@@ -1,0 +1,10 @@
+
+- hosts: all
+
+  tasks:
+  - include: ../tasks/fetch.yml
+  vars:
+    dest: /tmp
+    fail_on_missing: no
+    flat:
+    validate_checksum: yes
