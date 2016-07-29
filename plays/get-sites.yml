@@ -1,0 +1,15 @@
+#* This playbook wrappes the fetch module. It passes the websites
+#* configured for the host as a list to 'src'. Use '-a' to pass
+#* further parameters to ansible (as '-e'). See ansible fetch for
+#* details. 
+
+- hosts: all
+
+  tasks:
+  - include: ../tasks/fetch-multi.yml
+  vars:
+    src_files: '{{ service__websites }}'
+    dest: /tmp
+    fail_on_missing: no
+    flat:
+    validate_checksum: yes
