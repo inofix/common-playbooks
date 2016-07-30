@@ -3,5 +3,8 @@
     src: '{{ workdir }}/{{ fqdn }}/{{ item }}'
     dest: '{{ dest }}'
     backup: '{{ backup }}'
+    owner: '{{ owner }}'
+    group: '{{ group }}'
+    mode: '{{ mode }}'
   with_items: "{{ src_files }}"
 
