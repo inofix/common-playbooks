@@ -9,5 +9,5 @@
   - include: ../tasks/copy-multi.yml
   vars:
     src_files: '{{ service__websites }}'
-    dest: '{{ service__websites-dir }}'
+    dest: '{{ service__websites__dir }}'
     validate_checksum: yes
