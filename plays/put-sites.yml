@@ -1,7 +1,8 @@
 #* This playbook wrappes the copy module. It passes the websites
 #* configured for the host as a list to 'src'. Use '-a' to pass
 #* further parameters to ansible (as '-e'). See ansible copy for
-#* details. 
+#* details.
+#* You might want to do a noteify merge-all first
 
 - hosts: all
 
@@ -10,4 +11,4 @@
   vars:
     src_files: '{{ service__websites }}'
     dest: '{{ service__websites__dir }}'
-    validate_checksum: yes
+    backup: yes

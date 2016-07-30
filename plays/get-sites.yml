@@ -2,6 +2,8 @@
 #* configured for the host as a list to 'src'. Use '-a' to pass
 #* further parameters to ansible (as '-e'). See ansible fetch for
 #* details. 
+#* You might want to do a noteify merge-all first and then merge
+#* manually (for the moment..) back to the storage dir.
 
 - hosts: all
 
@@ -9,7 +11,7 @@
   - include: ../tasks/fetch-multi.yml
   vars:
     src_files: '{{ service__websites }}'
-    dest: /tmp
+    dest: '{{ workdir }}'
     fail_on_missing: no
     flat:
     validate_checksum: yes

@@ -1,7 +1,7 @@
 - name: copy web site related file(s) to remote host
   copy:
-    src: '{{ item }}'
+    src: '{{ workdir }}/{{ fqdn }}/{{ item }}'
     dest: '{{ dest }}'
-    validate_checksum: '{{ validate_checksum }}'
+    backup: '{{ backup }}'
   with_items: "{{ src_files }}"
 
