@@ -1,8 +1,0 @@
-- name: get web site related file(s) from remote host
-  fetch:
-    src: '{{ item }}'
-    dest: '{{ dest }}'
-    fail_on_missing: '{{ fail_on_missing }}'
-    flat: '{{ flat }}'
-    validate_checksum: '{{ validate_checksum }}'
-  with_items: "{{ src_files }}"
