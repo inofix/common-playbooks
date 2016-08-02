@@ -7,8 +7,3 @@
 
   roles:
     - fetch
-  vars:
-    dest: /tmp
-    fail_on_missing: no
-    flat:
-    validate_checksum: yes
