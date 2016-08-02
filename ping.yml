@@ -4,5 +4,5 @@
 - hosts: all
 
   tasks:
-  - include: ../tasks/ping.yml
+  - include: tasks/ping.yml
 
