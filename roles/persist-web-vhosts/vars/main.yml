@@ -1,0 +1,6 @@
+src_files: '{{ service__websites }}'
+dest: '{{ workdir }}'
+fail_on_missing: no
+flat:
+validate_checksum: yes
+
