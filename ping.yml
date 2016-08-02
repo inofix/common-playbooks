@@ -1,5 +1,6 @@
-#* This playbook simply wrappes the ping module. See ansible ping
-#* for details. No arguments are needed.
+#*  This playbook simply wrappes the ping module. See ansible ping
+#* for details.
+#*  No arguments are needed.
 
 - hosts: all
 

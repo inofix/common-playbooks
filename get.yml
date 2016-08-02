@@ -1,11 +1,12 @@
-#* This playbook simply wrappes the fetch module. Use '-a' to pass
+#*  This playbook simply wrappes the fetch module. Use '-a' to pass
 #* parameters to ansible (as '-e'). See ansible fetch for details.
-#* The following arguments are mandatory: 'src'
+#*  The following arguments are mandatory:
+#*   - 'src'
 
 - hosts: all
 
-  tasks:
-  - include: ../tasks/fetch.yml
+  roles:
+    - fetch
   vars:
     dest: /tmp
     fail_on_missing: no
