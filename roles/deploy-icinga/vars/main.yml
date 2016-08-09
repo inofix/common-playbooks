@@ -1,0 +1,11 @@
+src_files: '{{ service__monitoring__icinga__files + service__monitoring__icinga__ro_files + service__monitoring__icinga__rw_files }}'
+dest: '{{ service__monitoring__icinga__dirs }}'
+account_dest: '/etc/icinga/ido2db.cfg'
+account_store: '{{ account_store }}'
+account_section: 'icinga_db'
+account_pass_key: 'db_pass'
+#account_password_placeholder: '{{ account_password_placeholder }}'
+fail_on_missing: no
+flat:
+validate_checksum: yes
+
