@@ -1,5 +1,11 @@
 src_files: '{{ service__monitoring__icinga__files + service__monitoring__icinga__ro_files + service__monitoring__icinga__rw_files }}'
 dest: '{{ workdir }}'
+account_store: '{{ account_store }}'
+account_sections:
+  - 'icinga_db'
+account_key_key: 'key'
+account_pass_key: 'pass'
+account_password_placeholder: '{{ account_password_placeholder }}'
 fail_on_missing: no
 flat:
 validate_checksum: yes
