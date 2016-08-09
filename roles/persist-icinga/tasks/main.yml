@@ -1,6 +1,6 @@
 - name: make sure the db password is not stored in the repository
   lineinfile:
-    dest: '{{ workdir }}/{{ fqdn }}/etc/icinga/ido2db.cfg'
-    regexp: "^db_pass=.*"
-    line: "db_pass={{ account_password_placeholder }}"
+    dest: '{{ account_dest }}'
+    regexp: "^{{ account_pass_key }}=.*"
+    line: "{{ account_pass_key }}={{ account_password_placeholder }}"
   connection: local
