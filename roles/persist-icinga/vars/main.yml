@@ -1,4 +1,4 @@
-src_files: '{{ service__monitoring__icinga__files + service__monitoring__icinga__ro_files + service__monitoring__icinga__rw_files }}'
+src_files: '{{ service__monitoring__icinga__root_root_644_files + service__monitoring__icinga__root_nagios_640_files + service__monitoring__icinga__nagios_nagios_600_files }}'
 dest: '{{ workdir }}'
 account_dest: '{{ workdir }}/{{ fqdn }}/etc/icinga/ido2db.cfg'
 account_store: '{{ account_store }}'
