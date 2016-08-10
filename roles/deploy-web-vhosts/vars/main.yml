@@ -1,5 +1,4 @@
 src_files: '{{ service__websites }}'
-dest: '{{ service__websites__dir }}'
 backup: yes
 owner: '{{ service__websites_owner }}'
 group: '{{ service__websites_group }}'
