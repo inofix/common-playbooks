@@ -4,7 +4,7 @@ group: nagios
 mode: 600
 backup: yes
 account_dest: '{{ service__monitoring__icinga__db_file }}'
-account_store: '{{ account_store }}'
+#account_store: from project/any.yml
 account_section: 'icinga_db'
 account_pass_key: 'db_pass'
 
