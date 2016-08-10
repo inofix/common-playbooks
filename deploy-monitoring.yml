@@ -1,0 +1,12 @@
+#*  This playbook wrapps the copy module. It passes check_mk/icinga files
+#* configured for the host as a list to 'src'. Use '-a' to pass
+#* further parameters to ansible (as '-e'). See ansible copy for
+#* details.
+#*  You might want to do a `noteify merge-all` first or set a temporary
+#* workdir via `nodeify.sh -w dir`.
+#*  No arguments are needed.
+
+- hosts: role.monitor
+
+  roles:
+    - deploy-icinga
