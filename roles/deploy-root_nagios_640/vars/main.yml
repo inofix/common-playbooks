@@ -1,0 +1,6 @@
+src_files: '{{ service__monitoring__icinga__root_nagios_640_files }}'
+owner: root
+group: nagios
+mode: 640
+backup: yes
+
