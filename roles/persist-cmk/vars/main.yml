@@ -1,4 +1,4 @@
-src_files: '{{ service__monitoring__check-mk__files }}'
+src_files: '{{ service__monitoring__check-mk__root_root_644_files }}'
 dest: '{{ workdir }}'
 fail_on_missing: no
 flat:
