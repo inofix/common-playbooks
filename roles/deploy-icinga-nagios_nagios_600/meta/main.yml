@@ -1,2 +1,3 @@
 dependencies:
   - multi-copy
+  - set-password
