@@ -12,3 +12,4 @@
     - deploy-icinga-nagios_nagios_600
     - deploy-icinga-root_nagios_640
     - deploy-icinga-root_root_644
+    - deploy-cmk-root_root_644
