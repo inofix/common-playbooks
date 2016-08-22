@@ -1,3 +1,9 @@
 - name: copy file(s) to remote host
   copy:
-
+    src: '{{ src }}'
+    dest: '{{ dest }}'
+    owner: '{{ owner }}'
+    group: '{{ group }}'
+    mode: '{{ mode }}'
+    force: '{{ force }}'
+    backup: '{{ backup }}'
