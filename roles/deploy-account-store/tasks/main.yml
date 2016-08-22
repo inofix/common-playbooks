@@ -1,0 +1,16 @@
+# just pick the most generic storage dir and install the
+# file only if no one already exists!
+
+- name: make sure the workdir is available
+  file:
+    path: '{{ remotedirs.work }}'
+    state: 'directory'
+
+- name: install an account store if it does not exist yet
+  copy:
+    src: '{{ storage_dirs[0] }}/{{ account_store }}'
+    dest: '{{ account_store }}'
+    owner: 'root'
+    group: 'root'
+    mode: '600'
+    force: 'No'
