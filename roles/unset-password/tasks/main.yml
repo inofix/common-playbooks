@@ -3,4 +3,6 @@
     dest: '{{ account_dest }}'
     regexp: "^{{ account_pass_key }}=.*"
     line: "{{ account_pass_key }}={{ account_password_placeholder }}"
+# This always happens locally in the workdir..
+  sudo: false
   connection: local
