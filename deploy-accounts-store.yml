@@ -1,8 +1,11 @@
-#* This playbook installes the decentralized account store on the host.
-#* It is basically just a file rw-able only for root, that contains all
-#* account infos needed in the local configuration files, in order to
-#* fill in passphrases and the like when the config is put together from
+#*  This playbook installes the decentralized account store on the host.
+#* It is basically just a file rw-able only for root. This file contains
+#* all account infos needed for the local configuration files, in order to
+#* fill in passphrases and the like when the configs are put together from
 #* templates.
+#*  You might want to do a `noteify merge-all` first or set a temporary
+#* workdir via `nodeify.sh -w dir`.
+#*  No arguments are needed.
 
 - hosts: all
 
