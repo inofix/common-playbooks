@@ -1,4 +1,4 @@
-- name: copy file(s) to remote host
+- name: copy a file to a remote host
   copy:
     src: '{{ src }}'
     dest: '{{ dest }}'
