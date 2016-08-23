@@ -1,7 +1,7 @@
 src_files: '{{ service__monitoring__icinga__nagios_nagios_600_files }}'
 owner: nagios
 group: nagios
-mode: 600
+mode: 0600
 backup: yes
 account_dest: '{{ service__monitoring__icinga__db_file }}'
 #account_store: from project/any.yml

@@ -1,6 +1,6 @@
 src_files: '{{ service__monitoring__icinga__root_root_644_files }}'
 owner: root
 group: root
-mode: 644
+mode: 0644
 backup: yes
 
