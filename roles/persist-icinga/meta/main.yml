@@ -1,2 +1,3 @@
 dependencies:
   - multi-fetch
+  - unset-password
