@@ -1,0 +1,4 @@
+- name: install sudo
+  apt:
+    name: sudo
+    update_cache: yes
