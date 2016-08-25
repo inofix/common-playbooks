@@ -1,0 +1,5 @@
+- name: install apt-show-versions
+  apt:
+    name: apt-show-versions
+    update_cache: yes
+  when: ansible_os_family == "Debian"
