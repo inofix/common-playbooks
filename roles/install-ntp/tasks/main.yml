@@ -1,0 +1,11 @@
+- name: install ntpdate
+  apt:
+    name: ntpdate
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: install ntp
+  apt:
+    name: ntp
+    update_cache: yes
+  when: ansible_os_family == "Debian"
