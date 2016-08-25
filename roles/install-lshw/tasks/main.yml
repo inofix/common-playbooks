@@ -1,0 +1,5 @@
+- name: install lshw
+  apt:
+    name: lshw
+    update_cache: yes
+  when: ansible_os_family == "Debian"
