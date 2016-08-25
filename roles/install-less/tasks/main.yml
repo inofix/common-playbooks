@@ -1,0 +1,4 @@
+- name: install less
+  apt:
+    name: less
+    update_cache: yes
