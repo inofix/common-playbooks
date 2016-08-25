@@ -7,5 +7,7 @@
 
   roles:
     - install-less
+    - install-strace
     - install-sudo
     - install-vim
+
