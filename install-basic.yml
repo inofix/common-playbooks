@@ -6,7 +6,7 @@
 - hosts: app.vim
 
   roles:
-    - install-apt-show-versions
+    - install-apt-extra
     - install-less
     - install-strace
     - install-sudo
