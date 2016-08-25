@@ -1,0 +1,5 @@
+- name: install lm-sensors
+  apt:
+    name: lm-sensors
+    update_cache: yes
+  when: ansible_os_family == "Debian"
