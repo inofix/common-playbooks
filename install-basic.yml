@@ -22,3 +22,9 @@
     - install-lm-sensors
     - install-lshw
 
+- hosts: host.KVM
+
+  roles:
+    - install-netcat
+    - install-libvirt
+
