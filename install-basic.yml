@@ -12,4 +12,5 @@
     - install-strace
     - install-sudo
     - install-vim
+    - install-xml2
 
