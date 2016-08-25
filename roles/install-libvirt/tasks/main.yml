@@ -1,0 +1,12 @@
+- name: install libvirt-bin
+  apt:
+    name: libvirt-bin
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: install libvirt-top
+  apt:
+    name: libvirt-top
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
