@@ -3,3 +3,20 @@
     name: vim
     update_cache: yes
   when: ansible_os_family == "Debian"
+  vars:
+    just_installed_vim: true
+
+- name: install vim config
+  copy:
+    src: '{{ workdir }}/{{ fqdn }}/etc/vim/vimrc'
+    dest: '/etc/vim/vimrc'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+    backup: no
+  when: just_installed_vim == true
+
+- name: make vim the default editor
+  shell: update-alternatives --set editor /usr/bin/vim.basic
+  when:  just_installed_vim == true
+
