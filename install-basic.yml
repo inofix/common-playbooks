@@ -6,5 +6,6 @@
 - hosts: app.vim
 
   roles:
-    - install-vim
+    - install-less
     - install-sudo
+    - install-vim
