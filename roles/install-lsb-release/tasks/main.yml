@@ -1,0 +1,5 @@
+- name: install lsb-release
+  apt:
+    name: lsb-release
+    update_cache: yes
+  when: ansible_os_family == "Debian"

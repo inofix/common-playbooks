@@ -8,6 +8,7 @@
   roles:
     - install-apt-extra
     - install-less
+    - install-lsb-release
     - install-ntp
     - install-strace
     - install-sudo
