@@ -8,8 +8,8 @@
 
 - name: install vim config
   copy:
-    src: '{{ workdir }}/{{ fqdn }}/etc/vim/vimrc'
-    dest: '/etc/vim/vimrc'
+    src: '{{ workdir }}/{{ fqdn }}/{{ app_vim_config }}'
+    dest: '{{ app_vim_config }}'
     owner: 'root'
     group: 'root'
     mode: 0644
