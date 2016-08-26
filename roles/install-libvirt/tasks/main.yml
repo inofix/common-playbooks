@@ -4,9 +4,9 @@
     update_cache: yes
   when: ansible_os_family == "Debian" and ansible_virtualization_role == "host"
 
-- name: install libvirt-top
+- name: install virt-top
   apt:
-    name: libvirt-top
+    name: virt-top
     update_cache: yes
   when: ansible_os_family == "Debian" and ansible_virtualization_role == "host"
 
