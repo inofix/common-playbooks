@@ -1,0 +1,23 @@
+
+- name: install trac converter if necessary
+  copy:
+    src: '{{ workdir }}/{{ fqdn }}/{{ pkg_trac_er }}'
+    dest: '{{ pkg_trac_er }}'
+    owner: 'root'
+    group: 'root'
+    mode: 0755
+
+- name: track software removed today
+  shell: '{{ pkg_trac_er }}'
+  register: software_package_changes
+  when: ansible_os_family == "Debian"
+
+- name: write out todays software package changes
+  blockinfile:
+    block: '{{ software_package_changes.stdout }}\n'
+    dest: '{{ workdir }}/{{ fqdn }}/_packages.wiki'
+    create: true
+    marker: ""
+    insertbefore: yes
+  connection: local
+
