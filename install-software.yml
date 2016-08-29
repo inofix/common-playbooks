@@ -15,6 +15,12 @@
     - install-vim
     - install-xml2
 
+- hosts: host.KVM, host.Virtual
+
+  roles:
+    - install-screen
+    - install-tmux
+
 - hosts: host.Metal
 
   roles:
@@ -28,8 +34,3 @@
     - install-netcat
     - install-libvirt
 
-- hosts: host.KVM, host.Virtual
-
-  roles:
-    - install-screen
-    - install-tmux
