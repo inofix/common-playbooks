@@ -7,6 +7,7 @@
 
   roles:
     - install-apt-extra
+    - install-gawk
     - install-less
     - install-lsb-release
     - install-ntp
