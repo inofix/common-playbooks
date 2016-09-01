@@ -15,6 +15,7 @@
     - install-sudo
     - install-vim
     - install-xml2
+    - install-git
 
 - hosts: host.KVM, host.Virtual
 
