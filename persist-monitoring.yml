@@ -10,6 +10,6 @@
 - hosts: role.monitor
 
   roles:
-    - persist-icinga
     - persist-cmk
+    - persist-icinga
 
