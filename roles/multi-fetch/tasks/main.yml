@@ -1,4 +1,4 @@
-- name: "get {{ multifetchname }} files from the remote host"
+- name: 'get {{ multifetchname }} files from the remote host'
   fetch:
     src: '{{ item }}'
     dest: '{{ dest }}'
@@ -6,4 +6,4 @@
     flat: '{{ flat }}'
     mode: '{{ mode }}'
     validate_checksum: '{{ validate_checksum }}'
-  with_items: "{{ src_files }}"
+  with_items: '{{ src_files }}'

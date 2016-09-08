@@ -1,4 +1,4 @@
-- name: copy files to the remote host
+- name: 'copy {{ multicopyname }} files to the remote host'
   copy:
     src: '{{ workdir }}/{{ fqdn }}/{{ item }}'
     dest: '{{ item }}'
