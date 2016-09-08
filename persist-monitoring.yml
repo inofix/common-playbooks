@@ -11,8 +11,4 @@
 
   roles:
     - persist-cmk
-
-- hosts: role.monitor
-
-  roles:
     - persist-icinga

@@ -1,2 +1,3 @@
+allow_duplicates: yes
 dependencies:
-  - multi-fetch
+  - { role: multi-fetch, multifetchname: "check-mk config" }

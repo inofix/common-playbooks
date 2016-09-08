@@ -1,4 +1,3 @@
-multifetchname: "icinga config"
 src_files: '{{ service__monitoring__icinga__root_root_644_files + service__monitoring__icinga__root_nagios_640_files + service__monitoring__icinga__nagios_nagios_600_files }}'
 dest: '{{ workdir }}'
 #mode: 0640
