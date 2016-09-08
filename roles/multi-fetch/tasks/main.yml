@@ -1,4 +1,4 @@
-- name: get files from the remote host
+- name: "get {{ multifetchname }} files from the remote host"
   fetch:
     src: '{{ item }}'
     dest: '{{ dest }}'
