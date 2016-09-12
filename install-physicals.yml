@@ -1,15 +1,15 @@
-#*  This playbook joins the other installation playbooks here.
+#*  This playbook wrappes the apt (and others maybe in the future..) module
+#* to install software needed on a physical host ('bare metal').
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
 
-# please do not change the order.. ;)
-- include: install-basic.yml
-- include: install-terminal-mux.yml
-- include: install-monitored.yml
-- include: install-physicals.yml
-- include: install-virt.yml
+- hosts: host.Metal
 
+  roles:
+    - install-kpartx
+    - install-lm-sensors
+    - install-lshw
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

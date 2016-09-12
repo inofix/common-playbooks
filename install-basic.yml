@@ -1,0 +1,31 @@
+#*  This playbook wrappes the apt (and others maybe in the future..) module
+#* to install software considered basic here - i.e. to be installed on every
+#* host (non minimal/embedded..).
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+# app.vim is a placeholder for all software considered basic here
+- hosts: app.vim
+
+  roles:
+    - install-apt-extra
+    - install-gawk
+    - install-less
+    - install-lsb-release
+    - install-ntp
+    - install-strace
+    - install-sudo
+    - install-vim
+    - install-xml2
+    - install-git
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+
