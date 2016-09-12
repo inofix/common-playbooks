@@ -8,6 +8,8 @@
     create: yes
     line: "deb http://ftp.debian.org/debian wheezy-backports main"
   when: ansible_os_family == "Debian" and ansible_distribution_release == "wheezy"
+  vars:
+    apt_update_index: true
 
 - name: make sure backports is present
   lineinfile:
@@ -16,9 +18,11 @@
     create: yes
     line: "deb http://ftp.debian.org/debian jessie-backports main"
   when: ansible_os_family == "Debian" and ansible_distribution_release == "jessie"
+  vars:
+    apt_update_index: true
 
 - name: update the repository index
   apt:
     update_cache: yes
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and apt_update_index == true
 
