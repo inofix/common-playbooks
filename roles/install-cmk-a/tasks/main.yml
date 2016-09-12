@@ -16,7 +16,7 @@
 - name: install the icinga/nagios group
   group:
     name: nagios
-    gid: 105
+    gid: 133
     state: 'present'
     system: 'yes'
   when: just_installed_cmka == true
@@ -24,7 +24,7 @@
 - name: install the icinga/nagios user
   user:
     name: nagios
-    uid: 103
+    uid: 133
     group: nagios
     home: /var/lib/nagios
     shell: /bin/sh
