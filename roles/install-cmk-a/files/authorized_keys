@@ -1,0 +1,2 @@
+command="/usr/bin/sudo /usr/bin/check_mk_agent" {{ role__monitored__by_pubkey }}
+

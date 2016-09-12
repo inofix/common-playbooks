@@ -1,0 +1,53 @@
+- name: install check-mk-agent
+  apt:
+    name: check-mk-agent
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: install the icinga/nagios group
+  group:
+    name: nagios
+    gid: 105
+    state: 'present'
+    system: 'yes'
+
+- name: install the icinga/nagios user
+  user:
+    name: nagios
+    uid: 103
+    group: nagios
+    home: /var/lib/nagios
+    shell: /bin/sh
+
+- name: create the ssh config directory for the user nagios
+  file:
+    state: directory
+    dest: /var/lib/nagios/.ssh
+    mode: 700
+    owner: nagios
+    group: nagios
+
+- name: create ssh config authorized_keys for nagios
+  template:
+    src: authorized_keys
+    dest: /var/lib/nagios/.ssh/authorized_keys
+    mode: 600
+    owner: nagios
+    group: nagios
+
+- name: create the sudo config
+  copy:
+    src: sudoers_nagios
+    dest: /etc/sudoers.d/nagios
+    mode: 440
+    owner: root
+    group: root
+
+- name: make sure monitoring host may log in
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    insertafter: "AllowUsers.*"
+    line: "AllowUsers nagios@{{ role__monitored__by_ip }}
+
+

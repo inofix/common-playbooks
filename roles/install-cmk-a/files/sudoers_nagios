@@ -1,0 +1,2 @@
+Defaults: nagios !requiretty
+nagios ALL=(root) NOPASSWD: /usr/bin/check_mk_agent
