@@ -3,6 +3,7 @@
 #* details.
 #*  No arguments are mandatory.
 
+# app.vim is a placeholder for all software considered basic here
 - hosts: app.vim
 
   roles:
@@ -16,6 +17,11 @@
     - install-vim
     - install-xml2
     - install-git
+
+- hosts: app.check-mk-agent
+
+  roles:
+    - install-cmk-a
 
 - hosts: host.KVM, host.Virtual
 
