@@ -41,7 +41,7 @@
 
 - name: create ssh config authorized_keys for nagios
   template:
-    src: authorized_keys
+    src: roles/install-cmk-a/files/authorized_keys
     dest: /var/lib/nagios/.ssh/authorized_keys
     mode: 600
     owner: nagios
@@ -50,7 +50,7 @@
 
 - name: create the sudo config
   copy:
-    src: sudoers_nagios
+    src: roles/install-cmk-a/files/sudoers_nagios
     dest: /etc/sudoers.d/nagios
     mode: 440
     owner: root
