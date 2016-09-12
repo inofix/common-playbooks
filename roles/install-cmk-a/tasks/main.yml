@@ -3,6 +3,8 @@
     name: check-mk-agent
     update_cache: yes
   when: ansible_os_family == "Debian"
+  vars:
+    just_installed_cmka: true
 
 - name: install the icinga/nagios group
   group:
@@ -10,6 +12,7 @@
     gid: 105
     state: 'present'
     system: 'yes'
+  when: just_installed_cmka == true
 
 - name: install the icinga/nagios user
   user:
@@ -18,6 +21,7 @@
     group: nagios
     home: /var/lib/nagios
     shell: /bin/sh
+  when: just_installed_cmka == true
 
 - name: create the ssh config directory for the user nagios
   file:
@@ -26,6 +30,7 @@
     mode: 700
     owner: nagios
     group: nagios
+  when: just_installed_cmka == true
 
 - name: create ssh config authorized_keys for nagios
   template:
@@ -34,6 +39,7 @@
     mode: 600
     owner: nagios
     group: nagios
+  when: just_installed_cmka == true
 
 - name: create the sudo config
   copy:
@@ -42,6 +48,7 @@
     mode: 440
     owner: root
     group: root
+  when: just_installed_cmka == true
 
 - name: make sure monitoring host may log in
   lineinfile:
@@ -49,5 +56,6 @@
     state: present
     insertafter: "AllowUsers.*"
     line: "AllowUsers nagios@{{ role__monitored__by_ip }}
+  when: just_installed_cmka == true
 
 
