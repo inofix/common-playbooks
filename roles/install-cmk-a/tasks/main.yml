@@ -1,11 +1,6 @@
 
 # in jessie, the backports repo is needed..
-- name: make sure backports is present
-  lineinfile:
-    dest: /etc/apt/sources.d/backports.lst
-    state: present
-    create: yes
-    line: "deb http://ftp.debian.org/debian jessie-backports main"
+- include: roles/add-backports/tasks/main.yml
   when: ansible_os_family == "Debian" and ansible_distribution_release == "jessie"
 
 - name: install check-mk-agent
