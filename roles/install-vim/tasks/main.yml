@@ -2,6 +2,7 @@
   apt:
     name: vim
     update_cache: yes
+    cache_valid_time: 3600
   when: ansible_os_family == "Debian"
   vars:
     just_installed_vim: true

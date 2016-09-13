@@ -2,15 +2,20 @@
   apt:
     name: libvirt-bin
     update_cache: yes
+    cache_valid_time: 3600
   when: ansible_os_family == "Debian" and ansible_virtualization_role == "host"
 
 - name: install virtinst
   apt:
     name: virtinst
+    update_cache: yes
+    cache_valid_time: 3600
   when: ansible_os_family == "Debian" and ansible_virtualization_role == "host"
 
 - name: install virt-top
   apt:
     name: virt-top
+    update_cache: yes
+    cache_valid_time: 3600
   when: ansible_os_family == "Debian" and ansible_virtualization_role == "host"
 
