@@ -1,4 +1,4 @@
-#*  This playbook simply wrappes the fetch module. Use '-a' to pass
+#*  This playbook simply wrapps the fetch module. Use '-a' to pass
 #* parameters to ansible (as '-e'). See ansible fetch for details.
 #*  The following arguments are mandatory:
 #*   - 'src'

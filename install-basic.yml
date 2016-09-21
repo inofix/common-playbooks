@@ -1,4 +1,4 @@
-#*  This playbook wrappes the apt (and others maybe in the future..) module
+#*  This playbook wrapps the apt (and others maybe in the future..) module
 #* to install software considered basic here - i.e. to be installed on every
 #* host (non minimal/embedded..).
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
