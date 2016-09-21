@@ -1,0 +1,13 @@
+#*  This playbook wrapps the apt (and others maybe in the future..) module
+#* to install software for virtualization via KVM.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  The following arguments are mandatory:
+#*   - 'new_host_name'
+
+- hosts: host.KVM
+
+  roles:
+    - create_vm
+
+

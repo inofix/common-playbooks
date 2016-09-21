@@ -1,7 +1,7 @@
 
 - name: prepare a logical volume for storage
   lvol:
-    lv: '{{ hostname }}'
+    lv: '{{ new_host_name }}'
     size: '{{ virt__vm_size }}'
     vg: '{{ virt__vm_pool }}'
 
