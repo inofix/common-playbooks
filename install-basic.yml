@@ -5,8 +5,7 @@
 #* details.
 #*  No arguments are mandatory.
 
-# app.vim is a placeholder for all software considered basic here
-- hosts: app.vim
+- hosts: app.basics
 
   roles:
     - install-apt-extra
