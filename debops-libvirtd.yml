@@ -6,15 +6,19 @@
 #* details.
 #*  No arguments are mandatory.
 #*  Dependencies:
+#*   - debops.kvm
 #*   - debops.apt_preferences
 #*   - debops.ferm (disabled for testing..)
 #*   - debops.libvirtd
 
 - name: Install and manage libvirtd.
-  hosts: [ 'debops_service_libvirtd' ]
+#  hosts: [ 'debops_service_libvirtd' ] #does not seem to be a firm requirement
+  hosts: host.KVM
   become: True
 
   roles:
+
+# TODO: seems to need ferm at all costs..    - role: debops.kvm
 
     - role: debops.apt_preferences
       tags: [ 'depend::apt_preferences', 'type::dependency' ]
