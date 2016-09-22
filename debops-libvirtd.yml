@@ -1,0 +1,32 @@
+#*  This playbook uses the debops.libvirtd role (see
+#* https://github.com/debops/ansible-libvirtd) to install all necessary
+#* packages and configuration for Qemu/KVM virtualization support on a
+#* physical host.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+#*  Dependencies:
+#*   - debops.apt_preferences
+#*   - debops.ferm (disabled for testing..)
+#*   - debops.libvirtd
+
+- name: Install and manage libvirtd.
+  hosts: [ 'debops_service_libvirtd' ]
+  become: True
+
+  roles:
+
+    - role: debops.apt_preferences
+      tags: [ 'depend::apt_preferences', 'type::dependency' ]
+      apt_preferences__dependent_list:
+        - '{{ libvirtd__apt_preferences__dependent_list }}'
+
+#    - role: debops.ferm
+#      tags: [ 'depend::ferm', 'type::dependency' ]
+#      ferm_forward: '{{ libvirtd__ferm__forward|d() | bool }}'
+#      ferm_dependent_rules:
+#        - '{{ libvirtd__ferm__dependent_rules }}'
+
+    - role: debops.libvirtd
+      tags: [ 'role::libvirtd' ]
+
