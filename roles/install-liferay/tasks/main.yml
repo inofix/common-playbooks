@@ -1,0 +1,7 @@
+- name: download liferay
+  get_url:
+    checksum: "{{ app__liferay__checksum }}"
+    dest: "{{ remotedirs.service }}"
+    url: "{{ app__liferay__pkg_url }}"
+
+
