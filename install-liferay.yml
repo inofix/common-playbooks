@@ -1,0 +1,21 @@
+#*  This playbook downloads, unpacks, and installes our customized liferay
+#* packages.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- hosts: app.liferay
+  become: True
+
+  roles:
+    - install-liferay
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+
