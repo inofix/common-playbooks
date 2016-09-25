@@ -1,7 +1,24 @@
 - name: download liferay
   get_url:
     checksum: "{{ app__liferay__checksum }}"
-    dest: "{{ remotedirs.service }}"
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg_archive }}"
     url: "{{ app__liferay__pkg_url }}"
 
+- name: unpack liferay
+  unarchive:
+    remote_src: yes
+    copy: no
+    creates: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
+    dest: "{{ remotedirs.service }}/"
+    src: "{{ remotedirs.service }}/{{ app__liferay__pkg_archive }}"
+
+- name: change the ownership
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}"
+    state: directory
+    owner: "{{ app__tomcat__user }}"
+    group: "{{ app__tomcat__group }}"
+    recurse: yes
+
+#- name: install liferay
 
