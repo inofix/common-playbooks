@@ -20,5 +20,15 @@
     group: "{{ app__tomcat__group }}"
     recurse: yes
 
+- name: change liferay home in properties
+  lineinfile:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
+    mode: 0600
+    owner: "{{ app__tomcat__user }}"
+    group: "{{ app__tomcat__group }}"
+    state: present
+    regexp: "liferay.home=%LIFERAY_HOME%"
+    line: "liferay.home={{ app__liferay__workdir }}"
+
 #- name: install liferay
 
