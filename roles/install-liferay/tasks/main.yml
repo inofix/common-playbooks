@@ -1,4 +1,6 @@
 - name: download liferay
+  environment:
+    http_proxy: "{{ http_proxy }}"
   get_url:
     checksum: "{{ app__liferay__checksum }}"
     dest: "{{ remotedirs.service }}/{{ app__liferay__pkg_archive }}"
