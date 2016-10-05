@@ -1,0 +1,8 @@
+
+- name: set the correct password to the file
+  lineinfile:
+    dest: '{{ file }}'
+    regexp: "^.*$"
+    insertbefore: yes
+    line: "{{ comment_start }}{{ ansible_managed }}{{ comment_end }}"
+

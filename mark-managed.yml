@@ -1,0 +1,12 @@
+#*  This playbook wrappes the lineinfile module to add a line about loosing
+#* any changes in an managed file.
+#* Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  The following arguments are mandatory:
+#*   - 'file'
+
+- hosts: all
+
+  roles:
+    - mark-managed
+
