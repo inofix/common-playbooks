@@ -1,0 +1,7 @@
+src_files: '{{ os__base_config_files }}'
+dest: '{{ workdir }}'
+fail_on_missing: no
+flat:
+validate_checksum: yes
+mode: 0644
+
