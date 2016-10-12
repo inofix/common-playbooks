@@ -9,5 +9,5 @@ account_pass_key: 'db_pass'
 fail_on_missing: no
 flat:
 validate_checksum: yes
-mode: 644
+mode: 0644
 
