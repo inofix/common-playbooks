@@ -1,0 +1,3 @@
+allow_duplicates: yes
+dependencies:
+  - { role: multi-fetch, multifetchname: "basic config" }
