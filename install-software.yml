@@ -3,13 +3,12 @@
 #* details.
 #*  No arguments are mandatory.
 
-# please do not change the order.. ;)
 - include: install-basic.yml
+
 - include: install-terminal-mux.yml
 - include: install-monitored.yml
 - include: install-physicals.yml
 - include: install-virt.yml
-
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
