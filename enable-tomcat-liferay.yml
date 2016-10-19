@@ -4,20 +4,6 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-tomcat.yml
-
-- hosts: app.liferay
-  become: True
-
-  roles:
-    - install-liferay
-
-- hosts: app.tomcat,&app.liferay
-  become: True
-
-  roles:
-    - enable-liferay-tomcat
-
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
 # to be combined with something smarter as

@@ -1,0 +1,40 @@
+
+- name: check whether the old webapps was already disabled once
+  stat:
+    path: '/var/lib/{{ app__tomcat__name }}/webapps_ansible_disabled'
+  register: tomcat_webapps_stat
+
+- name: stop tomcat
+  service:
+    name: '{{ app__tomcat__name }}'
+    state: stopped
+  vars:
+    tomcat_was_stopped: True
+  when: not tomcat_webapps_stat.stat.exists
+
+- name: move the old tomcat webapps out of the way
+  command: mv '/var/lib/{{ app__tomcat__name }}/webapps' '/var/lib/{{ app__tomcat__name }}/webapps_ansible_disabled'
+  when: tomcat_webapps_stat.stat.exists
+
+- name: link liferay webapps into tomcat directory
+  file:
+    state: link
+    path: '/var/lib/{{ app__tomcat__name }}/webapps'
+    src: '{{ app__liferay__workdir }}'
+  when: tomcat_webapps_stat.stat.exists
+
+#- name: link liferay portal properties to system lib
+#  file:
+#    state: link
+#    path: '/var/lib/portal-ext.properties'
+#    src: '{{ app__liferay__workdir }}'
+#TODO still needed?
+
+
+
+- name: start tomcat
+  service:
+    name: '{{ app__tomcat__name }}'
+    state: stopped
+  when: tomcat_was_stopped
+
