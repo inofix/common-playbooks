@@ -7,7 +7,7 @@
 #* workdir via `nodeify.sh -w dir`.
 #*  No arguments are needed.
 
-- hosts: service.portal.liferay.apache-tomcat
+- hosts: app.tomcat
 
   roles:
     - deploy-tomcat-core
