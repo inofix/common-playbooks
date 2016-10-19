@@ -1,0 +1,3 @@
+allow_duplicates: yes
+dependencies:
+  - { role: multi-copy, multicopyname: "tomcat core 0640 config" }

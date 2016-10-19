@@ -1,0 +1,14 @@
+#*  This playbook wrapps the copy, file and lineinfile modules.
+#* It mainly passes files needed for a runnung tomcat installation
+#* as a list to 'src' to the hosts. Use '-a' to pass
+#* further parameters to ansible (as '-e'). See ansible copy for
+#* details.
+#*  You might want to do a `noteify merge-all` first or set a temporary
+#* workdir via `nodeify.sh -w dir`.
+#*  No arguments are needed.
+
+- hosts: service.portal.liferay.apache-tomcat
+
+  roles:
+    - deploy-tomcat-core
+    - deploy-tomcat-service
