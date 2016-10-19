@@ -1,5 +1,5 @@
-#*  This playbook downloads, unpacks, and installes our customized liferay
-#* packages.
+#*  This playbook wrapps the apt (and others maybe in the future..) module
+#* to install the tomcat package.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
