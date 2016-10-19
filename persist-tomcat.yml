@@ -1,0 +1,14 @@
+#*  This playbook wrapps the fetch module. It passes the liferay related
+#* configs for each host as a list to 'src'. Use '-a' to pass
+#* further parameters to ansible (as '-e'). See ansible fetch for
+#* details. 
+#*  You might want to do set a temporary workdir `nodeify.sh -w dir`
+#* or do a `nodeify.sh merge-all` first and then merge manually back
+#* to the storage dir. 
+#*  No arguments are needed.
+
+- hosts: service.portal.liferay.apache-tomcat
+
+  roles:
+    - persist-tomcat
+
