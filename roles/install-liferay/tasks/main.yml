@@ -1,3 +1,7 @@
+- name: check for installation
+  command: ls "{{ remotedirs.service }}/{{ app__liferay__pkg }}"
+  register: contents
+
 - name: download liferay
   environment:
     http_proxy: "{{ http_proxy }}"
@@ -5,6 +9,7 @@
     checksum: "{{ app__liferay__checksum }}"
     dest: "{{ remotedirs.service }}/{{ app__liferay__pkg_archive }}"
     url: "{{ app__liferay__pkg_url }}"
+  when: contents.stdout == ""
 
 - name: unpack liferay
   unarchive:
