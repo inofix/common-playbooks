@@ -34,13 +34,46 @@
 #    src: '{{ app__liferay__workdir }}'
 #TODO still needed?
 
-#- name: edit the main tomcat server.xml
-#  blockinfile:
-#    dest: '{{ app__tomcat__config }}'
-#    regexp: '
-#    replace: '        <!-- {mark} ANSIBLE MANAGED BLOCK -->
-#      <Host name="localhost"  appBase="{{  }}"
-#            unpackWARs="true" autoDeploy="true">
+- name: edit the main tomcat server.xml
+  replace:
+    dest: '{{ app__tomcat__config }}'
+    regexp: 'name="localhost"\s*appBase="webapps"'
+    replace: 'name="localhost"  appBase="{{ app__liferay__webapps }}/"'
+
+- name: edit the catalina properties
+  replace:
+    dest: '{{ app__tomcat__properties }}'
+    regexp: 'common.loader=.*'
+    replace: 'common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/var/lib/tomcat7/common/classes,/var/lib/tomcat7/common/*.jar,{{ app__liferay__worklink }}/lib/ext/*.jar'
+
+- name: edit the ROOT.xml
+  blockinfile:
+    create: True
+    dest: '{{ app__tomcat__workroot }}'
+    marker: '<!-- {mark} ANSIBLE MANAGED BLOCK -->'
+    block: |
+      <Context path="" crossContext="true">
+      </Context>
+
+- name: edit tomcat startup file for more RAM etc.
+  lineinfile:
+    dest: '{{ app__tomcat__startup }}'
+    insertafter: '^JAVA_OPTS="-'
+    line: 'JAVA_OPTS="${JAVA_OPTS} -Xms2048m -Xmx2048m -XX:MaxPermSize=256m -Duser.timezone=GMT -Dfile.encoding=UTF8"'
+
+- name: edit tomcat startup for development hosts
+  lineinfile:
+    dest: '{{ app__tomcat__startup }}'
+    insertafter: '^JAVA_OPTS="-'
+    line: 'JAVA_OPTS="${JAVA_OPTS} -Dexternal-properties=portal-developer.properties"'
+  when: role == 'development'
+
+- name: edit tomcat startup for development hosts
+  lineinfile:
+    dest: '{{ app__tomcat__startup }}'
+    state: absent
+    line: 'JAVA_OPTS="${JAVA_OPTS} -Dexternal-properties=portal-developer.properties"'
+  when: role != 'development'
 
 - name: start tomcat
   service:
