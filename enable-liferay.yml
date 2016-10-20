@@ -1,8 +1,14 @@
-#*  This playbook downloads, unpacks, and installes our customized liferay
-#* packages.
+#*  This playbook connects liferay to its container and database, currently
+#* only postgres and tomcat are supported.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
+
+- hosts: app.tomcat,&app.liferay
+  become: True
+
+  roles:
+    - enable-liferay-tomcat
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

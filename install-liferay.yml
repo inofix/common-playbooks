@@ -1,5 +1,6 @@
 #*  This playbook downloads, unpacks, and installes our customized liferay
-#* packages.
+#* packages. It will also install dependencies such as a container and a
+#* database and connect them together.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
@@ -12,11 +13,7 @@
   roles:
     - install-liferay
 
-- hosts: app.tomcat,&app.liferay
-  become: True
-
-  roles:
-    - enable-liferay-tomcat
+- include: enable-liferay.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
