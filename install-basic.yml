@@ -19,6 +19,11 @@
     - install-xml2
     - install-git
 
+- hosts: app.archive
+
+  roles:
+    - install-zip
+
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
 # to be combined with something smarter as
