@@ -25,14 +25,13 @@
   file:
     state: link
     dest: '/var/lib/{{ app__tomcat__name }}/webapps'
-    src: '{{ app__liferay__workdir }}'
+    src: '{{ app__liferay__home }}/{{ app__liferay__containername }}'
 
-#- name: link liferay portal properties to system lib
-#  file:
-#    state: link
-#    dest: '/var/lib/portal-ext.properties'
-#    src: '{{ app__liferay__workdir }}'
-#TODO still needed?
+- name: link liferay portal properties to system lib
+  file:
+    state: link
+    dest: '/var/lib/portal-ext.properties'
+    src: '{{ app__liferay__home }}/portal-ext.properties'
 
 - name: edit the main tomcat server.xml
   replace:
@@ -44,7 +43,7 @@
   replace:
     dest: '{{ app__tomcat__properties }}'
     regexp: 'common.loader=.*'
-    replace: 'common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/var/lib/tomcat7/common/classes,/var/lib/tomcat7/common/*.jar,{{ app__liferay__worklink }}/lib/ext/*.jar'
+    replace: 'common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/var/lib/{{ app__tomcat__name }}/common/classes,/var/lib/{{ app__tomcat__name }}/common/*.jar,{{ app__liferay__worklink }}/{{ app__liferay__containername }}/lib/ext/*.jar'
 
 - name: edit the ROOT.xml
   blockinfile:
@@ -59,7 +58,7 @@
   lineinfile:
     dest: '{{ app__tomcat__startup }}'
     insertafter: '^JAVA_OPTS="-'
-    line: 'JAVA_OPTS="${JAVA_OPTS} -Xms2048m -Xmx2048m -XX:MaxPermSize=256m -Duser.timezone=GMT -Dfile.encoding=UTF8"'
+    line: 'JAVA_OPTS="${JAVA_OPTS} -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Xms2048m -Xmx2048m -XX:MaxPermSize=512m -Duser.timezone=GMT -Dfile.encoding=UTF8"'
 
 - name: edit tomcat startup for development hosts
   lineinfile:

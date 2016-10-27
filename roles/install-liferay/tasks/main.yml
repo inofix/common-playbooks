@@ -34,7 +34,7 @@
     owner: "{{ app__tomcat__user }}"
     group: "{{ app__tomcat__group }}"
     regexp: "liferay.home=%LIFERAY_HOME%"
-    replace: "liferay.home={{ app__liferay__workdir }}"
+    replace: "liferay.home={{ app__liferay__home }}"
 
 #- name: install liferay
 
