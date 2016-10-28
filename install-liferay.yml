@@ -5,9 +5,16 @@
 #* details.
 #*  No arguments are mandatory.
 
+- include: install-basic.yml
 - include: install-tomcat.yml
 
-- hosts: app.liferay
+- hosts: app.liferay.v7
+  become: True
+
+  roles:
+    - install-liferay-unbundled
+
+- hosts: app.liferay.v6
   become: True
 
   roles:

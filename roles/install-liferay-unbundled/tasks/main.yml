@@ -1,0 +1,123 @@
+- name: check for installation
+  command: ls "{{ remotedirs.service }}/{{ app__liferay__name }}"
+  register: contents
+  ignore_errors: yes
+
+- name: download liferay bundle
+  environment:
+    http_proxy: "{{ http_proxy }}"
+  get_url:
+    checksum: "{{ app__liferay__checksum }}"
+    dest: "{{ remotedirs.service }}/{{ app__liferay__bundle_archive }}"
+    url: "{{ app__liferay__bundle_url }}"
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+  when: contents.stdout == ""
+
+- name: create liferay home
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
+
+- name: unpack liferay bundle
+  environment:
+    http_proxy: "{{ http_proxy }}"
+  unarchive:
+    remote_src: yes
+    copy: no
+    dest: "{{ remotedirs.service }}/"
+    src: "{{ remotedirs.service }}/{{ app__liferay__bundle_archive }}"
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+  when: contents.stdout == ""
+
+- name: create the containers home
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
+
+- name: create the containers library
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/lib"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
+
+- name: copy over the extended library
+  synchronize:
+    src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/{{ app__liferay__container }}-{{ app__liferay__bundle_container_version }}/lib/ext"
+    dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/lib/"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: create the webapps dir
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/webapps"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
+
+- name: copy over the actual liferay application
+  synchronize:
+    src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/{{ app__liferay__container }}-{{ app__liferay__bundle_container_version }}/webapps/ROOT"
+    dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/webapps/"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: create a link to the logs
+  file:
+    state: link
+    src: '/var/log/{{ app__liferay__container }}{{ app__liferay__container_version_major }}/'
+    dest: '{{ remotedirs.service }}/{{ app__liferay__name }}/logs'
+
+- name: create yet another link to the logs
+  file:
+    state: link
+    src: '/var/log/{{ app__liferay__container }}{{ app__liferay__container_version_major }}/'
+    dest: '{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/logs'
+
+- name: copy over the osgi library
+  synchronize:
+    src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/osgi"
+    dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: create the data directory
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/data"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
+
+- name: create the deploy directory
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/deploy"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
+
+- name: copy over the license information
+  synchronize:
+    src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/license"
+    dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: create a very basic properties file
+  lineinfile:
+    create: yes
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
+    mode: 0600
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    line: "liferay.home={{ app__liferay__home }}"
+
+#- name: install liferay
+

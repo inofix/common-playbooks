@@ -25,7 +25,7 @@
   file:
     state: link
     dest: '/var/lib/{{ app__tomcat__name }}/webapps'
-    src: '{{ app__liferay__home }}/{{ app__liferay__containername }}'
+    src: '{{ app__liferay__webapps }}'
 
 - name: link liferay portal properties to system lib
   file:
