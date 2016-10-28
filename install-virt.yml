@@ -4,6 +4,8 @@
 #* details.
 #*  No arguments are mandatory.
 
+- include: install-basic.yml
+
 - hosts: host.KVM
 
   roles:
