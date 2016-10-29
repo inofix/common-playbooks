@@ -4,8 +4,6 @@
     update_cache: yes
     cache_valid_time: 3600
   when: ansible_os_family == "Debian"
-  vars:
-    just_installed_vim: true
 
 - name: install vim config
   copy:
@@ -15,9 +13,7 @@
     group: 'root'
     mode: 0644
     backup: no
-  when: just_installed_vim == true
 
 - name: make vim the default editor
   shell: update-alternatives --set editor /usr/bin/vim.basic
-  when:  just_installed_vim == true
 
