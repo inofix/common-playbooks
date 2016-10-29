@@ -13,6 +13,7 @@
     group: 'root'
     mode: 0644
     backup: no
+  ignore_errors: yes
 
 - name: make vim the default editor
   shell: update-alternatives --set editor /usr/bin/vim.basic
