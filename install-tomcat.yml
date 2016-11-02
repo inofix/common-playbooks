@@ -7,6 +7,12 @@
 #* details.
 #*  No arguments are mandatory.
 
+- hosts: app.java.jdk
+  become: True
+
+  roles:
+    - install-jdk
+
 - hosts: app.tomcat
   become: True
 
