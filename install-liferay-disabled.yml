@@ -1,10 +1,11 @@
 #*  This playbook downloads, unpacks, and installes our customized liferay
 #* packages (without enabling it yet).
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
-
-- include: install-basic.yml
 
 - hosts: app.liferay
   become: True
