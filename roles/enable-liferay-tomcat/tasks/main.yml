@@ -45,7 +45,7 @@
     regexp: 'common.loader=.*'
     replace: 'common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/var/lib/{{ app__tomcat__name }}/common/classes,/var/lib/{{ app__tomcat__name }}/common/*.jar,{{ app__liferay__worklink }}/{{ app__liferay__containername }}/lib/ext/*.jar'
 
-- name: edit the ROOT.xml
+- name: edit the configuration descriptor ROOT.xml
   blockinfile:
     create: True
     dest: '{{ app__tomcat__workroot }}'
