@@ -1,4 +1,5 @@
-#*  This playbook joins the other installation playbooks here.
+#*  This is the main installer playbook that just joins the other installation
+#* playbooks.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
