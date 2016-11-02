@@ -75,12 +75,16 @@
     state: link
     src: '/var/log/{{ app__liferay__container }}{{ app__liferay__container_version_major }}/'
     dest: '{{ remotedirs.service }}/{{ app__liferay__name }}/logs'
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
 
 - name: create yet another link to the logs
   file:
     state: link
     src: '/var/log/{{ app__liferay__container }}{{ app__liferay__container_version_major }}/'
     dest: '{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/logs'
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
 
 - name: copy over the osgi library
   synchronize:
