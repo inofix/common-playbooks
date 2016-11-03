@@ -1,26 +1,33 @@
 
-- name: link the current liferay version to default path
-  file:
-    state: link
-    src: '{{ remotedirs.service }}/{{ app__liferay__name }}'
-    dest: '{{ app__liferay__worklink }}'
-    force: True
+- name: test if the installation was already done
+  stat:
+    path: '{{ app__liferay__worklink }}'
+  register: liferay_link
+
+- name: stop tomcat
+  service:
+    name: '{{ app__tomcat__name }}'
+    state: stopped
+  when: liferay_link.stat.islnk is not defined or liferay_link.stat.lnk_source != '{{ remotedirs.service }}/{{ app__liferay__name }}'
 
 - name: check whether the old webapps was already disabled once
   stat:
     path: '/var/lib/{{ app__tomcat__name }}/webapps_ansible_disabled'
   register: tomcat_webapps_stat
 
-- name: stop tomcat
-  service:
-    name: '{{ app__tomcat__name }}'
-    state: stopped
+- name: link the current liferay version to the default path
+  file:
+    state: link
+    src: '{{ remotedirs.service }}/{{ app__liferay__name }}'
+    dest: '{{ app__liferay__worklink }}'
+    force: True
+  when: liferay_link.stat.islnk is not defined or liferay_link.stat.lnk_source != '{{ remotedirs.service }}/{{ app__liferay__name }}'
 
 - name: move the old tomcat webapps out of the way
   when: not tomcat_webapps_stat.stat.exists
   command: mv '/var/lib/{{ app__tomcat__name }}/webapps' '/var/lib/{{ app__tomcat__name }}/webapps_ansible_disabled'
 
-- name: link liferay webapps into tomcat directory
+- name: link liferay webapps into the tomcat directory
   when: not tomcat_webapps_stat.stat.exists
   file:
     state: link
@@ -39,11 +46,23 @@
     regexp: 'name="localhost"\s*appBase="webapps"'
     replace: 'name="localhost"  appBase="{{ app__liferay__webapps }}/"'
 
-- name: edit the catalina properties
+- name: edit the catalina properties, add liferay dependency .jar-libraries to common.loader
   replace:
     dest: '{{ app__tomcat__properties }}'
-    regexp: 'common.loader=.*'
-    replace: 'common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,/var/lib/{{ app__tomcat__name }}/common/classes,/var/lib/{{ app__tomcat__name }}/common/*.jar,{{ app__liferay__worklink }}/{{ app__liferay__containername }}/lib/ext/*.jar'
+    regexp: '^common\.loader=.*'
+    replace: 'common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,{{ app__liferay__worklink }}/{{ app__liferay__containername }}/lib/ext/*.jar'
+
+- name: edit the catalina properties, unset server.loader
+  replace:
+    dest: '{{ app__tomcat__properties }}'
+    regexp: '^server\.loader=.*'
+    replace: 'server.loader='
+
+- name: edit the catalina properties, unset shared.loader
+  replace:
+    dest: '{{ app__tomcat__properties }}'
+    regexp: '^shared\.loader=.*'
+    replace: 'shared.loader='
 
 - name: edit the configuration descriptor ROOT.xml
   blockinfile:
@@ -54,7 +73,7 @@
       <Context path="" crossContext="true">
       </Context>
 
-- name: edit tomcat startup file for more RAM etc.
+- name: edit tomcat startup file for probably more RAM etc.
   lineinfile:
     dest: '{{ app__tomcat__startup }}'
     insertafter: '^JAVA_OPTS="-'
@@ -77,5 +96,6 @@
 - name: start tomcat
   service:
     name: '{{ app__tomcat__name }}'
-    state: stopped
+    state: started
+  when: liferay_link.stat.islnk is not defined or liferay_link.stat.lnk_source != '{{ remotedirs.service }}/{{ app__liferay__name }}'
 
