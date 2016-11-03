@@ -122,11 +122,11 @@
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
     block: |
-        admin.email.from.address=test@liferay.com
-        admin.email.from.name=Test Test
+        admin.email.from.address={{ app__liferay__admin_email }}
+        admin.email.from.name={{ app__liferay__admin_name }}
         liferay.home={{ app__liferay__home }}
         setup.wizard.add.sample.data={{ app__liferay__add_test_data }}
-        setup.wizard.enabled=false
+        setup.wizard.enabled={{ app__liferay__enable_setup_wizard }}
 
 #- name: install liferay
 
