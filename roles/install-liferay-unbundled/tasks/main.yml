@@ -1,7 +1,8 @@
+
 - name: check for installation
-  command: ls "{{ remotedirs.service }}/{{ app__liferay__name }}"
-  register: contents
-  ignore_errors: yes
+  stat:
+    path: "{{ remotedirs.service }}/{{ app__liferay__name }}"
+  register: liferay_dir
 
 - name: download liferay bundle
   environment:
@@ -12,7 +13,7 @@
     url: "{{ app__liferay__bundle_url }}"
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
-  when: contents.stdout == ""
+  when: liferay_dir.stat.isdir is not defined
 
 - name: create liferay home
   file:
@@ -32,7 +33,7 @@
     src: "{{ remotedirs.service }}/{{ app__liferay__bundle_archive }}"
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
-  when: contents.stdout == ""
+  when: liferay_dir.stat.isdir is not defined
 
 - name: create the containers home
   file:
@@ -69,7 +70,7 @@
     src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/{{ app__liferay__container }}-{{ app__liferay__bundle_container_version }}/webapps/ROOT"
     dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/webapps/"
   delegate_to: "{{ inventory_hostname }}"
-  when: contents.stdout == ""
+  when: liferay_dir.stat.isdir is not defined
 
 - name: create a link to the logs
   file:
@@ -92,7 +93,7 @@
     src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/osgi"
     dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/"
   delegate_to: "{{ inventory_hostname }}"
-  when: contents.stdout == ""
+  when: liferay_dir.stat.isdir is not defined
 
 - name: create the data directory
   file:
@@ -115,7 +116,7 @@
     src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/license"
     dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/"
   delegate_to: "{{ inventory_hostname }}"
-  when: contents.stdout == ""
+  when: liferay_dir.stat.isdir is not defined
 
 - name: create a very basic properties file
   blockinfile:
@@ -130,7 +131,7 @@
         liferay.home={{ app__liferay__home }}
         setup.wizard.add.sample.data={{ app__liferay__add_test_data }}
         setup.wizard.enabled={{ app__liferay__enable_setup_wizard }}
-  when: contents.stdout == ""
+  when: liferay_dir.stat.isdir is not defined
 
 #- name: install liferay
 
