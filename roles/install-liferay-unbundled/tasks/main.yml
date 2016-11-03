@@ -69,6 +69,7 @@
     src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/{{ app__liferay__container }}-{{ app__liferay__bundle_container_version }}/webapps/ROOT"
     dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/webapps/"
   delegate_to: "{{ inventory_hostname }}"
+  when: contents.stdout == ""
 
 - name: create a link to the logs
   file:
@@ -91,6 +92,7 @@
     src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/osgi"
     dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/"
   delegate_to: "{{ inventory_hostname }}"
+  when: contents.stdout == ""
 
 - name: create the data directory
   file:
@@ -113,6 +115,7 @@
     src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/license"
     dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/"
   delegate_to: "{{ inventory_hostname }}"
+  when: contents.stdout == ""
 
 - name: create a very basic properties file
   blockinfile:
@@ -127,6 +130,7 @@
         liferay.home={{ app__liferay__home }}
         setup.wizard.add.sample.data={{ app__liferay__add_test_data }}
         setup.wizard.enabled={{ app__liferay__enable_setup_wizard }}
+  when: contents.stdout == ""
 
 #- name: install liferay
 
