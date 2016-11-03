@@ -115,13 +115,18 @@
   delegate_to: "{{ inventory_hostname }}"
 
 - name: create a very basic properties file
-  lineinfile:
+  blockinfile:
     create: yes
     dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
     mode: 0600
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
-    line: "liferay.home={{ app__liferay__home }}"
+    block: |
+        admin.email.from.address=test@liferay.com
+        admin.email.from.name=Test Test
+        liferay.home={{ app__liferay__home }}
+        setup.wizard.add.sample.data={{ app__liferay__add_test_data }}
+        setup.wizard.enabled=false
 
 #- name: install liferay
 
