@@ -1,6 +1,6 @@
 #*  This playbook downloads, unpacks, and installes our customized liferay
-#* packages (without enabling it yet though - see install-liferay-enabled/
-#* install-liferay-disabled too).
+#* packages. It will also connect the container and the #* database - both
+#* must be already installed (see below).
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -8,17 +8,8 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.liferay.v7
-  become: True
-
-  roles:
-    - install-liferay-unbundled
-
-- hosts: app.liferay.v6
-  become: True
-
-  roles:
-    - install-liferay
+- include: install-liferay.yml
+- include: enable-liferay.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
