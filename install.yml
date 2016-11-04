@@ -1,15 +1,18 @@
-#*  This playbook joins the other installation playbooks here.
+#*  This is the main installer playbook that just joins the other installation
+#* playbooks.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
 
-# please do not change the order.. ;)
 - include: install-basic.yml
+
 - include: install-terminal-mux.yml
 - include: install-monitored.yml
 - include: install-physicals.yml
 - include: install-virt.yml
 
+- include: install-tomcat.yml
+- include: install-liferay-enabled.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

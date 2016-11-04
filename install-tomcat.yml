@@ -1,5 +1,5 @@
 #*  This playbook wrapps the apt (and others maybe in the future..) module
-#* to install software needed on a physical host ('bare metal').
+#* to install the tomcat package.
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -7,12 +7,17 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: host.Metal
+- hosts: app.java.jdk
+  become: True
 
   roles:
-    - install-kpartx
-    - install-lm-sensors
-    - install-lshw
+    - install-jdk
+
+- hosts: app.tomcat
+  become: True
+
+  roles:
+    - install-tomcat
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

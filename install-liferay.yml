@@ -1,10 +1,20 @@
 #*  This playbook downloads, unpacks, and installes our customized liferay
-#* packages.
+#* packages (without enabling it yet though - see install-liferay-enabled/
+#* install-liferay-disabled too).
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.liferay
+- hosts: app.liferay.v7
+  become: True
+
+  roles:
+    - install-liferay-unbundled
+
+- hosts: app.liferay.v6
   become: True
 
   roles:

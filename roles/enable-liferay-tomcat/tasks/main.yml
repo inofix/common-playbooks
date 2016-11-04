@@ -1,0 +1,101 @@
+
+- name: test if the installation was already done
+  stat:
+    path: '{{ app__liferay__worklink }}'
+  register: liferay_link
+
+- name: stop tomcat
+  service:
+    name: '{{ app__tomcat__name }}'
+    state: stopped
+  when: liferay_link.stat.islnk is not defined or liferay_link.stat.lnk_source != '{{ remotedirs.service }}/{{ app__liferay__name }}'
+
+- name: check whether the old webapps was already disabled once
+  stat:
+    path: '/var/lib/{{ app__tomcat__name }}/webapps_ansible_disabled'
+  register: tomcat_webapps_stat
+
+- name: link the current liferay version to the default path
+  file:
+    state: link
+    src: '{{ remotedirs.service }}/{{ app__liferay__name }}'
+    dest: '{{ app__liferay__worklink }}'
+    force: True
+  when: liferay_link.stat.islnk is not defined or liferay_link.stat.lnk_source != '{{ remotedirs.service }}/{{ app__liferay__name }}'
+
+- name: move the old tomcat webapps out of the way
+  when: not tomcat_webapps_stat.stat.exists
+  command: mv '/var/lib/{{ app__tomcat__name }}/webapps' '/var/lib/{{ app__tomcat__name }}/webapps_ansible_disabled'
+
+- name: link liferay webapps into the tomcat directory
+  when: not tomcat_webapps_stat.stat.exists
+  file:
+    state: link
+    dest: '/var/lib/{{ app__tomcat__name }}/webapps'
+    src: '{{ app__liferay__webapps }}'
+
+- name: link liferay portal properties to system lib
+  file:
+    state: link
+    dest: '/var/lib/portal-ext.properties'
+    src: '{{ app__liferay__home }}/portal-ext.properties'
+
+- name: edit the main tomcat server.xml
+  replace:
+    dest: '{{ app__tomcat__config }}'
+    regexp: 'name="localhost"\s*appBase="webapps"'
+    replace: 'name="localhost"  appBase="{{ app__liferay__webapps }}/"'
+
+- name: edit the catalina properties, add liferay dependency .jar-libraries to common.loader
+  replace:
+    dest: '{{ app__tomcat__properties }}'
+    regexp: '^common\.loader=.*'
+    replace: 'common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar,{{ app__liferay__worklink }}/{{ app__liferay__containername }}/lib/ext/*.jar'
+
+- name: edit the catalina properties, unset server.loader
+  replace:
+    dest: '{{ app__tomcat__properties }}'
+    regexp: '^server\.loader=.*'
+    replace: 'server.loader='
+
+- name: edit the catalina properties, unset shared.loader
+  replace:
+    dest: '{{ app__tomcat__properties }}'
+    regexp: '^shared\.loader=.*'
+    replace: 'shared.loader='
+
+- name: edit the configuration descriptor ROOT.xml
+  blockinfile:
+    create: True
+    dest: '{{ app__tomcat__workroot }}'
+    marker: '<!-- {mark} ANSIBLE MANAGED BLOCK -->'
+    block: |
+      <Context path="" crossContext="true">
+      </Context>
+
+- name: edit tomcat startup file for probably more RAM etc.
+  lineinfile:
+    dest: '{{ app__tomcat__startup }}'
+    insertafter: '^JAVA_OPTS="-'
+    line: 'JAVA_OPTS="${JAVA_OPTS} -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Xms2048m -Xmx2048m -XX:MaxPermSize=512m -Duser.timezone=GMT -Dfile.encoding=UTF8"'
+
+- name: edit tomcat startup for development hosts
+  lineinfile:
+    dest: '{{ app__tomcat__startup }}'
+    insertafter: '^JAVA_OPTS="-'
+    line: 'JAVA_OPTS="${JAVA_OPTS} -Dexternal-properties=portal-developer.properties"'
+  when: role == 'development'
+
+- name: edit tomcat startup for development hosts
+  lineinfile:
+    dest: '{{ app__tomcat__startup }}'
+    state: absent
+    line: 'JAVA_OPTS="${JAVA_OPTS} -Dexternal-properties=portal-developer.properties"'
+  when: role != 'development'
+
+- name: start tomcat
+  service:
+    name: '{{ app__tomcat__name }}'
+    state: started
+  when: liferay_link.stat.islnk is not defined or liferay_link.stat.lnk_source != '{{ remotedirs.service }}/{{ app__liferay__name }}'
+

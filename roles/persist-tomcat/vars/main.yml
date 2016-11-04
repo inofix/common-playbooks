@@ -1,0 +1,11 @@
+src_files:
+  - '{{ app__tomcat__config }}'
+  - '{{ app__tomcat__properties }}'
+  - '{{ app__tomcat__startup }}'
+  - '{{ app__tomcat__workroot }}'
+dest: '{{ workdir }}'
+fail_on_missing: no
+flat:
+validate_checksum: yes
+mode: 0644
+

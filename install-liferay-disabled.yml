@@ -1,5 +1,5 @@
-#*  This playbook wrapps the apt (and others maybe in the future..) module
-#* to install software needed on a physical host ('bare metal').
+#*  This playbook downloads, unpacks, and installes our customized liferay
+#* packages (without enabling it yet).
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -7,12 +7,7 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: host.Metal
-
-  roles:
-    - install-kpartx
-    - install-lm-sensors
-    - install-lshw
+- include: install-liferay.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

@@ -1,0 +1,8 @@
+src_files:
+  - '{{ app__tomcat__startup }}'
+  - '{{ app__tomcat__workroot }}'
+owner: '{{ app__tomcat__user }}'
+group: '{{ app__tomcat__group }}'
+mode: 0644
+backup: yes
+
