@@ -11,7 +11,7 @@
   become: True
 
   roles:
-    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_names: [ 'default-jdk' ] }
+    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ]}
 
 - hosts: app.tomcat
   become: True
