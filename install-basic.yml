@@ -9,16 +9,22 @@
 - hosts: app.basics
 
   roles:
-    - install-apt-extra
-    - install-gawk
-    - install-less
-    - install-lsb-release
-    - install-ntp
-    - install-strace
-    - install-sudo
+    - zwischenloesung.yapkg
     - install-vim
-    - install-xml2
-    - install-git
+  vars:
+    - yapkg_group_name: 'basic software'
+    - yapkg_names:
+      - 'apt-show-versions'
+      - 'cron-apt'
+      - 'gawk'
+      - 'git'
+      - 'less'
+      - 'lsb-release'
+      - 'ntpdate'
+      - 'ntp'
+      - 'strace'
+      - 'sudo'
+      - 'xml2'
 
 - hosts: app.archive
 
