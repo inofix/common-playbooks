@@ -8,10 +8,22 @@
 #*  No arguments are mandatory.
 
 - hosts: host.KVM
-
   roles:
-    - install-netcat
-    - install-libvirt
+    - zwischenloesung.yapkg
+  vars:
+    - yapkg_group_name: 'netcat'
+    - yapkg_names:
+      - 'netcat-openbsd'
+
+- hosts: host.KVM
+  roles:
+    - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
+  vars:
+    - yapkg_group_name: 'libvirt'
+    - yapkg_names:
+      - 'libvirt-bin'
+      - 'virtinst'
+      - 'virt-top'
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
