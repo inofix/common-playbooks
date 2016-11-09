@@ -11,13 +11,13 @@
   become: True
 
   roles:
-    - install-jdk
+    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_names: [ 'default-jdk' ] }
 
 - hosts: app.tomcat
   become: True
 
   roles:
-    - install-tomcat
+    - { role: zwischenloesung.yapkg, yapkg_group_name: 'tomcat', yapkg_names: [ 'tomcat{{ app__tomcat__version }}' ] }
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

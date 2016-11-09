@@ -9,21 +9,22 @@
 - hosts: app.basics
 
   roles:
-    - install-apt-extra
-    - install-gawk
-    - install-less
-    - install-lsb-release
-    - install-ntp
-    - install-strace
-    - install-sudo
+    - zwischenloesung.yapkg
     - install-vim
-    - install-xml2
-    - install-git
-
-- hosts: app.archive
-
-  roles:
-    - install-zip
+  vars:
+    - yapkg_group_name: 'basic software'
+    - yapkg_names:
+      - 'apt-show-versions'
+      - 'cron-apt'
+      - 'gawk'
+      - 'git'
+      - 'less'
+      - 'lsb-release'
+      - 'ntpdate'
+      - 'ntp'
+      - 'strace'
+      - 'sudo'
+      - 'xml2'
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
