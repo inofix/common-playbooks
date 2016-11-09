@@ -10,8 +10,12 @@
 - hosts: host.KVM, host.Virtual
 
   roles:
-    - install-screen
-    - install-tmux
+    - zwischenloesung.yapkg
+  vars:
+    - yapkg_group_name: 'terminal multiplexers'
+    - yapkg_names:
+      - screen
+      - tmux
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
