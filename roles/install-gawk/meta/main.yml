@@ -1,3 +1,0 @@
-dependencies:
-  - { role: apt, apt_packagename: gawk }
-
