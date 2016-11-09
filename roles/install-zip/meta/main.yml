@@ -1,4 +1,0 @@
-dependencies:
-  - { role: apt, apt_packagename: zip }
-  - { role: apt, apt_packagename: unzip }
-

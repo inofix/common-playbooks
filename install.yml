@@ -5,6 +5,7 @@
 #*  No arguments are mandatory.
 
 - include: install-basic.yml
+- include: install-archive.yml
 
 - include: install-terminal-mux.yml
 - include: install-monitored.yml
