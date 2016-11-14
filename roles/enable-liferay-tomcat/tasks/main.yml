@@ -1,4 +1,14 @@
 
+- name: test if liferay was installed
+  stat:
+    path: '{{ remotedirs.service }}/{{ app__liferay__name }}/portal-ext.properties'
+  register: liferay_config
+
+- name: fail if the installation is missing
+  fail:
+    msg: "Liferay was not installed correctly on {{ remotedirs.service }}/{{ app__liferay__name }}"
+  when: liferay_config.stat.isreg is not defined or not liferay_config.stat.isreg
+
 - name: test if the installation was already done
   stat:
     path: '{{ app__liferay__worklink }}'
