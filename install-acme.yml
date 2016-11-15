@@ -7,7 +7,7 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: service.tls
+- hosts: app.acme.tiny
   become: True
   roles:
     - zwischenloesung.acme-tiny-install
