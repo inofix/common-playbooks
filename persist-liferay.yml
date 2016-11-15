@@ -7,7 +7,7 @@
 #* to the storage dir. 
 #*  No arguments are needed.
 
-- hosts: service.portal.liferay.apache-tomcat
+- hosts: app.liferay
 
   roles:
     - persist-liferay-props
