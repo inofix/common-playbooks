@@ -13,7 +13,7 @@
 - include: install-virt.yml
 
 - include: install-tomcat.yml
-- include: install-liferay-enabled.yml
+- include: setup-liferay.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
