@@ -1,5 +1,5 @@
-#*  This playbook wrapps the apt (and others maybe in the future..) module
-#* to install the tomcat package.
+#*  This playbook installs acme-tiny either from the distro or directly
+#* from upstream github if there is no package available.
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -7,17 +7,10 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.java.jdk
+- hosts: app.acme.tiny
   become: True
-
   roles:
-    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ]}
-
-- hosts: app.tomcat
-  become: True
-
-  roles:
-    - { role: zwischenloesung.yapkg, yapkg_group_name: 'tomcat', yapkg_names: [ 'tomcat{{ app__tomcat__version }}' ] }
+    - zwischenloesung.acme-tiny-install
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
