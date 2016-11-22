@@ -1,1 +1,4 @@
 - src: zwischenloesung.yapkg
+- src: zwischenloesung.acme-tiny
+- src: zwischenloesung.acme-tiny-install
+- src: zwischenloesung.acme-tiny-setup
