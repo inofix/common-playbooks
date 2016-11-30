@@ -1,6 +1,7 @@
 - name: check for installation
   command: ls "{{ remotedirs.service }}/{{ app__liferay__pkg }}"
   register: contents
+  ignore_errors: yes
 
 - name: download liferay
   environment:
