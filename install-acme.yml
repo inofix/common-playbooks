@@ -7,6 +7,7 @@
 #* details.
 #*  No arguments are mandatory.
 
+# Do only on hosts with the acme-tiny application actually installed
 - hosts: app.acme.tiny
   become: True
   roles:
