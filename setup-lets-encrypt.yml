@@ -4,19 +4,18 @@
 #* system, where the dependencies are already provided.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
-#*  No arguments are mandatory.
-
-- include: install-acme.yml
+#*  The following arguments are mandatory:
+#*   - 'app__acme__tiny__domain'
 
 # Do on all hosts related to acme
-- hosts: app.acme
+- hosts: app.acme,!app.acme.tiny
   become: True
   roles:
-    - zwischenloesung.acme-tiny-setup
+    - { role: zwischenloesung.acme-tiny-setup }
 
 # Do only on hosts with the acme-tiny application actually installed
 - hosts: app.acme.tiny
   become: True
   roles:
-    - zwischenloesung.acme-tiny
+    - { role: zwischenloesung.acme-tiny }
 
