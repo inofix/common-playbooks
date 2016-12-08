@@ -1,5 +1,5 @@
 
-- name: set the correct password to the file
+- name: mark the file as managed automatically
   lineinfile:
     dest: '{{ file }}'
     insertbefore: BOF
