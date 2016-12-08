@@ -7,7 +7,8 @@
 #*  The following arguments are mandatory:
 #*   - 'app__acme__tiny__domain'
 
-# Do on all hosts related to acme
+# Do on all hosts related to acme (zwischenloesung.acme-tiny depends on
+# zwischenloesung.acme-tiny-setup, no need to repeat)
 - hosts: app.acme,!app.acme.tiny
   become: True
   roles:
@@ -18,4 +19,5 @@
   become: True
   roles:
     - { role: zwischenloesung.acme-tiny }
+    - { role: zwischenloesung.acme-tiny-cron }
 
