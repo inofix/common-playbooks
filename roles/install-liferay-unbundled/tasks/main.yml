@@ -15,14 +15,6 @@
     group: "{{ app__liferay__group }}"
   when: liferay_dir.stat.isdir is not defined
 
-- name: create liferay home
-  file:
-    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}"
-    state: directory
-    owner: "{{ app__liferay__user }}"
-    group: "{{ app__liferay__group }}"
-    recurse: yes
-
 - name: unpack liferay bundle
   environment:
     http_proxy: "{{ http_proxy }}"
@@ -34,6 +26,14 @@
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
   when: liferay_dir.stat.isdir is not defined
+
+- name: create liferay home
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
 
 - name: create the containers home
   file:
