@@ -1,15 +1,15 @@
 #*  This playbook makes sure the cronjob for acme-tiny is ready for a certain
 #* domain, that is declared by 'app__acme__tiny__domain'.
-#*  Note: this playbook has a 'weak' dependency to setup-letsencrypt, what
-#* means that playbook must be run at least once before. If a certain hosts
-#* covers more than one certificate, it might be run multiple times, e.g.
-#* by issuing some command like:
-#*   maestro.sh -b -H host ploop re-install-acme-cron \
-#*          app__acme__tiny__domain "certificates.main"
+#*  Note: this playbook has a 'weak' dependency to setup-lets-encrypt, what
+#* means that playbook must be run at least once before.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  The following arguments are mandatory:
 #*   - 'app__acme__tiny__domain'
+#*  If a certain hosts covers more than one certificate, it might be run
+#* multiple times, e.g. by issuing some command like:
+#*   `maestro.sh -b -H host ansible-play-loop re-install-acme-cron \
+#*              app__acme__tiny__domain "certificates.main:certificates.mail"`
 
 # Do only on hosts with the acme-tiny application actually installed
 - hosts: app.acme.tiny
