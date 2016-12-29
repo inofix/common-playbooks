@@ -1,7 +1,47 @@
+# In a first 'quick' version 'virt-install' will be used to install debian variants via preseed and custom scripts..
 
-- name: prepare a logical volume for storage
-  lvol:
-    lv: '{{ new_host_name }}'
-    size: '{{ virt__vm_default_size }}'
-    vg: '{{ virt__vm_default_pool }}'
+#- name: prepare a logical volume for storage
+#  lvol:
+#    lv: '{{ new__hostname }}'
+#    size: '{{ virt__vm_default_size }}'
+#    vg: '{{ virt__vm_default_pool }}'
+
+- name: 'Prepare the temp. folder hierarchy'
+  file:
+    path: '{{ host__dist_installer_image_amd64 }}'
+    state: directory
+    mode: '0755'
+
+- name: 'Check if a virtual machine with the same name is already defined'
+  stat:
+    path: '/etc/libvirt/qemu/{{ new__hostname }}.xml'
+  register: vm_def
+
+- name: 'Download the netinstaller files'
+  environment:
+    http_proxy: '{{ http_proxy }}'
+  get_url:
+    url: '{{ item.url }}'
+    dest: '{{ item.dest }}'
+    checksum: '{{ item.checksum }}'
+  with_items: '{{ os__installer_files }}'
+
+- name: 'Install the preseed template'
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items: '{{ os__installer_templates }}'
+
+#- name: 'Check if a virtual machine with the same name already exists'
+#  virt:
+#    command: list_vms
+#  register: result
+
+#- name: "foo"
+#  debug:
+#    var: result
+
+- name: 'Create a virtual machine'
+  shell: 'virt-install --quiet --connect {{ virt__connect }} --autostart --noautoconsole --console pty,target_type=serial --virt-type {{ virt__vtype }} --name {{ new__hostname }} --vcpus {{ new__cpu }} --ram {{ new__ram }} --disk pool={{ new__disk_pool }},size={{ new__disk_size }},format={{ new__disk_format }},cache={{ new__disk_cache }} --network {{ virt__network }} --os-type {{ new__os__distro }} --os-variant {{ new__os__variant }} --video {{ virt__video }} --graphics {{ virt__graphics }} --location {{ host__dist_installer }} --initrd-inject={{ host__dist_installer }}/preseed.cfg --extra-args "{{ virt__install_console }} auto=true file=/preseed.cfg hostname={{ new__hostname }} domain={{ new__domain }} interface=auto netcfg/get_ipaddress={{ new__ip }} netcfg/get_netmask={{ new__netmask }} netcfg/get_gateway={{ new__gateway }} netcfg/get_nameservers={{ new__nameserver }} netcfg/confirm_static=true netcfg/disable_dhcp=true" --debug'
+  when: ( vm_def.stat.isreg is not defined )
 
