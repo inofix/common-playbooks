@@ -38,7 +38,7 @@ new__disk_cache: 'default'
 #new__disk:
 #  - name: 'vda'
 #    type: 'lvm'
-#    size: '10' 
+#    size: '10'
 new__os__distro: 'debian'
 new__os__variant: 'generic'
 new__ip: '192.168.122.199'
