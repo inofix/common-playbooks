@@ -20,8 +20,8 @@ log-output -t debian_postinstall sh /tmp/debian_postinstall.sh
 # Fetch and run class specific post-installation scripts
 classes=$(debconf-get auto-install/classes | sed 's/,/ /g')
 if [ -n "${classes}" ]; then
-	for class in ${classes}; do
-		preseed_fetch ps/classes/${class}/class_script.sh /tmp/${class}_script.sh
-		log-output -t ${class}_script sh /tmp/${class}_script.sh
-	done
+    for class in ${classes}; do
+        preseed_fetch ps/classes/${class}/class_script.sh /tmp/${class}_script.sh
+        log-output -t ${class}_script sh /tmp/${class}_script.sh
+    done
 fi
