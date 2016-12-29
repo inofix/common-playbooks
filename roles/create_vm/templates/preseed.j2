@@ -1,0 +1,232 @@
+#
+# Debian Installer Preseed Configuration file
+#
+# This setup is influenced by the debian-installer configuration found
+# at: git://git.xivo.fr/official/debian-installer.git
+#
+# Inofix GmbH, Reto Gantenbein, 2017
+# Inofix GmbH, Michael Lustenberger, 2017
+#
+
+### Localization
+# Preseeding only locale sets language, country and locale.
+d-i debian-installer/locale     string en_US.UTF-8
+
+# Keyboard selection.
+#d-i console-tools/archs        select at
+d-i console-keymaps-at/keymap       select us
+d-i keyboard-configuration/xkb-keymap   select us
+
+### Network console
+# Use the following settings if you wish to make use of the network-console
+# component for remote installation over SSH (ssh installer@<ip>).
+d-i anna/choose_modules         string network-console
+d-i network-console/password        password {{ new__pw }}
+d-i network-console/password-again  password {{ new__pw }}
+d-i network-console/start       note
+
+### Clock and time zone setup
+# Controls whether or not the hardware clock is set to UTC.
+d-i clock-setup/utc         boolean false
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone               string Europe/Zurich
+
+# Controls whether to use NTP to set the clock during the install
+d-i clock-setup/ntp         boolean true
+# NTP server to use. The default is almost always fine here.
+d-i clock-setup/ntp-server      string ntp.inofix.ch
+
+# Disable that annoying WEP key dialog.
+d-i netcfg/wireless_wep         string
+
+## Partitioning..
+
+#preseed/base/05-partitioning.cfg ...
+# ..
+
+# If the system has free space you can choose to only partition that space.
+# This is only honoured if partman-auto/method (below) is not set.
+d-i partman-auto/init_automatically_partition select biggest_free
+
+# This makes partman automatically partition without confirmation, provided
+# that you told it what to do using one of the methods above.
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+### Boot loader configuration
+# This is fairly safe to set, it makes grub install automatically to the MBR
+# if no other operating system is detected on the machine.
+d-i grub-installer/only_debian          boolean true
+
+# GRUB install devices.
+grub-installer grub-installer/choose_bootdev    select /dev/{{ new__disk_name }}
+
+# Use the following option to add additional boot parameters for the
+# installed system (if supported by the bootloader installer).
+# Note: options passed to the installer will be added automatically.
+d-i debian-installer/add-kernel-opts        string console=tty0 console=ttyS0,115200n8
+
+#end #preseed/base/05-partitioning.cfg
+
+# Skip creation of a root account (normal user account will be able to
+# use sudo).
+#d-i passwd/root-login          boolean false
+
+# Root password, either in clear text
+d-i passwd/root-password        password {{ new__pw }}
+d-i passwd/root-password-again      password {{ new__pw }}
+# or encrypted using an MD5 hash.
+#d-i passwd/root-password-crypted   password [MD5 hash]
+
+# Alternatively, to skip creation of a normal user account.
+d-i passwd/make-user            boolean false
+
+# To create a normal user account.
+#d-i passwd/user-fullname       string Hans Muster
+#d-i passwd/username            string hans
+# Normal user's password, either in clear text
+#d-i passwd/user-password       password insecure
+#d-i passwd/user-password-again     password insecure
+# or encrypted using an MD5 hash.
+#d-i passwd/user-password-crypted   password [MD5 hash]
+# Create the first user with the specified UID instead of the default.
+#d-i passwd/user-uid            string 1010
+
+# The user account will be added to some standard initial groups. To
+# override that, use this.
+#d-i passwd/user-default-groups     string audio cdrom video
+
+# Do you want system-wide readable home directories?
+adduser adduser/homedir-permission  boolean false
+
+### Mirror settings
+# If you select ftp, the mirror/country string does not need to be set.
+#d-i mirror/protocol                    string ftp
+d-i mirror/country                      string manual
+d-i mirror/http/hostname                string ftp.ch.debian.org
+d-i mirror/http/directory               string /debian
+d-i mirror/http/proxy                   string
+
+### Base system installation
+# Configure APT to not install recommended packages by default. Use of this
+# option can result in an incomplete system and should only be used by very
+# experienced users.
+#d-i base-installer/install-recommends  boolean false
+
+### Apt setup
+# You can choose to install non-free and contrib software.
+d-i apt-setup/non-free          boolean true
+d-i apt-setup/contrib           boolean true
+#d-i apt-setup/volatile_host        string volatile.debian.org
+
+# Package set to install: minimal, standard, web-server, ...
+tasksel tasksel/first           multiselect minimal
+
+# If the desktop task is selected, install the kde and xfce desktops
+# instead of the default gnome desktop.
+#tasksel tasksel/desktop        multiselect kde, xfce
+
+# Individual additional packages to install
+d-i pkgsel/include          string apt-show-versions \
+bash-completion bzip2 colordiff cron-apt curl diffutils ethtool iotop \
+hdparm htop less localepurge lsof ntp ntpdate openssh-server psmisc \
+rsync screen sudo sysstat tcpdump vim w3m
+
+# Whether to upgrade packages after debootstrap.
+# Allowed values: none, safe-upgrade, full-upgrade
+d-i pkgsel/upgrade          select full-upgrade
+
+# Some versions of the installer can report back on what software you have
+# installed, and what software you use. The default is not to report back,
+# but sending reports helps the project determine what software is most
+# popular and include it on CDs.
+popularity-contest popularity-contest/participate boolean false
+
+#
+# Debconf settings for base packages
+#
+
+## dictionaries-common
+# System default wordlist:
+# Choices: american (American English), Manual symlink setting
+dictionaries-common dictionaries-common/default-wordlist select american (American English)
+
+## openssh-server
+# Disable challenge-response authentication?
+openssh-server ssh/disable_cr_auth  boolean false
+#TODO test this one:
+#openssh-server openssh-server/permit-root-login boolean false
+
+## localepurge
+# Keep locales
+localepurge localepurge/nopurge     multiselect en, en_US.UTF-8
+
+# Also delete localized man pages?
+localepurge localepurge/mandelete   boolean true
+
+# Display freed disk space?
+localepurge localepurge/showfreedspace  boolean true
+
+# Use dpkg --path-exclude?
+localepurge localepurge/use-dpkg-feature    boolean true
+
+# During installations from serial console, the regular virtual consoles
+# (VT1-VT6) are normally disabled in /etc/inittab. Uncomment the next
+# line to prevent this.
+d-i finish-install/keep-consoles        boolean true
+
+# Are you sure you want to exit now?
+d-i di-utils-reboot/really_reboot       boolean true
+
+# Load class specific preseed configuration files. The config file is always
+# called custom.cfg. Multiple classes can be choosen.
+#d-i preseed/include_command string for C in $(debconf-get auto-install/classes | sed 's/,/ /g'); \
+#    do echo -n "ps/classes/${C}/class.cfg "; done
+
+# Specify additional locales to be generated.
+d-i localechooser/supported-locales en_US.UTF-8, de_CH.UTF-8, de_DE.UTF-8
+
+# Name of your mailhub:
+#ssmtp ssmtp/mailhub     string zeus.inofix.ch
+
+# Remote SMTP port number:
+#ssmtp ssmtp/port        string 25
+
+# Username who gets mail for userids < 1000:
+#ssmtp ssmtp/root        string postmaster
+
+# Domain to masquerade as:
+#ssmtp ssmtp/rewritedomain   string inofix.ch
+
+# Fully qualified hostname:
+#ssmtp ssmtp/hostname        string
+
+# Name to store in /etc/mailname:
+#ssmtp ssmtp/mailname        string
+
+# Automatically overwrite config files?
+#ssmtp ssmtp/overwriteconfig boolean true
+
+# Load and run a shell script for post installation tasks just before /target
+# is unmounted.
+#d-i preseed/late_command string preseed_fetch ps/late_script.sh /tmp/late_script.sh; \
+#    log-output -t late_script sh /tmp/late_script.sh
+d-i preseed/late_command string log-output -t late_script sh /tmp/late_script.sh
+
+# Avoid that last message about the install being complete.
+d-i finish-install/reboot_in_progress note
+
+### Preseeding other packages
+# Depending on what software you choose to install, or if things go wrong
+# during the installation process, it's possible that other questions may
+# be asked. You can preseed those too, of course. To get a list of every
+# possible question that could be asked during an install, do an
+# installation, and then run these commands:
+#   debconf-get-selections --installer > file
+#   debconf-get-selections >> file
+###
+
