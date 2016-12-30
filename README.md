@@ -8,7 +8,7 @@ The state of this collection is: "first do it". In the next iteration, now that 
 Requirements
 ------------
 
-* Ansible >2.2 (for older installations check for branches)
+* Ansible >2.1
 * Maestro
 * our reclass inventory - a public version will be released, containing the very basics, to help starting new projects
 
