@@ -20,6 +20,7 @@
     http_proxy: "{{ http_proxy }}"
   unarchive:
     remote_src: yes
+    copy: no
     dest: "{{ remotedirs.service }}/"
     src: "{{ remotedirs.service }}/{{ app__liferay__bundle_archive }}"
     owner: "{{ app__liferay__user }}"
