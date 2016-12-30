@@ -1,13 +1,20 @@
-#*  This playbook wrapps the apt (and others maybe in the future..) module
-#* to install software for virtualization via KVM.
+#*  This playbook creates a vm on a KVM host (via virt-install for now).
+#* Currently only debian jessie on amd64 via preseed is supported, extending
+#* should not be too difficult, but we had to start somewhere..
+#*  The playbook is intended to be used by 'maestro', which gets the necessary
+#* host and vm info from the knowledge base (reclass-inventory).
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  The following arguments are mandatory:
-#*   - 'new_host_name'
+#*   - 'new__hostname'
+#*   - 'new__domain'
+#*   - 'new__pw'
+#*   - 'new__ip'
+#*   - 'new__netmask'
+#*   - 'new__gateway'
 
 - hosts: host.KVM
 
   roles:
     - create_vm
-
 
