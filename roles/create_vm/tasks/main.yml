@@ -1,5 +1,10 @@
 # In a first 'quick' version 'virt-install' will be used to install debian variants via preseed and custom scripts..
 
+- name: 'Test variables'
+  fail:
+    msg: 'Some mandatory variables were missing..'
+  when: new__hostname is defined and new__domain is defined and new__pw is defined and new__ip is defined and new__netmask is defined and new__gateway is defined
+
 #- name: prepare a logical volume for storage
 #  lvol:
 #    lv: '{{ new__hostname }}'
@@ -8,7 +13,7 @@
 
 - name: 'Prepare the temp. folder hierarchy'
   file:
-    path: '{{ host__dist_installer_image_amd64 }}'
+    path: '{{ os__tmp_image_dir }}'
     state: directory
     mode: '0755'
 
@@ -42,6 +47,6 @@
 #    var: result
 
 - name: 'Create a virtual machine'
-  shell: 'virt-install --quiet --connect {{ virt__connect }} --autostart --noautoconsole --console pty,target_type=serial --virt-type {{ virt__vtype }} --name {{ new__hostname }} --vcpus {{ new__cpu }} --ram {{ new__ram }} --disk pool={{ new__disk_pool }},size={{ new__disk_size }},format={{ new__disk_format }},cache={{ new__disk_cache }} --network {{ virt__network }} --os-type {{ new__os__distro }} --os-variant {{ new__os__variant }} --video {{ virt__video }} --graphics {{ virt__graphics }} --location {{ host__dist_installer }} --initrd-inject={{ host__dist_installer }}/preseed.cfg --extra-args "{{ virt__install_console }} auto=true file=/preseed.cfg hostname={{ new__hostname }} domain={{ new__domain }} interface=auto netcfg/get_ipaddress={{ new__ip }} netcfg/get_netmask={{ new__netmask }} netcfg/get_gateway={{ new__gateway }} netcfg/get_nameservers={{ new__nameserver }} netcfg/confirm_static=true netcfg/disable_dhcp=true" --debug'
+  shell: 'virt-install --quiet --connect {{ virt__connect }} --autostart --noautoconsole --console pty,target_type=serial --virt-type {{ virt__vtype }} --name {{ new__hostname }} --vcpus {{ new__cpu }} --ram {{ new__ram }} --disk pool={{ new__disk_pool }},size={{ new__disk_size }},format={{ new__disk_format }},cache={{ new__disk_cache }} --network {{ virt__network }} --os-type {{ new__os__distro }} --os-variant {{ new__os__variant }} --video {{ virt__video }} --graphics {{ virt__graphics }} --location {{ os__tmp_base_dir }} --initrd-inject={{ os__installer_template_list | join(" --initrd-inject=") }} --extra-args "{{ virt__install_console }} auto=true file=/preseed.cfg hostname={{ new__hostname }} domain={{ new__domain }} interface=auto netcfg/get_ipaddress={{ new__ip }} netcfg/get_netmask={{ new__netmask }} netcfg/get_gateway={{ new__gateway }} netcfg/get_nameservers={{ new__nameserver }} netcfg/confirm_static=true netcfg/disable_dhcp=true" --debug'
   when: ( vm_def.stat.isreg is not defined )
 
