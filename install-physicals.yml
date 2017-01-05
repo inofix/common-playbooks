@@ -17,6 +17,7 @@
       - 'kpartx'
       - 'lm-sensors'
       - 'lshw'
+      - 'smartmontools'
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
