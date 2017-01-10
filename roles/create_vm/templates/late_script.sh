@@ -4,7 +4,8 @@
 # is finished. After some generic tasks, the postinstall.sh scripts of the
 # choosen classes (if any) are executed.
 #
-# Inofix GmbH, Reto Gantenbein, 2013
+# Inofix GmbH, Reto Gantenbein, 2017
+# Inofix GmbH, Michael Lustenberger, 2017
 #
 exit
 # Work around some annoying dpkg hangs in chroot
@@ -18,10 +19,15 @@ preseed_fetch ps/debian_postinstall.sh /tmp/debian_postinstall.sh
 log-output -t debian_postinstall sh /tmp/debian_postinstall.sh
 
 # Fetch and run class specific post-installation scripts
-classes=$(debconf-get auto-install/classes | sed 's/,/ /g')
-if [ -n "${classes}" ]; then
-    for class in ${classes}; do
-        preseed_fetch ps/classes/${class}/class_script.sh /tmp/${class}_script.sh
-        log-output -t ${class}_script sh /tmp/${class}_script.sh
-    done
-fi
+#classes=$(debconf-get auto-install/classes | sed 's/,/ /g')
+#if [ -n "${classes}" ]; then
+#    for class in ${classes}; do
+#        preseed_fetch ps/classes/${class}/class_script.sh /tmp/${class}_script.sh
+#        log-output -t ${class}_script sh /tmp/${class}_script.sh
+#    done
+#fi
+
+# Run former class script - later this can be solved with jinja..
+preseed_fetch ps/inofix_base.sh /tmp/inofix_base.sh
+log-output -t inofix_base sh /tmp/inofix_base.sh
+
