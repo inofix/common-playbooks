@@ -7,14 +7,11 @@
 #* details.
 #*  The following arguments are mandatory:
 #*   - 'new__hostname'
-#*   - 'new__domain'
-#*   - 'new__pw'
-#*   - 'new__ip'
-#*   - 'new__netmask'
-#*   - 'new__gateway'
+#*   - 'host' (dict)
 
 - hosts: host.KVM
-
+  vars:
+    new: '{{ host.resource[new__hostname] }}'
   roles:
     - create_vm
 
