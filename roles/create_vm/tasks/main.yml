@@ -2,8 +2,13 @@
 
 - name: 'Test variables'
   fail:
-    msg: 'Some mandatory variables were missing..'
-  when: new__hostname is defined and new__domain is defined and new__pw is defined and new__ip is defined and new__netmask is defined and new__gateway is defined
+    msg: 'Some mandatory variable was missing..'
+  when: new.domainname is not defined or new.default_password is not defined or new.net is not defined or new.net.eth0 is not defined or new.net.eth0.ip is not defined or new.net.eth0.netmask is not defined or new.net.eth0.gateway is not defined
+
+- name: 'Check that the new host really is defined as virtual'
+  fail:
+    msg: '{{ new__hostname }} is not defined as virtual in new.type'
+  when: new.type != 'vm'
 
 #- name: prepare a logical volume for storage
 #  lvol:
@@ -11,31 +16,10 @@
 #    size: '{{ virt.storage.default.size }}'
 #    vg: '{{ virt.storage.default.pool }}'
 
-- name: 'Prepare the temp. folder hierarchy'
-  file:
-    path: '{{ os__tmp_image_dir }}'
-    state: directory
-    mode: '0755'
-
 - name: 'Check if a virtual machine with the same name is already defined'
   stat:
     path: '/etc/libvirt/qemu/{{ new__hostname }}.xml'
   register: vm_def
-
-- name: 'Download the netinstaller files'
-  environment:
-    http_proxy: '{{ http_proxy }}'
-  get_url:
-    url: '{{ item.url }}'
-    dest: '{{ item.dest }}'
-    checksum: '{{ item.checksum }}'
-  with_items: '{{ os__installer_files }}'
-
-- name: 'Install the preseed template'
-  template:
-    src: '{{ item.src }}'
-    dest: '{{ item.dest }}'
-  with_items: '{{ os__installer_templates }}'
 
 #- name: 'Check if a virtual machine with the same name already exists'
 #  virt:
@@ -46,7 +30,28 @@
 #  debug:
 #    var: result
 
+- name: 'Prepare the (temp.?) working directory hierarchy'
+  file:
+    path: '{{ os__tmp_image_dir }}'
+    state: directory
+    mode: '0755'
+
+- name: 'Download the netinstaller files'
+  environment:
+    http_proxy: '{{ http_proxy }}'
+  get_url:
+    url: '{{ item.url }}'
+    dest: '{{ item.dest }}'
+    checksum: '{{ item.checksum }}'
+  with_items: '{{ os__installer_files[new.arch] }}'
+
+- name: 'Install the preseed template'
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items: '{{ os__installer_templates }}'
+
 - name: 'Create a virtual machine'
-  shell: 'virt-install --quiet --connect {{ virt.connect }} --autostart --noautoconsole --console pty,target_type=serial --virt-type {{ virt.type }} --name {{ new__hostname }} --vcpus {{ new__cpu }} --ram {{ new__ram }} --disk pool={{ new__disk_pool }},size={{ new__disk_size }},format={{ new__disk_format }},cache={{ new__disk_cache }} --network {{ virt.network }} --os-type {{ new__os__distro }} --os-variant {{ new__os__variant }} --video {{ virt.display.video }} --graphics {{ virt.display.graphics }} --location {{ os__tmp_base_dir }} --initrd-inject={{ os__installer_template_list | join(" --initrd-inject=") }} --extra-args "{{ virt.install_console }} auto=true file=/preseed.cfg hostname={{ new__hostname }} domain={{ new__domain }} interface=auto netcfg/get_ipaddress={{ new__ip }} netcfg/get_netmask={{ new__netmask }} netcfg/get_gateway={{ new__gateway }} netcfg/get_nameservers={{ new__nameserver }} netcfg/confirm_static=true netcfg/disable_dhcp=true" --debug'
+  shell: 'virt-install --quiet --connect {{ host.virt.connect }} --autostart --noautoconsole --console pty,target_type=serial --virt-type {{ host.virt.type }} --name {{ new__hostname }} --vcpus {{ new.cpu.cores }} --ram {{ new.mem.size }} --disk pool={{ new.disk.meta.pool }},size={{ new.disk.size }},format={{ host.virt.storage[new.disk.meta.pool].format }},cache={{ host.virt.storage[new.disk.meta.pool].cache }} --network {{ host.virt.network }} --os-type {{ new.os.distro }} --os-variant {{ new.os.variant }} --video {{ host.virt.display.video }} --graphics {{ host.virt.display.graphics }} --location {{ os__tmp_base_dir }} --initrd-inject={{ os__installer_template_list | join(" --initrd-inject=") }} --extra-args "{{ host.virt.install_console }} auto=true file=/preseed.cfg hostname={{ new__hostname }} domain={{ new.domainname }} interface=auto netcfg/get_ipaddress={{ new.net.ip }} netcfg/get_netmask={{ new.net.netmask }} netcfg/get_gateway={{ new.net.gateway }} netcfg/get_nameservers={{ new.net.nameserver }} netcfg/confirm_static=true netcfg/disable_dhcp=true" --debug'
   when: ( vm_def.stat.isreg is not defined )
 
