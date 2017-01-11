@@ -7,7 +7,7 @@
 # Inofix GmbH, Reto Gantenbein, 2017
 # Inofix GmbH, Michael Lustenberger, 2017
 #
-exit
+
 # Work around some annoying dpkg hangs in chroot
 export DEBIAN_FRONTEND=noninteractive
 unset  DEBIAN_HAS_FRONTEND
@@ -15,8 +15,8 @@ unset  DEBCONF_REDIR
 unset  DEBCONF_OLD_FD_BASE
 
 # First fetch and run the generic Debian post-installation script
-preseed_fetch ps/debian_postinstall.sh /tmp/debian_postinstall.sh
-log-output -t debian_postinstall sh /tmp/debian_postinstall.sh
+#preseed_fetch ps/debian_postinstall.sh /tmp/debian_postinstall.sh
+log-output -t debian_postinstall sh /debian_postinstall.sh
 
 # Fetch and run class specific post-installation scripts
 #classes=$(debconf-get auto-install/classes | sed 's/,/ /g')
@@ -28,6 +28,6 @@ log-output -t debian_postinstall sh /tmp/debian_postinstall.sh
 #fi
 
 # Run former class script - later this can be solved with jinja..
-preseed_fetch ps/inofix_base.sh /tmp/inofix_base.sh
-log-output -t inofix_base sh /tmp/inofix_base.sh
+#preseed_fetch ps/inofix_base.sh /tmp/inofix_base.sh
+log-output -t inofix_base sh /inofix_base.sh
 
