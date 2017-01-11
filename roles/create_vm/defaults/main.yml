@@ -50,12 +50,16 @@ os__installer_files:
 os__installer_templates:
   - src: 'preseed.j2'
     dest: '{{ os__tmp_base_dir }}/preseed.cfg'
+    mode: '0644'
   - src: 'late_script.sh'
     dest: '{{ os__tmp_base_dir }}/late_script.sh'
+    mode: '0755'
   - src: 'debian_postinstall.sh'
     dest: '{{ os__tmp_base_dir }}/debian_postinstall.sh'
+    mode: '0755'
   - src: 'inofix_base.sh'
     dest: '{{ os__tmp_base_dir }}/inofix_base.sh'
+    mode: '0755'
 os__installer_template_list: '{{ os__installer_templates | map(attribute="dest") | list }}'
 host:
   virt:

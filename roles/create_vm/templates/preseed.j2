@@ -340,7 +340,7 @@ d-i localechooser/supported-locales en_US.UTF-8, de_CH.UTF-8, de_DE.UTF-8
 # is unmounted.
 #d-i preseed/late_command string preseed_fetch ps/late_script.sh /tmp/late_script.sh; \
 #    log-output -t late_script sh /tmp/late_script.sh
-d-i preseed/late_command string log-output -t late_script sh /tmp/late_script.sh
+d-i preseed/late_command string log-output -t late_script sh /late_script.sh
 
 # Avoid that last message about the install being complete.
 d-i finish-install/reboot_in_progress note
