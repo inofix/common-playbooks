@@ -1,0 +1,8 @@
+src_files: '{{ app__kivitendo__templates }}'
+dest: '{{ workdir }}'
+#mode: 0640
+fail_on_missing: no
+flat:
+validate_checksum: yes
+mode: 0644
+
