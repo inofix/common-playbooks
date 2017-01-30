@@ -10,7 +10,7 @@
 #*  If a certain hosts covers more than one certificate, it might be run
 #* multiple times, e.g. by issuing some command like:
 #*   `maestro.sh -b -H host ansible-play-loop setup-lets-encrypt \
-#*              app__acme__tiny__domain "certificates.main:certificates.mail"`
+#*              app__acme__tiny__domain "certificate.main:certificate.mail"`
 
 # Do on all hosts related to acme (zwischenloesung.acme-tiny depends on
 # zwischenloesung.acme-tiny-setup, no need to repeat)
