@@ -1,4 +1,4 @@
-src_files: '{{ service__monitoring__icinga__root_root_644_files }}'
+src_files: '{{ service__monitoring__check_mk__root_root_644_files }}'
 owner: root
 group: root
 mode: 0644
