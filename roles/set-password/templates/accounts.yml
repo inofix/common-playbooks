@@ -1,0 +1,13 @@
+# an example passphrase
+example:
+  # the file where this passphrase is used
+  file: "/dev/null"
+  # the username that this passphrase identifies
+  user: "test"
+  # the key which the pass is assoziated with in the above file
+  key: "unused"
+  # well, finally, the actual secret..
+  pass: "secret"
+  # in cases `pass` is missleading `value` can be used (see playbooks)
+  value: "secret"
+
