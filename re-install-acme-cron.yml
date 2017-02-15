@@ -9,7 +9,7 @@
 #*  If a certain hosts covers more than one certificate, it might be run
 #* multiple times, e.g. by issuing some command like:
 #*   `maestro.sh -b -H host ansible-play-loop re-install-acme-cron \
-#*              app__acme__tiny__domain "certificates.main:certificates.mail"`
+#*              app__acme__tiny__domain "certificate.main:certificate.mail"`
 
 # Do only on hosts with the acme-tiny application actually installed
 - hosts: app.acme.tiny
