@@ -9,12 +9,12 @@
 #*   - 'app__acme__tiny__domain'
 #*  Examples:
 #* * A single run might look like this:
-#*   `maestro.sh -b -H host -a 'app__acme__tiny__domain={{ certificate.main }}' \
-#*              ansible-play setup-lets-encrypt
+#*   `maestro.sh -H host ansible-play setup-lets-encrypt \
+#*          'app__acme__tiny__domain={{ certificate.main }}' -b`
 #* * If a certain hosts covers more than one certificate, it might be run
 #* multiple times, e.g. by issuing some command like:
-#*   `maestro.sh -b -H host ansible-play-loop setup-lets-encrypt \
-#*              app__acme__tiny__domain "certificate.main:certificate.mail"`
+#*   `maestro.sh -H host ansible-play-loop setup-lets-encrypt \
+#*          "app__acme__tiny__domain=certificate.main:certificate.mail" -b`
 
 # Do on all hosts related to acme (zwischenloesung.acme-tiny depends on
 # zwischenloesung.acme-tiny-setup, no need to repeat)
