@@ -57,7 +57,7 @@ os__installer_templates:
   - src: 'debian_postinstall.sh'
     dest: '{{ os__tmp_base_dir }}/debian_postinstall.sh'
     mode: '0755'
-  - src: 'inofix_base.sh'
+  - src: 'inofix_base.j2'
     dest: '{{ os__tmp_base_dir }}/inofix_base.sh'
     mode: '0755'
 os__installer_template_list: '{{ os__installer_templates | map(attribute="dest") | list }}'

@@ -13,5 +13,5 @@
   vars:
     new: '{{ host.resource[new__hostname] }}'
   roles:
-    - create_vm
+    - virt-install
 

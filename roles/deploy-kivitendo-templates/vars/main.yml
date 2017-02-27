@@ -1,0 +1,6 @@
+src_files: '{{ app__kivitendo__templates }}'
+owner: '{{ app__kivitendo__user }}'
+group: '{{ app__kivitendo__group }}'
+mode: 0644
+backup: no
+
