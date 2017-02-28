@@ -1,0 +1,11 @@
+#*  This playbook simply wrapps the setup module and prints the
+#* facts defined for a host.
+#*  No arguments are needed.
+
+- hosts: all
+
+  tasks:
+    - name: Print Ansible facts
+      debug:
+        var: hostvars[inventory_hostname]
+
