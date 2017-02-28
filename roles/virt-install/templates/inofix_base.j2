@@ -15,8 +15,8 @@ unset  DEBIAN_HAS_FRONTEND
 ##
 # Setup inofix group/users
 in-target groupadd -g 1000 inofix
-mkdir -p /etc/sudoers.d
-cat > /etc/sudoers.d/inofix << EOF
+mkdir -p /target/etc/sudoers.d
+cat > /target/etc/sudoers.d/inofix << EOF
 Defaults: %inofix env_check += "SSH_CLIENT"
 %inofix ALL = (ALL:ALL) NOPASSWD: SETENV: ALL
 EOF
@@ -26,12 +26,11 @@ in-target useradd -u "{{ admin.uid }}" -G inofix -c "{{ admin.fullname }}" -s /b
 #in-target chage -d 0 "{{ admin.username }}"
 mkdir -p "/target/home/{{ admin.username }}/.ssh"
 chmod 0700 "/target/home/{{ admin.username }}/.ssh"
-  {% for ssh_key in admin.ssh_keys %} 
+{%   for ssh_key in admin.ssh_keys %}
 echo "{{ ssh_key }}" >> "/target/home/{{ admin.username }}/.ssh/authorized_keys"
-  {% endfor %}
+{%   endfor %}
 chmod 0600 "/target/home/{{ admin.username }}/.ssh/authorized_keys"
-chown -R "{{ admin.username }}.{{ admin.groupname }}" "/target/home/{{ admin.username }}/.ssh"
-
+chown -R "{{ admin.uid }}:{{ admin.gid }}" "/target/home/{{ admin.username }}/.ssh"
 {% endfor %}
 
 ##
