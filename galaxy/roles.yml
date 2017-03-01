@@ -1,3 +1,4 @@
+- src: debops.apache
 - src: zwischenloesung.yapkg
 - src: zwischenloesung.acme-tiny
 - src: zwischenloesung.acme-tiny-install
