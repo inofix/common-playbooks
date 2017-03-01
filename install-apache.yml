@@ -1,0 +1,23 @@
+---
+#*  This playbook wrapps the debops.apache Ansible role to install and
+#* manage the Apache httpd Web server.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  Check the following link for a list of possible configuration variables:
+#* https://docs.debops.org/en/latest/ansible/roles/ansible-apache/docs/defaults.html
+#*  No arguments are mandatory.
+
+- name: Setup Apache httpd Web server
+  hosts: app.apache
+  become: True
+
+  vars:
+    apache__default_vhost:
+      name: '{{ ansible_fqdn }}'
+      root: '/var/www/html'
+      # don't enforce https by default
+      redirect_to_https: False
+
+  roles:
+    - debops.apache/env
+    - debops.apache
