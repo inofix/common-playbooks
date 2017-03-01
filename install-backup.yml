@@ -26,7 +26,15 @@
   vars:
     - yapkg_group_name: 'backup software: backupninja'
     - yapkg_names:
-      - 'backup-ninja'
+      - 'backupninja'
+
+- hosts: app.sshfs
+  roles:
+    - zwischenloesung.yapkg
+  vars:
+    - yapkg_group_name: 'remote mounts: sshfs'
+    - yapkg_names:
+      - 'sshfs'
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
