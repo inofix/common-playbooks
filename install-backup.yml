@@ -4,6 +4,7 @@
 #*  No arguments are mandatory.
 
 - hosts: app.duplicity
+  become: true
   roles:
     - zwischenloesung.yapkg
   vars:
@@ -13,6 +14,7 @@
       - 'duplicity'
 
 - hosts: app.rdiff-backup
+  become: true
   roles:
     - zwischenloesung.yapkg
   vars:
@@ -21,6 +23,7 @@
       - 'rdiff-backup'
 
 - hosts: app.backupninja
+  become: true
   roles:
     - zwischenloesung.yapkg
   vars:
@@ -29,6 +32,7 @@
       - 'backupninja'
 
 - hosts: app.sshfs
+  become: true
   roles:
     - zwischenloesung.yapkg
   vars:
