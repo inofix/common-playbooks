@@ -1,0 +1,25 @@
+#*  This playbook creates a simple and working backup environement.
+#* It relies on the install-backup playbook here.
+#*  Use '-a' to pass parameters to ansible (as '-e').
+#*  No arguments are mandatory.
+
+- include: install-backup.yml
+
+- hosts: app.backupninja
+  become: true
+  roles:
+    - prepare-backup
+  vars:
+    - yapkg_group_name: 'backup software: backupninja'
+    - yapkg_names:
+      - 'backupninja'
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+

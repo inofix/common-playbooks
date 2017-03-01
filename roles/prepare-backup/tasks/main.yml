@@ -1,0 +1,117 @@
+
+- name: Create a possible mount point
+  file:
+    state: directory
+    path: '{{ service__backup__mount_point }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
+- name: Create the backup top directory
+  file:
+    state: directory
+    path: '{{ service__backup__directory }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
+- name: Link the backup dir to the mount-point
+  file:
+    state: link
+    src: '{{ service__backup__mount_point }}'
+    path: '{{ service__backup__directory }}/remote'
+    owner: 'root'
+    group: 'root'
+
+- name: Create a dedicated backup group
+  when: '{{ service__backup__create_user }}'
+  group:
+    name: '{{ service__backup__group }}'
+    system: True
+
+- name: Create a dedicated backup user
+  when: '{{ service__backup__create_user }}'
+  user:
+    name: '{{ service__backup__user }}'
+    group: '{{ service__backup__group }}'
+    system: True
+    home: '{{ service__backup__directory }}/{{ service__backup__user }}'
+    createhome: True
+
+- name: Create ssh config directory for the new user
+  file:
+    state: directory
+    path: '{{ service__backup__directory }}/{{ service__backup__user }}/.ssh'
+    owner: '{{ service__backup__user }}'
+    group: '{{ service__backup__group }}'
+    mode: '0700'
+
+- name: Test if user key exists
+  stat:
+    path: '{{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
+  register: backup_user_key_stat
+
+# this did not work: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
+- name: Create ssh-keys
+  when: backup_user_key_stat.stat.isreg is not defined or not backup_user_key_stat.stat.isreg
+  shell: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
+
+- name: Test if user converted key exists
+  stat:
+    path: '{{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa_rfc.pub'
+  register: backup_user_ckey_stat
+
+- name: Convert the key to a certain providers favorite key format
+  when: backup_user_ckey_stat.stat.isreg is not defined or not backup_user_ckey_stat.stat.isreg
+  shell: 'ssh-keygen -e -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub | grep -v "Comment:" > {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa_rfc.pub'
+
+- name: Test if root key exists
+  stat:
+    path: '/root/.ssh/id_rsa.pub'
+  register: backup_root_key_stat
+
+# this did not work: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
+- name: Create user roots ssh-keys too
+  when: backup_root_key_stat.stat.isreg is not defined or not backup_root_key_stat.stat.isreg
+  shell: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f /root/.ssh/id_rsa.pub'
+
+- name: Test if root converted key exists
+  stat:
+    path: '/root/.ssh/id_rsa_rfc.pub'
+  register: backup_root_ckey_stat
+
+- name: Convert the root's key to a certain providers favorite key format
+  shell: 'ssh-keygen -e -f /root/.ssh/id_rsa.pub | grep -v "Comment:" > /root/.ssh/id_rsa_rfc.pub'
+
+- name: Create the target backup directory
+  file:
+    state: directory
+    path: '{{ service__backup__directory }}/backup'
+    owner: '{{ service__backup__user }}'
+    group: '{{ service__backup__group }}'
+    mode: '0755'
+
+- name: Create the restore directory
+  file:
+    state: directory
+    path: '{{ service__backup__directory }}/manual-restore'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
+- name: Create the backup mirror directory
+  file:
+    state: directory
+    path: '{{ service__backup__directory }}/mirror'
+    owner: '{{ service__backup__user }}'
+    group: '{{ service__backup__group }}'
+    mode: '0755'
+
+- name: Create the restore directory
+  file:
+    state: directory
+    path: '{{ service__backup__directory }}/restore'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
