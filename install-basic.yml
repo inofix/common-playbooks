@@ -7,7 +7,7 @@
 #*  No arguments are mandatory.
 
 - hosts: app.basics
-
+  become: true
   roles:
     - zwischenloesung.yapkg
     - install-vim
@@ -18,8 +18,11 @@
       - 'cron-apt'
       - 'gawk'
       - 'git'
+      - 'htop'
+      - 'iotop'
       - 'less'
       - 'lsb-release'
+      - 'nmon'
       - 'ntpdate'
       - 'ntp'
       - 'strace'
