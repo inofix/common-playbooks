@@ -1,4 +1,5 @@
 - src: debops.apache
+- src: debops.postgresql
 - src: zwischenloesung.yapkg
 - src: zwischenloesung.acme-tiny
 - src: zwischenloesung.acme-tiny-install
