@@ -21,6 +21,7 @@
 # not supported in reclass
 # TODO: should this be a simple mapping here or a mandatory argument
 #    apache__vhosts: '{{ app__apache__vhosts }}'
+    apache__modules: '{{ app__apache__modules }}'
 
   roles:
     - debops.apache/env
