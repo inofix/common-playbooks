@@ -12,6 +12,16 @@
   become: True
 
   vars:
+    # define custom vhosts
+    apache__vhosts: '{{ app__apache__vhosts }}'
+    apache__modules: '{{ app__apache__modules }}'
+
+    # build up the correct ssl path to allow crt
+    # and key configurations relative to /etc/ssl
+    apache__pki_realm_path: '/etc'
+    apache__pki_realm: 'ssl'
+    apache__pki_ca_filename: '{{ app__apache__pki_ca_filename }}'
+
     apache__default_vhost:
       name: '{{ ansible_fqdn }}'
       root: '/var/www/html'
