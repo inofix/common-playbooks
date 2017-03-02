@@ -13,7 +13,7 @@
 
   vars:
     apache__default_vhost:
-      name: '{{ fqdn }}'
+      name: '{{ ansible_fqdn }}'
       root: '/var/www/html'
       # don't enforce https by default
       redirect_to_https: False
