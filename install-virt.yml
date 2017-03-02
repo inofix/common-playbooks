@@ -8,6 +8,7 @@
 #*  No arguments are mandatory.
 
 - hosts: host.KVM
+  become: True
   roles:
     - zwischenloesung.yapkg
   vars:
@@ -16,6 +17,7 @@
       - 'netcat-openbsd'
 
 - hosts: host.KVM
+  become: True
   roles:
     - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:

@@ -6,7 +6,7 @@
 #*  No arguments are mandatory.
 
 - hosts: app.archive
-
+  become: True
   roles:
     - { role: zwischenloesung.yapkg, yapkg_group_name: 'archive', yapkg_names: [ 'zip', 'unzip' ] }
 
