@@ -13,10 +13,14 @@
 
   vars:
     apache__default_vhost:
-      name: '{{ ansible_fqdn }}'
+      name: '{{ fqdn }}'
       root: '/var/www/html'
       # don't enforce https by default
       redirect_to_https: False
+# TODO: does not work yet, mainly because of the 'raw' format which is
+# not supported in reclass
+# TODO: should this be a simple mapping here or a mandatory argument
+#    apache__vhosts: '{{ app__apache__vhosts }}'
 
   roles:
     - debops.apache/env
