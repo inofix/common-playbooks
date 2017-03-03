@@ -1,10 +1,13 @@
+---
 #*  This playbook simply wrapps the copy module. Use '-a' to pass
 #* parameters to ansible (as '-e'). See ansible copy for details.
 #*  The following arguments are mandatory:
-#*   - 'src' (/workdir/fqdn/ is automatically added)
-#*   - 'dest'
+#*   - 'src' ('/workdir/fqdn/' is automatically added)
+#*  The following arguments are optional:
+#*   - 'dest' (if empty '/{{ src }}' is used)
 
 - hosts: all
 
   roles:
     - copy
+
