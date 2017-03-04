@@ -1,7 +1,7 @@
 - name: copy a file to a remote host
   copy:
-    src: '{{ workdir }}/{{ fqdn }}/{{ src }}'
-    dest: '{{ src if (dest is not defined) else dest }}'
+    src: '{{ src }}'
+    dest: '{{ dest }}'
     owner: '{{ owner }}'
     group: '{{ group }}'
     mode: '{{ mode }}'

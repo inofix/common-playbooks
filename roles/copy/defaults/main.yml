@@ -1,4 +1,5 @@
-
+src: '{{ workdir }}/{{ fqdn }}/{{ file }}'
+dest: '{{ file }}'
 backup: no
 force: no
 group: 'root'
