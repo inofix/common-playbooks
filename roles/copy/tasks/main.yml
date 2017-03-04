@@ -1,6 +1,6 @@
 - name: copy a file to a remote host
   copy:
-    src: '{{ workdir }}/{{ fqdn }}/{{ src }}'
+    src: '{{ src }}'
     dest: '{{ dest }}'
     owner: '{{ owner }}'
     group: '{{ group }}'

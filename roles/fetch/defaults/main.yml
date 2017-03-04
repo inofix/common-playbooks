@@ -1,3 +1,4 @@
+src: '{{ file }}'
 dest: '{{ workdir }}'
 fail_on_missing: no
 flat:

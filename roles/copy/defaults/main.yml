@@ -1,0 +1,8 @@
+src: '{{ workdir }}/{{ fqdn }}/{{ file }}'
+dest: '{{ file }}'
+backup: no
+force: no
+group: 'root'
+mode: '0644'
+owner: 'root'
+

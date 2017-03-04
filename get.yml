@@ -1,7 +1,7 @@
-#*  This playbook simply wrapps the fetch module. Use '-a' to pass
-#* parameters to ansible (as '-e'). See ansible fetch for details.
+#*  This playbook simply wrapps the fetch module. Per default it gets
+#* a certain file from the server and puts it in the workdir.
 #*  The following arguments are mandatory:
-#*   - 'src'
+#*   - ( 'file' ) or ( 'src' and 'dest' )
 
 - hosts: all
 
