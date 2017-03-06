@@ -1,5 +1,5 @@
-src: '{{ app__liferay__config }}'
-dest: '{{ src }}'
+src: '{{ workdir }}/{{ fqdn }}/{{ app__liferay__config }}'
+dest: '{{ app__liferay__config }}'
 owner: '{{ app__tomcat__user }}'
 group: '{{ app__tomcat__group }}'
 mode: 0640

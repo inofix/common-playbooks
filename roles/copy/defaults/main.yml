@@ -1,7 +1,7 @@
 src: '{{ workdir }}/{{ fqdn }}/{{ file }}'
 dest: '{{ file }}'
 backup: no
-force: no
+force: yes
 group: 'root'
 mode: '0644'
 owner: 'root'
