@@ -8,6 +8,6 @@
 #*  No arguments are needed.
 
 - hosts: app.liferay
-
+  become: True
   roles:
     - deploy-liferay-props
