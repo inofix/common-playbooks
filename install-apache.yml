@@ -12,6 +12,9 @@
   become: True
 
   vars:
+    # use fqdn if ansible_fqdn is not set
+    #TODO why is it not forwarded from reclass?
+    ansible_fqdn: '{{ fqdn }}'
     apache__default_vhost:
       name: '{{ ansible_fqdn }}'
       root: '/var/www/html'
