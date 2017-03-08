@@ -1,0 +1,5 @@
+dependencies:
+  - copy
+  - { role: set-password, account_section: 'shariff_backend_id', account_pass_key: 'app_id' }
+  - { role: set-password, account_section: 'shariff_backend_secret', account_pass_key: 'secret' }
+  - mark-managed
