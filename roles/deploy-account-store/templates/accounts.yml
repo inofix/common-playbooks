@@ -7,7 +7,5 @@ example:
   # the key which the pass is assoziated with in the above file
   key: "unused"
   # well, finally, the actual secret..
-  pass: "secret"
-  # in cases `pass` is missleading `value` can be used (see playbooks)
   value: "secret"
 

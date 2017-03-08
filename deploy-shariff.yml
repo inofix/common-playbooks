@@ -1,0 +1,12 @@
+#*  This playbook wrapps the copy, file and lineinfile modules.
+#* It mainly passes files needed for the runnung shariff backend
+#* as a list to the hosts. Use '-a' to pass further parameters to
+#* ansible (as '-e'). See ansible copy for details.
+#*  You might want to do a `noteify merge-all` first or set a temporary
+#* workdir via `nodeify.sh -w dir`.
+#*  No arguments are needed.
+
+- hosts: app.shariff
+  become: True
+  roles:
+    - deploy-shariff

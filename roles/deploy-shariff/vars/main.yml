@@ -1,0 +1,13 @@
+src: '{{ workdir }}/{{ fqdn }}/{{ app__shariff__config }}'
+dest: '{{ app__shariff__config }}'
+owner: 'root'
+group: 'root'
+mode: '0644'
+backup: no
+force: yes
+account_dest: '{{ dest }}'
+account_dest_file_type: "json"
+#account_store: from project/any.yml
+# multiple calls: see meta/main.yml
+#account_section:
+#account_pass_key:
