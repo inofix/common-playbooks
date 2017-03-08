@@ -5,7 +5,7 @@
   get_url:
     checksum: "{{ item.checksum }}"
     dest: "{{ remotedirs.service }}/{{ item.file }}"
-    url: "{{ item.url }}"
+    url: "{{ item.url }}/{{ item.file }}"
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
   with_items: "{{ app__liferay__plugin }}"
