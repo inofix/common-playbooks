@@ -16,8 +16,10 @@
 - name: set the correct password to the file
   lineinfile:
     dest: '{{ account_dest }}'
-    regexp: '^( *)(.){{ account_pass_key }}.: .*([,|])'
-    line: '\1\2{{ account_pass_key }}\2: \2{{ accountinfos[account_section][value_to_use] }}\2\3'
+    regexp: '^( *).{{ account_pass_key }}.: .*(,?)$'
+# TODO: if I try to use (.) -> \2 instead of '"', then somehow the third \2 (which should be a quote) is interpreted as char code if it is followed directly with some number..
+#    line: '\\1\\2{{ account_pass_key }}\\2: \\2{{ accountinfos[account_section][value_to_use] }}\\2\\3'
+    line: '\1"{{ account_pass_key }}": "{{ accountinfos[account_section][value_to_use] }}"\2'
     backrefs: yes
   when: account_dest_file_type == "json"
 
