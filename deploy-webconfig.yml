@@ -7,6 +7,6 @@
 #*  No arguments are needed.
 
 - hosts: role.webserver
-
+  become: True
   roles:
     - deploy-web-vhosts
