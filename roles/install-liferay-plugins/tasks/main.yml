@@ -4,7 +4,7 @@
     http_proxy: "{{ http_proxy }}"
   get_url:
     checksum: "{{ item.checksum }}"
-    dest: "{{ remotedirs.service }}/{{ item.file }}"
+    dest: "{{ app__liferay__home }}/deploy/{{ item.file }}"
     url: "{{ item.url }}/{{ item.file }}"
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
