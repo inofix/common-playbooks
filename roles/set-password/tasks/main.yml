@@ -1,14 +1,22 @@
 
 - name: gather the passwords file from the host itself
-  shell: cat {{ account_store }}
+  shell: 'cat {{ account_store }}'
   register: accountsfile
 
 - name: parse the file for passwords
-  set_fact: accountinfos={{ accountsfile.stdout | from_yaml }}
+  set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
 
 - name: set the correct password to the file
   lineinfile:
     dest: '{{ account_dest }}'
     regexp: "^{{ account_pass_key }}=.*"
-    line: "{{ account_pass_key }}={{ accountinfos[account_section]['pass'] }}"
+    line: "{{ account_pass_key }}={{ accountinfos[account_section][value_to_use] }}"
+  when: account_dest_file_type == "key=val"
+
+- name: set the correct password to the file
+  lineinfile:
+    dest: '{{ account_dest }}'
+    regexp: '^\( *\)"{{ account_pass_key }}":.*'
+    line: '\1"{{ account_pass_key }}": "{{ accountinfos[account_section][value_to_use] }}"'
+  when: account_dest_file_type == "json"
 
