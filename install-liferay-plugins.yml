@@ -1,6 +1,5 @@
-#*  This playbook downloads, unpacks, and installes our customized liferay
-#* packages (without enabling it yet though - see install-liferay-enabled/
-#* install-liferay-disabled too).
+#*  This playbook downloads and deploys valid liferay plugins to the liferay
+#* installations deploy directory.
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -8,18 +7,10 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.liferay.v7
-  become: True
-
-  roles:
-    - install-liferay-unbundled
-#    - install-liferay-plugins
-
 - hosts: app.liferay.v6
   become: True
 
   roles:
-    - install-liferay
     - install-liferay-plugins
 
 # not enabling this yet, as it only tracks 'today'

@@ -1,0 +1,12 @@
+---
+- name: download and deploy liferay plugins
+  environment:
+    http_proxy: "{{ http_proxy }}"
+  get_url:
+    checksum: "{{ item.checksum }}"
+    dest: "{{ app__liferay__home }}/deploy/{{ item.file }}"
+    url: "{{ item.url }}/{{ item.file }}"
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+  with_items: "{{ app__liferay__plugin }}"
+
