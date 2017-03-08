@@ -13,12 +13,14 @@
 
   roles:
     - install-liferay-unbundled
+#    - install-liferay-plugins
 
 - hosts: app.liferay.v6
   become: True
 
   roles:
     - install-liferay
+    - install-liferay-plugins
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
