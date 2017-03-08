@@ -7,7 +7,7 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.liferay
+- hosts: app.liferay.v6
   become: True
 
   roles:
