@@ -1,4 +1,4 @@
-- name: make sure the db password is not stored in the repository
+- name: Make sure the password is not stored in the repository (properties).
   lineinfile:
     dest: '{{ account_dest }}'
     regexp: "^{{ account_pass_key }}=.*"
@@ -6,3 +6,26 @@
 # This always happens locally in the workdir..
   sudo: false
   connection: local
+  when: account_dest_file_type == "key=val"
+
+- name: Make sure the password is not stored in the repository (ini).
+  lineinfile:
+    dest: '{{ account_dest }}'
+    regexp: "^{{ account_pass_key }} = .*"
+    line: "{{ account_pass_key }} = {{ account_password_placeholder }}"
+# This always happens locally in the workdir..
+  sudo: false
+  connection: local
+  when: account_dest_file_type == "key = val"
+
+- name: Make sure the password is not stored in the repository (json).
+  lineinfile:
+    dest: '{{ account_dest }}'
+    regexp: "^( *).{{ account_pass_key }}.: .*(,?)$"
+    line: '\1"{{ account_pass_key }}": "{{ account_password_placeholder }}"\2'
+    backrefs: yes
+# This always happens locally in the workdir..
+  sudo: false
+  connection: local
+  when: account_dest_file_type == "json"
+
