@@ -1,0 +1,13 @@
+- name: Gather the passwords file from the host itself.
+  shell: 'cat {{ account_store }}'
+  register: accountsfile
+
+- name: Parse the file for passwords.
+  set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
+
+- name: Set the correct password to each file.
+  lineinfile:
+    dest: "{{ item.file }}"
+    regexp: "{{ format[file_type].regexp }}"
+    line: "{{ format[file_type].line }}"
+  with_items: "{{ file_list }}"
