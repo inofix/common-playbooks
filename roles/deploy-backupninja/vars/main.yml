@@ -1,0 +1,16 @@
+backup: no
+owner: 'root'
+group: 'root'
+# the main config gets passed on to copy
+config_src: '{{ app__backupninja__config }}'
+config_mode: '0644'
+# all tasks must not be visible for common users
+tasks_mode: '0600'
+# the duplicity task files get passed on to multi-copy
+dup_src_files: '{{ app__backupninja__d_task | map(attribute="file")|list() }}'
+# gets passed on to multi-set-password
+account_dup_files: '{{ app__backupninja__d_task | rejectattr("credentials", "undefined") | selectattr("credentials") | selectattr("dup") | list() }}'
+account_dup_filetype: "json"
+account_dup_section: "backupninja_dup"
+account_dup_key: "password"
+
