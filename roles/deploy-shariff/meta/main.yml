@@ -1,6 +1,6 @@
 dependencies:
   - copy
-  - { role: set-password, account_section: 'shariff_backend_id', account_pass_key: 'app_id' }
-  - { role: set-password, account_section: 'shariff_backend_secret', account_pass_key: 'secret' }
+  - { role: multi-set-password, file_list: "{{ account_file_list }}", file_type: "{{ account_file_type }}", account_section: 'shariff_backend_id', account_pass_key: 'app_id' }
+  - { role: multi-set-password, file_list: "{{ account_file_list }}", file_type: "{{ account_file_type }}", account_section: 'shariff_backend_secret', account_pass_key: 'secret' }
 # ommit comment in json files
 #  - mark-managed
