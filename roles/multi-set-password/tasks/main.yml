@@ -7,7 +7,8 @@
 
 - name: Set the correct password to each file.
   lineinfile:
+    backrefs: "{{ format[file_type].backrefs }}"
     dest: "{{ item.file }}"
-    regexp: "{{ format[file_type].regexp }}"
     line: "{{ format[file_type].line }}"
+    regexp: "{{ format[file_type].regexp }}"
   with_items: "{{ file_list }}"
