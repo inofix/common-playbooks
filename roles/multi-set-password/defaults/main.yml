@@ -13,5 +13,6 @@ format:
     regexp: "^{{ account_key }} = .*"
   json:
     backrefs: true
+# TODO: if I try to use (.) -> \2 instead of '"', then somehow the third \2 (which should be a quote) is interpreted as char code if it is followed directly with some number..
     line: '\1"{{ account_key }}": "{{ accountinfos[account_section][value_to_use] }}"\2'
     regexp: '^( *).{{ account_key }}.: .*(,?)$'
