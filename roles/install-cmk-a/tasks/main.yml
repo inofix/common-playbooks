@@ -57,4 +57,4 @@
     state: present
     insertafter: "AllowUsers.*"
     line: "AllowUsers nagios@{{ role__monitored__by_ip }}"
-
+  when: role__monitored__by_ip | ipaddr
