@@ -13,17 +13,17 @@
 - name: prepare logical volume storage
   become: true
   lvol:
-    lv: '{{ new__hostname }}-{{ item.key }}'
-    size: '{{ item.value.size | d( host.virt.storage[item.value.meta.pool].default_size ) }}'
-    vg: '{{ host.virt.storage[item.value.meta.pool].pool }}'
-  with_dict: '{{ new.disk }}'
-  when: host.virt.storage[item.value.meta.pool].type == "lvm"
+    lv: '{{ new__hostname }}-{{ item.name }}'
+    size: '{{ item.size | d( host.virt.storage[item.meta.pool].default_size ) }}'
+    vg: '{{ host.virt.storage[item.meta.pool].pool }}'
+  with_items: '{{ new.disk }}'
+  when: host.virt.storage[item.meta.pool].type == "lvm"
 
 - name: prepare qemu image file storage
   become: true
-  shell: 'qemu-img create -f {{ host.virt.storage[item.value.meta.pool].format }} {{ host.virt.storage[item.value.meta.pool].path }}/{{ new__hostname }}-{{ item.key }}.{{ host.virt.storage[item.value.meta.pool].format }} {{ item.value.size | d( host.virt.storage[item.value.meta.pool].default_size ) }}'
-  with_dict: '{{ new.disk }}'
-  when: host.virt.storage[item.value.meta.pool].type == "qemu-image"
+  shell: 'qemu-img create -f {{ host.virt.storage[item.meta.pool].format }} {{ host.virt.storage[item.meta.pool].path }}/{{ new__hostname }}-{{ item.name }} {{ item.size | d( host.virt.storage[item.meta.pool].default_size ) }}'
+  with_items: '{{ new.disk }}'
+  when: host.virt.storage[item.meta.pool].type == "qemu-image"
 
 - name: 'Check if a virtual machine with the same name is already defined'
   stat:
@@ -62,6 +62,6 @@
   with_items: '{{ os__installer_templates }}'
 
 - name: 'Create a virtual machine'
-  shell: 'virt-install --quiet --connect {{ host.virt.connect }} --autostart --noautoconsole --console pty,target_type=serial --virt-type {{ host.virt.type }} --name {{ new__hostname }} --vcpus {{ new.cpu.cores }} --ram {{ new.mem.size }} --disk {{ new__system_disk.path }},bus={{ new__system_disk.bus }},cache={{ new__system_disk.cache }} --network {{ host.virt.network }} --os-type {{ new.os.distro }} --os-variant {{ new.os.variant }} --video {{ host.virt.display.video }} --graphics {{ host.virt.display.graphics }} --location {{ os__tmp_installer_dir }} --initrd-inject={{ os__installer_template_list | join(" --initrd-inject=") }} --extra-args "{{ host.virt.install_console }} auto=true file=/preseed.cfg hostname={{ new__hostname }} domain={{ new.domainname }} interface=auto netcfg/get_ipaddress={{ new.net.eth0.ip }} netcfg/get_netmask={{ new.net.eth0.netmask }} netcfg/get_gateway={{ new.net.eth0.gateway }} netcfg/get_nameservers={{ new.net.eth0.nameserver }} netcfg/confirm_static=true netcfg/disable_dhcp=true"'
+  shell: 'virt-install --quiet --connect {{ host.virt.connect }} --autostart --noautoconsole --console pty,target_type=serial --virt-type {{ host.virt.type }} --name {{ new__hostname }} --vcpus {{ new.cpu.cores }} --ram {{ new.mem.size }} --disk {{ new__system_disk_attr.target }},bus={{ new__system_disk.bus }},cache={{ new__system_disk.cache }} --network {{ host.virt.network }} --os-type {{ new.os.distro }} --os-variant {{ new.os.variant }} --video {{ host.virt.display.video }} --graphics {{ host.virt.display.graphics }} --location {{ os__tmp_installer_dir }} --initrd-inject={{ os__installer_template_list | join(" --initrd-inject=") }} --extra-args "{{ host.virt.install_console }} auto=true file=/preseed.cfg hostname={{ new__hostname }} domain={{ new.domainname }} interface=auto netcfg/get_ipaddress={{ new.net.eth0.ip }} netcfg/get_netmask={{ new.net.eth0.netmask }} netcfg/get_gateway={{ new.net.eth0.gateway }} netcfg/get_nameservers={{ new.net.eth0.nameserver }} netcfg/confirm_static=true netcfg/disable_dhcp=true"'
   when: ( vm_def.stat.isreg is not defined )
 
