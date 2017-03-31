@@ -12,6 +12,14 @@
 - hosts: host.KVM
   vars:
     new: '{{ host.resource[new__hostname] }}'
+    new__system_disk: '{{ new.disk | selectattr("system") | first() }}'
+    # TODO why does attr() not work as expected?
+    new__system_disk_attr:
+      bus: '{{ host.virt.storage[new__system_disk.meta.pool].bus }}'
+      cache: '{{ host.virt.storage[new__system_disk.meta.pool].cache }}'
+      name: '{{ new__system_disk.name }}'
+      pool: '{{ new__system_disk.pool }}'
+      target: '{{ host.virt.storage[new__system_disk.meta.pool].path }}/{{ new__hostname }}-{{ new__system_disk.name }}'
   roles:
     - virt-install
 
