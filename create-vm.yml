@@ -20,6 +20,7 @@
       name: '{{ new__system_disk.name }}'
       pool: '{{ new__system_disk.pool }}'
       target: '{{ host.virt.storage[new__system_disk.meta.pool].path }}/{{ new__hostname }}-{{ new__system_disk.name }}'
+    new__system_net: '{{ new.net | selectattr("primary") | first() }}'
   roles:
     - virt-install
 
