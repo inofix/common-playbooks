@@ -15,7 +15,7 @@
   lvol:
     lv: '{{ new__hostname }}-{{ item.name }}'
     size: '{{ item.size | d( host.virt.storage[item.meta.pool].default_size ) }}'
-    vg: '{{ host.virt.storage[item.meta.pool].pool }}'
+    vg: '{{ host.virt.storage[item.meta.pool].volume_group }}'
   with_items: '{{ new.disk }}'
   when: host.virt.storage[item.meta.pool].type == "lvm"
 
