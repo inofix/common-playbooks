@@ -1,4 +1,5 @@
 allow_duplicates: yes
 dependencies:
   - { role: multi-copy, multicopyname: "icinga 0600 config" }
-  - { role: set-password }
+  - { role: multi-set-password, file_list: "{{ account_file_list }}", file_type: "properties" }
+  - { role: multi-set-password, file_list: "{{ account_file_list }}", file_type: "properties", account_section: 'icinga_db', account_key: 'db_pass' }

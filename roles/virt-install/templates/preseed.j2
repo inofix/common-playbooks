@@ -64,15 +64,15 @@ d-i netcfg/wireless_wep         string
 #   deleted in the post-installation. This is a work-around for partman,
 #   which likes to use all disk space when creating the partition layout.
 # - The resulting free VG space can be used to resize any existing LV or
-#   for additional custom LVs (e.g. srv, home). 
+#   for additional custom LVs (e.g. srv, home).
 #
 
 # Alternatively, you may specify a disk to partition. If the system has only
 # one disk the installer will default to using that, but otherwise the device
 # name must be given in traditional, non-devfs format (so e.g. /dev/hda or
 # /dev/sda, and not e.g. /dev/discs/disc0/disc).
-d-i partman-auto/disk           string {{ new.disk.system.path }} 
-partman-auto partman-auto/disk      string {{ new.disk.system.path }}
+d-i partman-auto/disk           string {{ new__system_disk.path }}
+partman-auto partman-auto/disk      string {{ new__system_disk.path }}
 
 # In addition, you'll need to specify the method to use.
 # The presently available methods are:
@@ -188,7 +188,7 @@ d-i partman/mount_style             select label
 d-i grub-installer/only_debian          boolean true
 
 # GRUB install devices.
-grub-installer grub-installer/choose_bootdev    select {{ new.disk.system.path }}
+grub-installer grub-installer/choose_bootdev    select {{ new__system_disk.path }}
 
 # Use the following option to add additional boot parameters for the
 # installed system (if supported by the bootloader installer).

@@ -1,4 +1,4 @@
 dependencies:
   - copy
-  - set-password
+  - { role: multi-set-password, file_list: "{{ account_file_list }}", file_type: "{{ account_file_type }}" }
   - mark-managed

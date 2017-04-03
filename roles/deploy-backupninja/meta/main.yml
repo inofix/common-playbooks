@@ -1,0 +1,5 @@
+allow_duplicates: yes
+dependencies:
+  - { role: copy, file: "{{ config_src }}", mode: "{{ config_mode }}" }
+  - { role: multi-copy, multicopyname: "backupninja config files", src_files: "{{ dup_src_files }}", mode: "{{ tasks_mode }}"  }
+  - { role: multi-set-password, file_list: "{{ account_dup_files }}", file_type: "{{ account_dup_filetype }}", account_section: "{{ account_dup_section }}", account_key: "{{ account_dup_key }}" }

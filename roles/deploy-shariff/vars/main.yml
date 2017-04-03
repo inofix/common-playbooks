@@ -5,8 +5,9 @@ group: 'root'
 mode: '0644'
 backup: no
 force: yes
-account_dest: '{{ dest }}'
-account_dest_file_type: "json"
+account_file_list:
+  - file: '{{ dest }}'
+account_file_type: "json"
 #account_store: from project/any.yml
 # multiple calls: see meta/main.yml
 #account_section:
