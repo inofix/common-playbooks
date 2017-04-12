@@ -1,15 +1,15 @@
 ---
 - name: Create a dedicated group
   group:
-    name: 'libreoffice'
+    name: '{{ group }}'
     system: True
 
 - name: Create a dedicated user
   user:
-    name: 'libreoffice'
-    group: 'libreoffice'
+    name: '{{ user }}'
+    group: '{{ group }}'
     system: True
-    home: '/var/lib/libreoffice-home'
+    home: '{{ users_home }}'
     createhome: True
 
 - name: Install the start-stop-daemon-script
