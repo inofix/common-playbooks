@@ -12,3 +12,10 @@
     home: '/var/lib/libreoffice-home'
     createhome: True
 
+- name: Install the start-stop-daemon-script
+  template:
+    src: 'startstop_libreoffice.yml'
+    dest: '/etc/init.d/libreoffice'
+    mode: '0755'
+    owner: 'root'
+    group: 'root'
