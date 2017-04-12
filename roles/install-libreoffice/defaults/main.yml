@@ -1,4 +1,8 @@
-yapkg_names:
+d_user: 'libreoffice'
+d_group: 'libreoffice'
+d_users_home: '/var/lib/libreoffice-home'
+
+d_yapkg_names:
   - libreoffice-writer
   - libreoffice-calc
   - libreoffice-pdfimport
