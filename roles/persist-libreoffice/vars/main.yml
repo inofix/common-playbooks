@@ -1,9 +1,3 @@
-src: '{{ app__liferay__config }}'
-owner: '{{ app__tomcat__user }}'
-group: '{{ app__tomcat__group }}'
-mode: 0640
-backup: yes
-account_dest: '{{ workdir }}/{{ fqdn }}/{{ src }}'
-#account_store: from project/any.yml
-account_section: 'liferay_db'
-account_pass_key: 'jdbc.default.password'
+src: '{{ app__libreoffice__startstop | d(d_src) }}'
+owner: '{{ app__libreoffice__user | d(d_owner) }}'
+group: '{{ app__libreoffice__group | d(d_group) }}'
