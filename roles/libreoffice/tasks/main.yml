@@ -1,0 +1,14 @@
+---
+- name: Create a dedicated group
+  group:
+    name: 'libreoffice'
+    system: True
+
+- name: Create a dedicated user
+  user:
+    name: 'libreoffice'
+    group: 'libreoffice'
+    system: True
+    home: '/var/lib/libreoffice-home'
+    createhome: True
+
