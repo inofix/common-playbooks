@@ -1,0 +1,6 @@
+user: '{{ app__libreoffice__user | d(d_user) }}'
+group: '{{ app__libreoffice__group | d(d_group) }}'
+users_home: '{{ app__libreoffice__users_home | d(d_users_home) }}'
+
+yapkg_names: '{{ app__libreoffice__yapkg_names | d(d_yapkg_names) }}'
+
