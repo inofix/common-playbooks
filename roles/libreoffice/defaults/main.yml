@@ -1,0 +1,10 @@
+yapkg_names:
+  - libreoffice-writer
+  - libreoffice-calc
+  - libreoffice-pdfimport
+  - libreoffice-math
+  - libreoffice-writer2latex
+  - libreoffice-writer2xhtml
+  - libreoffice-java-common
+  - libreoffice-impress
+
