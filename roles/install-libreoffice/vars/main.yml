@@ -1,6 +1,11 @@
 user: '{{ app__libreoffice__user | d(d_user) }}'
 group: '{{ app__libreoffice__group | d(d_group) }}'
 users_home: '{{ app__libreoffice__users_home | d(d_users_home) }}'
-
+lo_command: '{{ app__libreoffice__lo_command | d(d_lo_command) }}'
+lo_host: '{{ app__libreoffice__lo_host | d(d_lo_host) }}'
+lo_port: '{{ app__libreoffice__lo_port | d(d_lo_port) }}'
+lo_pid: '{{ app__libreoffice__lo_pid | d(d_lo_pid) }}'
+lo_tmp: '{{ app__libreoffice__lo_tmp | d(d_lo_tmp) }}'
+lo_lr_tmp: '{{ app__libreoffice__lo_lr_tmp | d(d_lo_lr_tmp) }}'
 yapkg_names: '{{ app__libreoffice__yapkg_names | d(d_yapkg_names) }}'
 
