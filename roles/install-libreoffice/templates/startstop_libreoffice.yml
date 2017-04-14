@@ -27,12 +27,12 @@ TC_GROUP={{ group }}
 # for the moment liferay is too stupid for letting ooffice run as a separate user due to shared directories and the like..
 LO_USER=$TC_USER
 LO_GROUP=$TC_GROUP
-LO_COMMAND={{ lo_command }}
+LO_COMMAND="{{ lo_command }}"
 ## why not? --env:UserInstallation=file:///var/lib/libreoffice-home/
 LO_OPTIONS="--headless --accept=socket,host={{ lo_host }},port={{ lo_port }};urp; --nofirststartwizard --norestore --nologo --nodefault"
-PIDFILE={{ lo_pid }}
-TC_TEMPDIR={{ lo_tmp }}
-COMMON_TEMPDIR={{ lo_lr_tmp }}
+PIDFILE="{{ lo_pid }}"
+TC_TEMPDIR="{{ lo_tmp }}"
+COMMON_TEMPDIR="{{ lo_lr_tmp }}"
 
 if [ `id -u` -ne 0 ]; then
     echo "You need root privileges to run this script"
