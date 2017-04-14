@@ -29,7 +29,7 @@ LO_USER=$TC_USER
 LO_GROUP=$TC_GROUP
 LO_COMMAND="{{ lo_command }}"
 ## why not? --env:UserInstallation=file:///var/lib/libreoffice-home/
-LO_OPTIONS="--headless --accept=socket,host={{ lo_host }},port={{ lo_port }};urp; --nofirststartwizard --norestore --nologo --nodefault"
+LO_OPTIONS="{{ lo_options }}"
 PIDFILE="{{ lo_pid }}"
 TC_TEMPDIR="{{ lo_tmp }}"
 COMMON_TEMPDIR="{{ lo_lr_tmp }}"
