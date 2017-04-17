@@ -31,10 +31,6 @@ LO_COMMAND="{{ lo_command }}"
 ## why not? --env:UserInstallation=file:///var/lib/libreoffice-home/
 LO_OPTIONS="{{ lo_options }}"
 PIDFILE="{{ lo_pid }}"
-# TODO check which way to go, is shared still not possible? is setting TMPDIR always save?
-{% if use_unshared_home %}
-  export TMPDIR="{{ lo_tmp }}"
-{% endif %}
 TC_TEMPDIR="{{ lo_tmp }}"
 COMMON_TEMPDIR="{{ lo_lr_tmp }}"
 
@@ -48,6 +44,11 @@ fi
 if [ -r /etc/default/rcS ]; then
     . /etc/default/rcS
 fi
+
+# TODO check which way to go, is shared still not possible? is setting TMPDIR always save?
+{% if use_unshared_home %}
+  export TMPDIR="{{ lo_tmp }}"
+{% endif %}
 
 # allow members of the group to access our files..
 #umask 002
