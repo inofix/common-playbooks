@@ -1,3 +1,4 @@
+---
 # In the credentials store, the 'password' is per default stored in a field called:
 value_to_use: 'value'
 # mutually exclusive credentail patterns:
@@ -13,6 +14,8 @@ format:
     regexp: "^{{ account_key }} = .*"
   json:
     backrefs: true
-# TODO: if I try to use (.) -> \2 instead of '"', then somehow the third \2 (which should be a quote) is interpreted as char code if it is followed directly with some number..
+# TODO: if I try to use (.), to match the 4 quotes (which would then become
+# \2), then somehow the third \2 is interpreted as char code instead of the
+# regexp placeholder, if it is followed directly by some digit (e.g. \256)
     line: '\1"{{ account_key }}": "{{ accountinfos[account_section][value_to_use] }}"\2'
     regexp: '^( *).{{ account_key }}.: .*(,?)$'
