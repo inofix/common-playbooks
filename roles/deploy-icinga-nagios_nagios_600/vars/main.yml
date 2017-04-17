@@ -5,7 +5,8 @@ mode: 0600
 backup: yes
 account_file_list:
   - file: '{{ service__monitoring__icinga__db_file }}'
+account_file_type: "properties"
 #account_store: from project/any.yml
 account_section: 'icinga_db'
-account_pass_key: 'db_pass'
+account_key: 'db_pass'
 
