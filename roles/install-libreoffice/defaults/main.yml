@@ -6,7 +6,7 @@ d_lo_host: '127.0.0.1'
 d_lo_port: 8100
 d_lo_options: '--headless --accept=socket,host={{ lo_host }},port={{ lo_port }};urp; --nofirststartwizard --norestore --nologo --nodefault'
 d_lo_pid: '/run/libreoffice.pid'
-d_lo_tmp: '/srv/tmp/tomcat7-temp/'
+d_lo_tmp: '{{ d_users_home }}'
 d_lo_lr_tmp: '$TC_TEMPDIR/liferay/document_conversion/'
 use_unshared_home: false
 
