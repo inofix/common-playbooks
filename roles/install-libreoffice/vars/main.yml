@@ -1,6 +1,7 @@
 user: '{{ app__libreoffice__user | d(d_user) }}'
 group: '{{ app__libreoffice__group | d(d_group) }}'
 users_home: '{{ app__libreoffice__users_home | d(d_users_home) }}'
+users_unshared_home: '{{ app__libreoffice__users_unshared_home | d(d_users_home) }}'
 lo_command: '{{ app__libreoffice__lo_command | d(d_lo_command) }}'
 lo_host: '{{ app__libreoffice__lo_host | d(d_lo_host) }}'
 lo_options: '{{ app__libreoffice__lo_options | d(d_lo_options) }}'

@@ -12,6 +12,69 @@
     home: '{{ users_home }}'
     createhome: True
 
+- name: Create a separate directory where the user has full write permissions
+  file:
+    state: directory
+    name: '{{ users_unshared_home }}'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0755'
+  when: '{{ use_unshared_home }}'
+
+- name: Create the lo config dir
+  file:
+    state: directory
+    name: '{{ users_unshared_home }}/.config'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0755'
+  when: '{{ use_unshared_home }}'
+
+- name: Create the lo font config dir
+  file:
+    state: directory
+    name: '{{ users_unshared_home }}/.fontconfig'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0755'
+  when: '{{ use_unshared_home }}'
+
+- name: Create the lo working dir
+  file:
+    state: directory
+    name: '{{ users_unshared_home }}/libreoffice'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+    mode: '0755'
+  when: '{{ use_unshared_home }}'
+
+- name: Link the config dir home
+  file:
+    state: link
+    src: '{{ users_unshared_home }}/.config'
+    dest: '{{ users_home }}/.config'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  when: '{{ use_unshared_home }}'
+
+- name: Link the font config dir home
+  file:
+    state: link
+    src: '{{ users_unshared_home }}/.fontconfig'
+    dest: '{{ users_home }}/.fontconfig'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  when: '{{ use_unshared_home }}'
+
+- name: Link the working dir home
+  file:
+    state: link
+    src: '{{ users_unshared_home }}/libreoffice'
+    dest: '{{ users_home }}/libreoffice'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  when: '{{ use_unshared_home }}'
+
 - name: Install the start-stop-daemon-script
   template:
     src: 'startstop_libreoffice.yml'
