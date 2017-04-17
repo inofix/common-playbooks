@@ -1,4 +1,4 @@
 allow_duplicates: yes
 dependencies:
   - { role: multi-fetch, multifetchname: "icinga config" }
-  - { role: unset-password }
+  - { role: unset-credentials, file_list: "{{ account_file_list }}", file_type: "{{ account_file_type }}" }
