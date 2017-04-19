@@ -1,0 +1,121 @@
+#!/bin/sh
+#
+# /etc/init.d/libreoffice -- startup script for the LibreOffice Suite
+#                            in interaction with tomcat/liferay
+#
+# Written by Michael Lustenberger <mic@inofix.ch>.
+#
+### BEGIN INIT INFO
+# Provides:          libreoffice
+# Required-Start:    $local_fs $remote_fs tomcat7
+# Required-Stop:     $local_fs $remote_fs tomcat7
+# Should-Start:      $named
+# Should-Stop:       $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start LibreOffice.
+# Description:       Start the LibreOffice suite in server mode.
+### END INIT INFO
+
+set -e
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+NAME=libreoffice
+DESC="LibreOffice server mode"
+TC_USER={{ user }}
+TC_GROUP={{ group }}
+# for the moment liferay is too stupid for letting ooffice run as a separate user due to shared directories and the like..
+LO_USER=$TC_USER
+LO_GROUP=$TC_GROUP
+LO_COMMAND="{{ lo_command }}"
+## why not? --env:UserInstallation=file:///var/lib/libreoffice-home/
+LO_OPTIONS="{{ lo_options }}"
+PIDFILE="{{ lo_pid }}"
+TC_TEMPDIR="{{ lo_tmp }}"
+COMMON_TEMPDIR="{{ lo_lr_tmp }}"
+
+if [ `id -u` -ne 0 ]; then
+    echo "You need root privileges to run this script"
+    exit 1
+fi
+
+. /lib/lsb/init-functions
+
+if [ -r /etc/default/rcS ]; then
+    . /etc/default/rcS
+fi
+
+# TODO check which way to go, is shared still not possible? is setting TMPDIR always save?
+{% if use_unshared_home %}
+  export TMPDIR="{{ lo_tmp }}"
+{% endif %}
+
+# allow members of the group to access our files..
+#umask 002
+# and make sure we can write this directory too
+#if [ -d "$TC_TEMPDIR" ] ; then
+#    mkdir -p $COMMON_TEMPDIR
+#    chown "$LO_USER:$LO_GROUP" -R $COMMON_TEMPDIR
+#    find $COMMON_TEMPDIR -type d -exec chmod 775 \{\} \;
+#else
+#    echo "Temp dir does not exist: $TC_TEMPDIR - control tomcat start script."
+#fi
+
+case "$1" in
+    start)
+        log_daemon_msg "Starting $DESC" "$NAME "
+
+        if [ -f "$PIDFILE" ]; then
+
+            if /bin/pidof "$LO_COMMAND" ; then
+                echo "(already running)"
+            else
+                echo "(pidfile found but not running, trying to clean up)"
+                rm "$PIDFILE"
+            fi
+        else
+
+#            start-stop-daemon --start \
+#                --make-pidfile --pidfile "$PIDFILE" \
+#                --user "$LO_USER" --group "$LO_GROUP" \
+#                --chuid "$LO_USER:$LO_GROUP" \
+#                --exec "$LO_COMMAND" -- $LO_OPTIONS >/dev/null &
+
+            start-stop-daemon --start \
+                --make-pidfile --pidfile "$PIDFILE" \
+                --user "$LO_USER" \
+                --chuid "$LO_USER" \
+                --exec "$LO_COMMAND" -- $LO_OPTIONS >/dev/null &
+
+
+            if /bin/pidof "$LO_COMMAND" ; then
+                echo "(done)"
+            else
+                echo "(failed)"
+            fi
+        fi
+    ;;
+    stop)
+        if start-stop-daemon --stop --pidfile "$PIDFILE" \
+                --user "$LO_USER" --retry=TERM/20/KILL/5 >/dev/null ; then
+
+            rm "$PIDFILE"
+        else
+
+            echo "(failed to stop)"
+        fi
+    ;;
+    restart)
+        $0 stop
+        sleep 1
+        $0 start
+    ;;
+    status)
+        echo "Please implement me too.."
+    ;;
+    *)
+        log_success_msg "Usage: $0 {start|stop|restart|status}"
+        exit 1
+    ;;
+esac
+

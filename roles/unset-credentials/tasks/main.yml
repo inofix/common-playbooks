@@ -1,0 +1,11 @@
+- name: Make sure the password is not stored in the repository.
+  lineinfile:
+    backrefs: "{{ format[file_type].backrefs }}"
+    dest: "{{ item.file }}"
+    line: "{{ format[file_type].line }}"
+    regexp: "{{ format[file_type].regexp }}"
+# This always happens locally in the workdir..
+  sudo: false
+  connection: local
+  with_items: "{{ file_list }}"
+

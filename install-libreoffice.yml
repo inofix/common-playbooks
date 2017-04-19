@@ -1,0 +1,28 @@
+#*  This playbook installes libreoffice as a service, mainly for liferay to
+#* support office documents.
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- hosts: app.libreoffice, !app.liferay
+  become: True
+  roles:
+    - install-libreoffice
+
+- hosts: app.libreoffice, app.liferay
+  become: True
+  roles:
+    - { role: install-libreoffice, app__libreoffice__user: '{{ app__tomcat__user }}', app__libreoffice__group: '{{ app__tomcat__group }}', app__libreoffice__users_home: '{{ app__tomcat__users_home }}', use_unshared_home: true }
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+

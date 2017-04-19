@@ -1,0 +1,3 @@
+src: '{{ app__libreoffice__startstop | d(d_src) }}'
+owner: '{{ app__libreoffice__user | d(d_owner) }}'
+group: '{{ app__libreoffice__group | d(d_group) }}'

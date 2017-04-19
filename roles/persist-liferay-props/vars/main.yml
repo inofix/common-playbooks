@@ -3,7 +3,9 @@ owner: '{{ app__tomcat__user }}'
 group: '{{ app__tomcat__group }}'
 mode: 0640
 backup: yes
-account_dest: '{{ workdir }}/{{ fqdn }}/{{ src }}'
+account_file_list:
+  - file: '{{ workdir }}/{{ fqdn }}/{{ src }}'
+account_file_type: "properties"
 #account_store: from project/any.yml
 account_section: 'liferay_db'
-account_pass_key: 'jdbc.default.password'
+account_key: 'jdbc.default.password'

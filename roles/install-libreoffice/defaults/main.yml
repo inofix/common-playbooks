@@ -1,0 +1,22 @@
+d_user: 'libreoffice'
+d_group: 'libreoffice'
+d_users_home: '/var/lib/libreoffice-home'
+d_lo_command: '/usr/lib/libreoffice/program/soffice.bin'
+d_lo_host: '127.0.0.1'
+d_lo_port: 8100
+d_lo_options: '--headless --accept=socket,host={{ lo_host }},port={{ lo_port }};urp; --nofirststartwizard --norestore --nologo --nodefault'
+d_lo_pid: '/run/libreoffice.pid'
+d_lo_tmp: '{{ d_users_home }}'
+d_lo_lr_tmp: '$TC_TEMPDIR/liferay/document_conversion/'
+use_unshared_home: false
+
+d_yapkg_names:
+  - libreoffice-writer
+  - libreoffice-calc
+  - libreoffice-pdfimport
+  - libreoffice-math
+  - libreoffice-writer2latex
+  - libreoffice-writer2xhtml
+  - libreoffice-java-common
+  - libreoffice-impress
+

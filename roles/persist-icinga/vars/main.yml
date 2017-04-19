@@ -1,10 +1,12 @@
 src_files: '{{ service__monitoring__icinga__root_root_644_files + service__monitoring__icinga__root_nagios_640_files + service__monitoring__icinga__nagios_nagios_600_files }}'
 dest: '{{ workdir }}'
 #mode: 0640
-account_dest: '{{ workdir }}/{{ fqdn }}/{{ service__monitoring__icinga__db_file }}'
+account_file_list:
+  - file: '{{ workdir }}/{{ fqdn }}/{{ service__monitoring__icinga__db_file }}'
+account_file_type: "properties"
 #account_store: from project/any.yml
 account_section: 'icinga_db'
-account_pass_key: 'db_pass'
+account_key: 'db_pass'
 #account_password_placeholder: from project/any.yml
 fail_on_missing: no
 flat:

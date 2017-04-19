@@ -18,7 +18,7 @@
     dest: '{{ account_store }}'
     owner: 'root'
     group: 'root'
-    mode: '600'
+    mode: '0600'
     force: 'No'
   when:
     - account_store_local_stat.stat.isreg is defined
@@ -35,7 +35,7 @@
     dest: '{{ account_store }}'
     owner: 'root'
     group: 'root'
-    mode: '600'
+    mode: '0600'
   when:
     - account_store_remote_stat.stat.isreg is not defined or not account_store_remote_stat.stat.isreg
     - account_store_local_stat.stat.isreg is not defined or not account_store_local_stat.stat.isreg

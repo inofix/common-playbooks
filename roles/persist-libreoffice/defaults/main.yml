@@ -1,0 +1,5 @@
+d_src: '/etc/init.d/libreoffice'
+d_owner: 'libreoffice'
+d_group: 'libreoffice'
+d_mode: 0755
+d_backup: no
