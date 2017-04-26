@@ -10,7 +10,7 @@
 #*  The following arguments are mandatory:
 #*   - 'new__hostname'
 #*   - 'host' (dict)
-#*  Ansible Examples:
+#*  Maestro Examples:
 #*   * Create a VM called <newhost> on <kvmhost>
 #*     `$ maestro.sh -H <kvmhost> ansible-play create-vm "new__hostname=<newhost>"`
 
