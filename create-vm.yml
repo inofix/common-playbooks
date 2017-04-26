@@ -2,12 +2,17 @@
 #* Currently only debian jessie on amd64 via preseed is supported, extending
 #* should not be too difficult, but we had to start somewhere..
 #*  The playbook is intended to be used by 'maestro', which gets the necessary
-#* host and vm info from the knowledge base (reclass-inventory).
+#* 'host' dict with the vm info from the knowledge base (reclass-inventory),
+#* the 'new__hostname' parameter can be provided as the first argument after
+#* the name of the play (See Maestro Examples below).
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  The following arguments are mandatory:
 #*   - 'new__hostname'
 #*   - 'host' (dict)
+#*  Ansible Examples:
+#*   * Create a VM called <newhost> on <kvmhost>
+#*     `$ maestro.sh -H <kvmhost> ansible-play create-vm "new__hostname=<newhost>"`
 
 - hosts: host.KVM
   vars:
