@@ -7,7 +7,7 @@
 #* details.
 #*  The following arguments are mandatory:
 #*   - 'app__acme__tiny__domain'
-#*  Examples:
+#*  Maestro Examples:
 #* * A single run might look like this:
 #*   `maestro.sh -H host ansible-play setup-lets-encrypt \
 #*          'app__acme__tiny__domain={{ certificate.main }}' -b`
