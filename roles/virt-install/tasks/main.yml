@@ -52,7 +52,7 @@
     url: '{{ item.url }}'
     dest: '{{ item.dest }}'
     checksum: '{{ item.checksum }}'
-  with_items: '{{ os__installer_files[new.arch] }}'
+  with_items: '{{ os__installer_files }}'
 
 - name: 'Install the preseed template'
   template:

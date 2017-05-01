@@ -27,6 +27,7 @@
       pool: '{{ new__system_disk_tmp.meta.pool }}'
       target: '{{ host.virt.storage[new__system_disk_tmp.meta.pool].path }}/{{ new__hostname }}-{{ new__system_disk_tmp.name }}'
     new__system_net: '{{ new.net | selectattr("primary") | first() }}'
+    os__installer_files: '{{ os__installer_base[new.os.distro][new.os.codename][new.arch] }}'
   roles:
     - virt-install
 
