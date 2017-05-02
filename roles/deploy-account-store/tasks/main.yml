@@ -7,9 +7,7 @@
     state: 'directory'
 
 - name: test if we have an accounts file for this host locally
-  local_action:
-    stat:
-      path: '{{ workdir }}/{{ fqdn }}/{{ account_store }}'
+  local_action: stat path='{{ workdir }}/{{ fqdn }}/{{ account_store }}'
   register: account_store_local_stat
 
 - name: install the account store missing on the target
