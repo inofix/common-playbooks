@@ -8,6 +8,6 @@
 #*  No arguments are needed.
 
 - hosts: all
-
+  become: true
   roles:
     - deploy-account-store
