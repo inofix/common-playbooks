@@ -1,26 +1,6 @@
 
 # add it in a controlled way..
 
-#- name: make sure backports is present
-#  lineinfile:
-#    dest: /etc/apt/sources.list.d/backports.list
-#    state: present
-#    create: yes
-#    line: "deb http://ftp.debian.org/debian wheezy-backports main"
-#  when: ansible_os_family == "Debian" and ansible_distribution_release == "wheezy"
-#  vars:
-#    apt_update_index: true
-
-#- name: make sure backports is present
-#  lineinfile:
-#    dest: /etc/apt/sources.list.d/backports.list
-#    state: present
-#    create: yes
-#    line: "deb http://ftp.debian.org/debian jessie-backports main"
-#  when: ansible_os_family == "Debian" and ansible_distribution_release == "jessie"
-#  vars:
-#    apt_update_index: true
-
 - name: add the backports for jessie
   apt_repository:
     repo: deb http://ftp.debian.org/debian jessie-backports main
