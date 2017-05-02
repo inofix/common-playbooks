@@ -26,18 +26,18 @@
     repo: deb http://ftp.debian.org/debian jessie-backports main
     state: present
   when: ansible_os_family == "Debian" and ansible_distribution_release == "jessie"
-  register: apt_update_index
+  register: was_apt_updated
 
 - name: add the backports for the current distro
   apt_repository:
     repo: deb http://ftp.debian.org/debian wheezy-backports main
     state: present
   when: ansible_os_family == "Debian" and ansible_distribution_release == "wheezy"
-  register: apt_update_index
+  register: was_apt_updated
 
 - name: update the repository index
   apt:
     update_cache: yes
     cache_valid_time: 3600
-  when: apt_update_index.changed
+  when: was_apt_updated.changed
 
