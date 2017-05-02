@@ -1,29 +1,43 @@
 
 # add it in a controlled way..
 
-- name: make sure backports is present
-  lineinfile:
-    dest: /etc/apt/sources.list.d/backports.list
-    state: present
-    create: yes
-    line: "deb http://ftp.debian.org/debian wheezy-backports main"
-  when: ansible_os_family == "Debian" and ansible_distribution_release == "wheezy"
-  vars:
-    apt_update_index: true
+#- name: make sure backports is present
+#  lineinfile:
+#    dest: /etc/apt/sources.list.d/backports.list
+#    state: present
+#    create: yes
+#    line: "deb http://ftp.debian.org/debian wheezy-backports main"
+#  when: ansible_os_family == "Debian" and ansible_distribution_release == "wheezy"
+#  vars:
+#    apt_update_index: true
 
-- name: make sure backports is present
-  lineinfile:
-    dest: /etc/apt/sources.list.d/backports.list
+#- name: make sure backports is present
+#  lineinfile:
+#    dest: /etc/apt/sources.list.d/backports.list
+#    state: present
+#    create: yes
+#    line: "deb http://ftp.debian.org/debian jessie-backports main"
+#  when: ansible_os_family == "Debian" and ansible_distribution_release == "jessie"
+#  vars:
+#    apt_update_index: true
+
+- name: add the backports for the current distro
+  apt_repository:
+    repo: deb http://ftp.debian.org/debian jessie-backports main
     state: present
-    create: yes
-    line: "deb http://ftp.debian.org/debian jessie-backports main"
   when: ansible_os_family == "Debian" and ansible_distribution_release == "jessie"
-  vars:
-    apt_update_index: true
+  register: apt_update_index
+
+- name: add the backports for the current distro
+  apt_repository:
+    repo: deb http://ftp.debian.org/debian wheezy-backports main
+    state: present
+  when: ansible_os_family == "Debian" and ansible_distribution_release == "wheezy"
+  register: apt_update_index
 
 - name: update the repository index
   apt:
     update_cache: yes
     cache_valid_time: 3600
-  when: ansible_os_family == "Debian" and apt_update_index == true
+  when: apt_update_index.changed
 
