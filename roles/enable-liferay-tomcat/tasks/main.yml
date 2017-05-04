@@ -9,7 +9,7 @@
     msg: "Liferay was not installed correctly on {{ remotedirs.service }}/{{ app__liferay__name }}"
   when: liferay_config.stat.isreg is not defined or not liferay_config.stat.isreg
 
-- name: test if the installation was already done
+- name: test if the setup was already done
   stat:
     path: '{{ app__liferay__worklink }}'
   register: liferay_link
