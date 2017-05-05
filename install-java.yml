@@ -1,5 +1,5 @@
 #*  This playbook wrapps the apt (and others maybe in the future..) module
-#* to install the tomcat package.
+#* to install the correct java package.
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -7,13 +7,18 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-java.yml
-
-- hosts: app.tomcat
+- hosts: app.java.jdk
   become: True
 
   roles:
-    - { role: zwischenloesung.yapkg, yapkg_group_name: 'tomcat', yapkg_names: [ 'tomcat{{ app__tomcat__version }}' ] }
+    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ]}
+
+- hosts: app.java.jdk.8,&os.debian_jessie
+  become: True
+
+  roles:
+    - { role: add-backports }
+    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java 8 from backports', yapkg_deb_names: [ 'openjdk-8-jdk' ], yapkg_update_cache: true, yapkg_default_release: 'jessie-backports' }
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

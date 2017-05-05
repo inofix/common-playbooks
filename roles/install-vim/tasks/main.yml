@@ -1,4 +1,13 @@
-- name: install vim config
+---
+- name: 'Install a basic config file'
+  template:
+    src: 'vimrc.j2'
+    dest: '/etc/vim/vimrc'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: 'Overwrite the default if the workdir knows better'
   copy:
     src: '{{ workdir }}/{{ fqdn }}/{{ app_vim_config }}'
     dest: '{{ app_vim_config }}'

@@ -15,6 +15,7 @@
 - include: install-tomcat.yml
 - include: setup-liferay.yml
 - include: install-libreoffice.yml
+- include: install-shariff.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
