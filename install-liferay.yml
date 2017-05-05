@@ -8,6 +8,11 @@
 #* details.
 #*  No arguments are mandatory.
 
+- hosts: app.liferay
+  become: True
+  roles:
+    - { role: zwischenloesung.yapkg, yapkg_group_name: 'preview generation', yapkg_names: [ 'imagemagick', 'ghostscript' ] }
+
 - hosts: app.liferay.v7
   become: True
 
