@@ -1,0 +1,22 @@
+#*  This playbook wrapps the apt (and others maybe in the future..) module
+#* to install software considered basic here - i.e. to be installed on every
+#* host (non minimal/embedded..). It is the first one in the row and thus
+#* has no dependencies.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- hosts: app.basics
+  become: true
+  roles:
+    - install-sshd
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+

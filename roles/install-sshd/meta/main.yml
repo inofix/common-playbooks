@@ -1,0 +1,3 @@
+allow_duplicates: yes
+dependencies:
+  - { role: zwischenloesung.yapkg, yapkg_group_name: 'ssh server', yapkg_names: [ 'openssh-server' ] }
