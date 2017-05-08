@@ -4,6 +4,7 @@
 #* details.
 #*  No arguments are mandatory.
 
+- include: install-ssh.yml
 - include: install-basic.yml
 - include: install-archive.yml
 - include: install-backup.yml
