@@ -11,14 +11,7 @@
   become: True
 
   roles:
-    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ]}
-
-- hosts: app.java.jdk.8,&os.debian_jessie
-  become: True
-
-  roles:
-    - { role: add-backports }
-    - { role: zwischenloesung.yapkg, yapkg_group_name: 'java 8 from backports', yapkg_deb_names: [ 'openjdk-8-jdk' ], yapkg_update_cache: true, yapkg_default_release: 'jessie-backports' }
+    - { role: install-java }
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
