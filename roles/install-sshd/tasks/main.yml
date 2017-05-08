@@ -1,0 +1,8 @@
+---
+# Assumtion: Use a separate AllowUsers line for every case
+- name: Define AllowUsers to let our admins in (and them only)
+  lineinfile:
+    insertafter: '^AllowUsers (.*)$'
+    line: 'AllowUsers {% for u in admins %}{{ u }} {% endfor %}'
+    dest: '{{ app__sshd__config | d(sshd_config) }}' 
+    state: present
