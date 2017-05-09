@@ -1,0 +1,5 @@
+---
+dependencies:
+  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ] }
+  - { role: add-backports, when: ( 'app.java.jdk.8' in group_names and 'os.debian_jessie' in group_names ) }
+  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java 8 from backports', yapkg_deb_names: [ 'openjdk-8-jdk' ], yapkg_update_cache: true, yapkg_default_release: 'jessie-backports', when: ( 'app.java.jdk.8' in group_names and 'os.debian_jessie' in group_names ) }

@@ -1,0 +1,6 @@
+---
+- name: Makeing java 8 the default vm on jessie
+  alternatives:
+    name: java
+    path: '/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java'
+  when: ( 'app.java.jdk.8' in group_names and 'os.debian_jessie' in group_names )

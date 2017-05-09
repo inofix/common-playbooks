@@ -103,6 +103,16 @@
     line: 'JAVA_OPTS="${JAVA_OPTS} -Dexternal-properties=portal-developer.properties"'
   when: role != 'development'
 
+- name: use the non-default java version 8 for jessie in tomcat startup config
+  lineinfile:
+    dest: '{{ app__tomcat__startup }}'
+    insertafter: '^#JAVA_HOME='
+    line: 'JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/'
+  when:
+    - os__distro == "debian"
+    - os__codename == "jessie"
+    - app__java__version == "8"
+
 - name: start tomcat
   service:
     name: '{{ app__tomcat__name }}'
