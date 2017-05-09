@@ -1,11 +1,26 @@
 ---
+- name: Gather the passwords file from the host itself.
+  shell: 'cat {{ a_store }}'
+  register: accountsfile
+
+- name: Parse the file for passwords.
+  set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
+
 - name: add an entry containing credentials for a certain service
   blockinfile:
-    marker: '# {mark} ANSIBLE MANAGED BLOCK: {{ credentials_name | d(default__credentials_name) }}'
+    marker: '# {mark} ANSIBLE MANAGED BLOCK: {{ c_name }}'
     backup: true
-    dest: '{{ account_store | d(default__account_store) }}'
+    dest: '{{ a_store }}'
     block: |
-      {{ credentials_name | d(default__credentials_name) }}:
-        file: "{{ target_file | d(default__target_file) }}"
-        key: "{{ credentials_key | d(default__credentials_key) }}"
+      {{ c_name }}:
+        file: "{{ t_file }}"
+        key: "{{ c_key }}"
         value: "{{ password }}"
+  when: accountinfos[c_name] is not defined
+
+- name: clean up the temporary local password file
+  become: false
+  connection: local
+  file:
+    state: absent
+    path: '{{ ptf }}'
