@@ -9,7 +9,12 @@
 #*  No arguments are mandatory.
 
 - include: install-liferay.yml
-- include: enable-liferay.yml
+
+- hosts: app.tomcat,&app.liferay
+  become: True
+
+  roles:
+    - enable-liferay-tomcat
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
