@@ -1,0 +1,2 @@
+password: "{{ lookup('password', password_string | d(default__password_string)) }}"
+

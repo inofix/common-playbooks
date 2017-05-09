@@ -1,0 +1,10 @@
+---
+- name: add an entry containing credentials for a certain service
+  blockinfile:
+    backup: true
+    dest: '{{ account_store | d(default__account_store) }}'
+    block: |
+      name: '{{ credentials_name | d(default__credentials_name) }}'
+        file: '{{ target_file | d(default__target_file) }}'
+        key: '{{ credentials_key | d(default__credentials_key) }}'
+        value: '{{ password }}'

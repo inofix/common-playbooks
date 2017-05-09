@@ -1,0 +1,10 @@
+default__account_store: '/var/lib/maestro/credentials.yml'
+
+default__credentials_key: 'example'
+default__credentials_name: 'example'
+default__target_file: '/etc/example'
+
+default__password_string: "{{ 'credentials/' + ansible_fqdn +
+                                '/default/example/password length=64 ' +
+                                'chars=ascii,digits,.-_~!$&()*+;=' }}"
+
