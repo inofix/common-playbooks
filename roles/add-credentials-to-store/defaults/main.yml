@@ -4,7 +4,8 @@ default__credentials_key: 'example'
 default__credentials_name: 'example'
 default__target_file: '/etc/example'
 
-default__password_string: "{{ 'credentials/' + ansible_fqdn +
-                                '/default/example/password length=64 ' +
-                                'chars=ascii,digits,.-_~!$&()*+;=' }}"
+# TODO: /dev/null not working as expected for one time passwords..
+default__password_tmp_file: "{{ '/tmp/credentials/' + ansible_fqdn + '/default/example/password' }}"
+default__password_length: "64"
+default__password_chars: "ascii,digits,.-_~!$&()*+;="
 

@@ -1,2 +1,8 @@
-password: "{{ lookup('password', password_string | d(default__password_string)) }}"
+
+ptf: "{{ password_tmp_file | d(default__password_tmp_file) }}"
+pl: "length={{ password_length | d(default__password_length) }}"
+pc: "chars={{ password_chars | d(default__password_chars) }}"
+
+password_string: "{{ ptf + ' ' + pl + ' ' + pc }}"
+password: "{{ lookup('password', password_string) }}"
 
