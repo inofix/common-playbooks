@@ -4,6 +4,9 @@ default__postgresql__group: 'postgres'
 default__liferay__db_name: 'liferay'
 default__liferay__db_user: 'liferay'
 
+default__liferay_db_credentails_name: 'liferay_db'
+default__liferay_db_credentials_key: 'jdbc.default.password'
+
 # TODO: /dev/null does not work..
 default__password_tmp_file: "{{ '/tmp/credentials/' + ansible_fqdn + '/postgresql/liferay/password' }}"
 default__password_length: "32"
