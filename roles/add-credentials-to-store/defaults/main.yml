@@ -1,7 +1,7 @@
 default__account_store: '/var/lib/maestro/credentials.yml'
 
 default__credentials_key: 'example'
-default__credentials_name: 'example'
+default__credentials_name: 'test'
 default__target_file: '/etc/example'
 
 # TODO: /dev/null not working as expected for one time passwords..
