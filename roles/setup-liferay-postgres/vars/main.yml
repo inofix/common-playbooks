@@ -1,0 +1,3 @@
+---
+liferay_db_credentails_key: '{{ app__liferay__db_credentials_key | d(default__liferay_db_credentails_key) }}'
+liferay_db_credentails_name: '{{ app__liferay__db_credentials_name | d(default__liferay_db_credentails_name) }}'

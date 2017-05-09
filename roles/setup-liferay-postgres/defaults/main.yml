@@ -4,6 +4,6 @@ default__postgresql__group: 'postgres'
 default__liferay__db_name: 'liferay'
 default__liferay__db_user: 'liferay'
 
-default__liferay_db_credentails_name: 'liferay_db'
 default__liferay_db_credentials_key: 'jdbc.default.password'
+default__liferay_db_credentails_name: 'liferay_db'
 
