@@ -10,10 +10,15 @@
 
 - include: install-liferay.yml
 
-- hosts: app.tomcat,&app.liferay
+- hosts: app.liferay,&app.tomcat
   become: True
   roles:
     - { role: setup-liferay-tomcat, when: ( app__liferay__container == "tomcat" ) }
+
+- hosts: app.liferay,&app.postgresql
+  become: True
+  roles:
+    - { role: setup-liferay-postgres, when: ( app__liferay__dbs == "postgresql" ) }
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
