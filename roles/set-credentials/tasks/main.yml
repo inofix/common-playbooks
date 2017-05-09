@@ -12,3 +12,4 @@
     line: "{{ format[file_type].line }}"
     regexp: "{{ format[file_type].regexp }}"
   with_items: "{{ file_list }}"
+
