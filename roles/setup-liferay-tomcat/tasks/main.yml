@@ -107,7 +107,7 @@
   lineinfile:
     dest: '{{ app__tomcat__startup }}'
     insertafter: '^#JAVA_HOME='
-    line: 'JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/'
+    line: 'JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64'
   when:
     - os__distro == "debian"
     - os__codename == "jessie"
