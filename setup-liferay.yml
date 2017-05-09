@@ -14,7 +14,7 @@
   become: True
 
   roles:
-    - enable-liferay-tomcat
+    - setup-liferay-tomcat
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
