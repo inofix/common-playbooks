@@ -8,7 +8,9 @@
 #*  No arguments are needed.
 
 - hosts: role.webserver
-
   roles:
     - persist-web-vhosts
 
+- hosts: role.webserver,&app.apache
+  roles:
+    - persist-apache-config
