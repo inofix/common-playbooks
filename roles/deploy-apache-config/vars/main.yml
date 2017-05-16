@@ -1,0 +1,6 @@
+multicopyname: 'apache configuration'
+src_files: '{{ app__apache__config_files }}'
+backup: yes
+owner: '{{ service__websites_owner }}'
+group: '{{ service__websites_group }}'
+mode: '{{ service__websites_mode }}'
