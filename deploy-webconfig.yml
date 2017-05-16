@@ -10,3 +10,8 @@
   become: True
   roles:
     - deploy-web-vhosts
+
+- hosts: role.webserver,&app.apache
+  become: True
+  roles:
+    - deploy-apache-config
