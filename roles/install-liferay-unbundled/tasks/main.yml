@@ -34,6 +34,11 @@
     group: "{{ app__liferay__group }}"
     recurse: yes
 
+- name: check for installation
+  stat:
+    path: "{{ remotedirs.service }}/{{ app__liferay__name }}/portal-ext.properties"
+  register: liferay_properties
+
 - name: create the containers home
   file:
     dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}"
@@ -124,13 +129,18 @@
     mode: 0600
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: BASICS"
     block: |
         admin.email.from.address={{ app__liferay__admin_email }}
         admin.email.from.name={{ app__liferay__admin_name }}
         liferay.home={{ app__liferay__home }}
         setup.wizard.add.sample.data={{ app__liferay__add_test_data }}
         setup.wizard.enabled={{ app__liferay__enable_setup_wizard }}
-  when: liferay_dir.stat.isdir is not defined
+  when: liferay_properties.stat.isfile is not defined
 
-#- name: install liferay
+- name: add a note about the docu for properties
+  lineinfile:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
+    line: "# See https://docs.liferay.com/portal/{{ app__liferay__version_major }}/propertiesdoc/portal.properties.html #"
+    insertbefore: BOF
 
