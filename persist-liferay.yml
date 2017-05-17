@@ -8,7 +8,7 @@
 #*  No arguments are needed.
 
 - hosts: app.liferay
-
+  become: True
   roles:
     - persist-liferay-props
 
