@@ -99,6 +99,13 @@
   delegate_to: "{{ inventory_hostname }}"
   when: liferay_dir.stat.isdir is not defined
 
+- name: copy over the tools directory
+  synchronize:
+    src:  "{{ remotedirs.service }}/{{ app__liferay__unbundled_name }}/tools"
+    dest:  "{{ remotedirs.service }}/{{ app__liferay__name }}/"
+  delegate_to: "{{ inventory_hostname }}"
+  when: liferay_dir.stat.isdir is not defined
+
 - name: create the data directory
   file:
     dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/data"
