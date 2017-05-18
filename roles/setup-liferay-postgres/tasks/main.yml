@@ -44,3 +44,17 @@
       jdbc.default.username={{ app__liferay__db_name }}
       jdbc.default.password={{ accountinfos[liferay_db_credentails_name]["value"] }}
 
+- name: prepare an upgrade config, just in case
+  blockinfile:
+    create: yes
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}//tools/portal-tools-db-upgrade-client/portal-upgrade-database.properties"
+    mode: 0600
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: DB"
+    block: |
+      jdbc.default.driverClassName=org.postgresql.Driver
+      jdbc.default.url=jdbc:postgresql://localhost:5432/liferay
+      jdbc.default.username={{ app__liferay__db_name }}
+      jdbc.default.password={{ accountinfos[liferay_db_credentails_name]["value"] }}
+
