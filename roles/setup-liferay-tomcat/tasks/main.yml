@@ -119,3 +119,17 @@
     state: started
   when: liferay_link.stat.islnk is not defined or liferay_link.stat.lnk_source != '{{ remotedirs.service }}/{{ app__liferay__name }}'
 
+- name: prepare an upgrade config, just in case
+  blockinfile:
+    create: yes
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}//tools/portal-tools-db-upgrade-client/app-server.properties"
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: Container"
+    block: |
+      dir={{ remotedirs.service }}/{{ app__liferay__pkg }}/container
+      global.lib.dir=lib
+      portal.dir=webapps/ROOT
+      server.detector.server.id=tomcat
+      extra.lib.dirs=bin
+
