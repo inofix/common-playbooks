@@ -44,6 +44,37 @@
     dest: '/var/lib/{{ app__tomcat__name }}/webapps'
     src: '{{ app__liferay__webapps }}'
 
+- name: create bin/ and lib/ directories for the new tomcat
+  file:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__name }}/{{ app__liferay__containername }}/{{ item }}"
+    state: directory
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+    recurse: yes
+  with_items:
+    - "bin"
+    - "lib"
+
+- name: link the contents of bin/ from the tomcat installation to the new tomcat directory
+  file:
+    state: link
+    src: "{{ item }}"
+    dest: "{{ app__tomcat__installation }}/bin/"
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+  with_fileglob:
+    - "{{ app__tomcat__installation }}/bin/*"
+
+- name: link the contents of lib/ from the tomcat installation to the new tomcat directory
+  file:
+    state: link
+    src: "{{ item }}"
+    dest: "{{ app__tomcat__installation }}/lib/"
+    owner: "{{ app__liferay__user }}"
+    group: "{{ app__liferay__group }}"
+  with_fileglob:
+    - "{{ app__tomcat__installation }}/lib/*"
+
 - name: link liferay portal properties to system lib
   file:
     state: link
