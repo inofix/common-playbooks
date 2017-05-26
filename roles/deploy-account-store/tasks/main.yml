@@ -11,7 +11,7 @@
   local_action: stat path='{{ workdir }}/{{ fqdn }}/{{ account_store }}'
   register: account_store_local_stat
 
-- name: install the account store missing on the target
+- name: install the account store if it is missing on the target
   copy:
     src: '{{ workdir }}/{{ fqdn }}/{{ account_store }}'
     dest: '{{ account_store }}'
@@ -23,12 +23,12 @@
     - account_store_local_stat.stat.isreg is defined
     - account_store_local_stat.stat.isreg
 
-- name: test if the store is already at its destination
+- name: test if the store is already (respectively now) at its destination
   stat:
     path: '{{ account_store }}'
   register: account_store_remote_stat
 
-- name: install the example credentials store instead
+- name: install the example credentials store from the template instead
   template:
     src: accounts.yml
     dest: '{{ account_store }}'
