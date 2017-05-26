@@ -1,4 +1,4 @@
 ---
 dependencies:
   - { role: zwischenloesung.yapkg, yapkg_group_name: 'mail server - exim4', yapkg_deb_names: [ 'exim4' ] }
-#  - { role: add-credentials-to-store, target_file: '{{ app__liferay__config }}', credentials_key: '{{ liferay_db_credentails_key }}', credentials_name: '{{ liferay_db_credentails_name }}', password_length: 0 }
+  - { role: add-credentials-to-store, target_file: '{{ app__exim4__client_credentials_file }}', credentials_key: 'unused', credentials_name: '{{ app__exim4__name }}', password_length: 0 }

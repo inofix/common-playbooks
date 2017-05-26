@@ -1,0 +1,18 @@
+
+
+app__exim4__name: 'exim4'
+
+app__exim4__client_credentials_file: '/etc/exim4/passwd.client'
+
+app__exim4__client_user: ''
+
+app__exim4__client_password: ''
+
+app__exim4__server_mode: 'local'
+
+app__exim4__mail_name: '{{ ansible_fqdn }}'
+
+app__exim4__smart_host: ''
+
+app__exim4__hide_mail_name: ''
+
