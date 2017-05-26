@@ -1,4 +1,4 @@
 ---
 dependencies:
   - { role: zwischenloesung.yapkg, yapkg_group_name: 'mail server - exim4', yapkg_deb_names: [ 'exim4' ] }
-  - { role: add-credentials-to-store, target_file: '{{ app__exim4__client_credentials_file }}', credentials_key: 'unused', credentials_name: '{{ app__exim4__name }}', password_length: 0 }
+  - { role: add-credentials-to-store, target_file: '{{ app__exim4__client_credentials_file }}', credentials_key: 'unused', credentials_name: '{{ app__exim4__name }}', password_length: 0, when: app__exim4__server_mode == 'satellite' }
