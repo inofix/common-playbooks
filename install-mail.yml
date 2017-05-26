@@ -12,7 +12,7 @@
   roles:
     - install-ssmtp
 
-- hosts: app.exim
+- hosts: app.exim4
   become: True
   roles:
     - install-exim4
