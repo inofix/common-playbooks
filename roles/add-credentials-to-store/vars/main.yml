@@ -1,6 +1,7 @@
 a_store: '{{ account_store | d(default__account_store) }}'
 c_name: '{{ credentials_name | d(default__credentials_name) }}'
 c_key: "{{ credentials_key | d(default__credentials_key) }}"
+c_user: '{{ credentials_user | d(default__credentials_user) }}'
 t_file: "{{ target_file | d(default__target_file) }}"
 
 ptf: "{{ password_tmp_file | d(default__password_tmp_file) }}"
