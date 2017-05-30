@@ -4,6 +4,8 @@ default__exim4__name: 'exim4'
 
 default__exim4__client_credentials_file: '/etc/exim4/passwd.client'
 
+default__exim4__update_config_file: '/etc/exim4/update-exim4.conf.conf'
+
 default__exim4__client_user: ''
 
 default__exim4__client_password: ''
