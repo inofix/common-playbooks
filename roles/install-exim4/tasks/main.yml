@@ -1,0 +1,5 @@
+---
+
+- include: satellite.yml
+  when: exim4__server_mode == "satellite"
+

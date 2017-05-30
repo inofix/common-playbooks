@@ -1,0 +1,23 @@
+---
+
+- name: Gather the passwords file from the host itself.
+  shell: 'cat {{ account_store }}'
+  register: accountsfile
+
+- name: Parse the file for passwords.
+  set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
+
+- name: Set the credentials
+  lineinfile:
+    dest: '{{ exim4__client_credentials_file }}'
+    line: '{{ exim4__smart_host }}:{{ exim4__client_user }}:{{ accountinfos[exim4__name]["value"] }}'
+
+- name: Configure the client to connect to the smarthost
+  template:
+    src: 'update-exim4.conf.conf.yml'
+    dest: '{{ exim4__update_config_file }}'
+    mode: '0644'
+    owner: 'root'
+    group: 'root'
+
+
