@@ -1,0 +1,21 @@
+
+exim4__name: '{{ app__exim4__name | d(default__exim4__name) }}'
+
+exim4__client_credentials_file: '{{ app__exim4__client_credentials_file | d(default__exim4__client_credentials_file) }}'
+
+exim4__client_user: '{{ app__exim4__client_user | d(default__exim4__client_user) }}'
+
+exim4__client_password: '{{ app__exim4__client_password | d(default__exim4__client_password) }}'
+
+exim4__update_config_file: '{{ app__exim4__update_config_file | d(default__exim4__update_config_file) }}'
+
+exim4__server_mode: '{{ app__exim4__server_mode | d(default__exim4__server_mode) }}'
+
+exim4__mail_name: '{{ app__exim4__mail_name | d(ansible_fqdn) }}'
+
+exim4__sender_domain: '{{ app__exim4__sender_domain | d() }}'
+
+exim4__smart_host: '{{ app__exim4__smart_host | d(default__exim4__smart_host) }}'
+
+exim4__hide_mail_name: '{{ app__exim4__hide_mail_name | d(default__exim4__hide_mail_name) }}'
+
