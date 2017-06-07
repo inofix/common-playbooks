@@ -4,5 +4,16 @@
   lineinfile:
     insertafter: '^AllowUsers (.*)$'
     line: 'AllowUsers {% for u in admins %}{{ u }} {% endfor %}'
-    dest: '{{ app__sshd__config | d(sshd_config) }}' 
+    dest: '{{ app__sshd__config | d(sshd_config) }}'
     state: present
+  when: admins is iterable
+
+# Assumtion: If real users are present, there is no need to login as root
+- name: Disable root login altogether
+  lineinfile:
+    regexp: '^PermitRootLogin .*$'
+    line: 'PermitRootLogin no'
+    dest: '{{ app__sshd__config | d(sshd_config) }}'
+    state: present
+  when: admins is iterable
+
