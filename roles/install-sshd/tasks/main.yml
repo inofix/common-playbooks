@@ -11,7 +11,7 @@
 # Assumtion: If real users are present, there is no need to login as root
 - name: Disable root login altogether
   lineinfile:
-    regexp: 'PermitRootLogin yes'
+    regexp: '^PermitRootLogin .*$'
     line: 'PermitRootLogin no'
     dest: '{{ app__sshd__config | d(sshd_config) }}'
     state: present
