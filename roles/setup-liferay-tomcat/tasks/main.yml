@@ -169,4 +169,6 @@
       portal.dir=webapps/ROOT
       server.detector.server.id=tomcat
       extra.lib.dirs=bin
+  when:
+    - app__liferay__version_major >= '7.0'
 
