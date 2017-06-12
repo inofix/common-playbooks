@@ -15,7 +15,6 @@
 - name: unpack liferay
   unarchive:
     remote_src: yes
-    copy: no
     creates: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
     dest: "{{ remotedirs.service }}/"
     src: "{{ remotedirs.service }}/{{ app__liferay__pkg_archive }}"

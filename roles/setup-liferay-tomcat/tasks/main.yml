@@ -55,25 +55,31 @@
     - "bin"
     - "lib"
 
+- name: register the content of the tomcat installations bin/ directory
+  command: 'ls {{ app__tomcat__installation }}/bin/'
+  register: tomcat_bins
+
+- name: register the content of the tomcat installations bin/ directory
+  command: 'ls {{ app__tomcat__installation }}/lib/'
+  register: tomcat_libs
+
 - name: link the contents of bin/ from the tomcat installation to the new tomcat directory
   file:
     state: link
-    src: "{{ item }}"
-    dest: "{{ app__tomcat__installation }}/bin/"
+    src: "{{ app__tomcat__installation }}/bin/{{ item }}"
+    dest: "{{ app__liferay__container_dir }}/bin/{{ item }}"
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
-  with_fileglob:
-    - "{{ app__tomcat__installation }}/bin/*"
+  with_items: "{{ tomcat_bins.stdout_lines }}"
 
 - name: link the contents of lib/ from the tomcat installation to the new tomcat directory
   file:
     state: link
-    src: "{{ item }}"
-    dest: "{{ app__tomcat__installation }}/lib/"
+    src: "{{ app__tomcat__installation }}/lib/{{ item }}"
+    dest: "{{ app__liferay__container_dir }}/lib/{{ item }}"
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
-  with_fileglob:
-    - "{{ app__tomcat__installation }}/lib/*"
+  with_items: "{{ tomcat_libs.stdout_lines }}"
 
 - name: link liferay portal properties to system lib
   file:
