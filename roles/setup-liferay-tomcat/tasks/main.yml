@@ -111,14 +111,20 @@
     regexp: '^shared\.loader=.*'
     replace: 'shared.loader='
 
-- name: edit the configuration descriptor ROOT.xml
-  blockinfile:
-    create: True
+- name: create the configuration descriptor ROOT.xml
+  template:
     dest: '{{ app__tomcat__workroot }}'
-    marker: '<!-- {mark} ANSIBLE MANAGED BLOCK -->'
-    block: |
-      <Context path="" crossContext="true">
-      </Context>
+    src: 'ROOT.xml'
+    group: "{{ app__liferay__group }}"
+    owner: "{{ app__liferay__user }}"
+    mode: "0644"
+#  blockinfile:
+#    create: True
+#    dest: '{{ app__tomcat__workroot }}'
+#    marker: '<!-- {mark} ANSIBLE MANAGED BLOCK -->'
+#    block: |
+#      <Context path="" crossContext="true">
+#      </Context>
 
 - name: edit tomcat startup file for (probably) more RAM etc.
   lineinfile:
