@@ -1,5 +1,6 @@
 default__postgresql__user: 'postgres'
 default__postgresql__group: 'postgres'
+default__postgresql__edit_db: true
 
 default__liferay__db_name: 'liferay'
 default__liferay__db_user: 'liferay'
