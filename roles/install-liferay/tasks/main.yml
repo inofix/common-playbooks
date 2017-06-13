@@ -36,6 +36,17 @@
     regexp: "liferay.home=%LIFERAY_HOME%"
     replace: "liferay.home={{ app__liferay__home }}"
 
+- name: disable the setup whizzard
+  blockinfile:
+    dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
+    insertafter: "liferay.home={{ app__liferay__home }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: WHIZZARD"
+    block: |
+      setup.wizard.add.sample.data=false
+      setup.wizard.enabled=false
+  when:
+    - app__liferay__setup_whizzard == false
+
 - name: add a note about the docu for properties
   lineinfile:
     dest: "{{ remotedirs.service }}/{{ app__liferay__pkg }}/portal-ext.properties"
