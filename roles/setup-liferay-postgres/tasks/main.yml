@@ -22,6 +22,8 @@
   postgresql_user:
     name: '{{ app__liferay__db_user }}'
     password: '{{ accountinfos[liferay_db_credentails_name]["value"] }}'
+  when:
+    - postgresql__edit_db
 
 - name: create a db for liferay
   postgresql_db:
@@ -29,6 +31,8 @@
     owner: '{{ app__liferay__db_user }}'
     encoding: UTF-8
     template: template0
+  when:
+    - postgresql__edit_db
 
 - name: connect liferay to the newly created db
   blockinfile:
@@ -57,4 +61,6 @@
       jdbc.default.url=jdbc:postgresql://localhost:5432/liferay
       jdbc.default.username={{ app__liferay__db_name }}
       jdbc.default.password={{ accountinfos[liferay_db_credentails_name]["value"] }}
+  when:
+    - app__liferay__version_major >= '7.0'
 
