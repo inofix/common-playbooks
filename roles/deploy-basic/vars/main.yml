@@ -1,0 +1,7 @@
+backup: yes
+owner: 'root'
+group: 'root'
+# the main config gets passed on to copy
+src_files: '{{ os__base_config_files }}'
+mode: '0644'
+
