@@ -17,3 +17,9 @@
     state: present
   when: admins is iterable
 
+- name: Set the port
+  lineinfile:
+    regexp: '^Port .*$'
+    line: 'Port {{ app__sshd__port }}'
+    dest: '{{ app__sshd__config | d(sshd_config) }}'
+    state: present
