@@ -1,5 +1,5 @@
 ---
-# Assumtion: Use a separate AllowUsers line for every case
+# Assumption: Use a separate AllowUsers line for every case
 - name: Define AllowUsers to let our admins in (and them only)
   lineinfile:
     insertafter: '^AllowUsers (.*)$'
@@ -8,7 +8,7 @@
     state: present
   when: admins is iterable
 
-# Assumtion: If real users are present, there is no need to login as root
+# Assumption: If real users are present, there is no need to login as root
 - name: Disable root login altogether
   lineinfile:
     regexp: '^PermitRootLogin .*$'
