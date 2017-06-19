@@ -9,4 +9,4 @@
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
   with_items: "{{ app__liferay__plugin }}"
-
+  when: app__liferay__plugin is defined and app__liferay__plugin is iterable
