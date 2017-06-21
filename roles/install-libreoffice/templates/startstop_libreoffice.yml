@@ -7,8 +7,8 @@
 #
 ### BEGIN INIT INFO
 # Provides:          libreoffice
-# Required-Start:    $local_fs $remote_fs tomcat7
-# Required-Stop:     $local_fs $remote_fs tomcat7
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
 # Should-Start:      $named
 # Should-Stop:       $named
 # Default-Start:     2 3 4 5
@@ -22,17 +22,15 @@ set -e
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 NAME=libreoffice
 DESC="LibreOffice server mode"
-TC_USER={{ user }}
-TC_GROUP={{ group }}
-# for the moment liferay is too stupid for letting ooffice run as a separate user due to shared directories and the like..
-LO_USER=$TC_USER
-LO_GROUP=$TC_GROUP
+LO_USER={{ user }}
+LO_GROUP={{ group }}
 LO_COMMAND="{{ lo_command }}"
-## why not? --env:UserInstallation=file:///var/lib/libreoffice-home/
-LO_OPTIONS="{{ lo_options }}"
+{% if users_shared_home != users_home %}
+LO_OPTIONS="--headless --env:'HOME={{ users_shared_home }}' --accept='socket,host={{ lo_host }},port={{ lo_port }};urp' --norestore --nologo --nodefault"
+{% else %}
+LO_OPTIONS="--headless --accept='socket,host={{ lo_host }},port={{ lo_port }};urp' --norestore --nologo --nodefault"
+{% endif %}
 PIDFILE="{{ lo_pid }}"
-TC_TEMPDIR="{{ lo_tmp }}"
-COMMON_TEMPDIR="{{ lo_lr_tmp }}"
 
 if [ `id -u` -ne 0 ]; then
     echo "You need root privileges to run this script"
@@ -44,22 +42,6 @@ fi
 if [ -r /etc/default/rcS ]; then
     . /etc/default/rcS
 fi
-
-# TODO check which way to go, is shared still not possible? is setting TMPDIR always save?
-{% if use_unshared_home %}
-  export TMPDIR="{{ lo_tmp }}"
-{% endif %}
-
-# allow members of the group to access our files..
-#umask 002
-# and make sure we can write this directory too
-#if [ -d "$TC_TEMPDIR" ] ; then
-#    mkdir -p $COMMON_TEMPDIR
-#    chown "$LO_USER:$LO_GROUP" -R $COMMON_TEMPDIR
-#    find $COMMON_TEMPDIR -type d -exec chmod 775 \{\} \;
-#else
-#    echo "Temp dir does not exist: $TC_TEMPDIR - control tomcat start script."
-#fi
 
 case "$1" in
     start)
