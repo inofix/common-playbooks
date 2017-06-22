@@ -12,10 +12,10 @@
   roles:
     - install-libreoffice
 
-- hosts: app.libreoffice, app.liferay
+- hosts: app.libreoffice.4, app.liferay
   become: True
   roles:
-    - { role: install-libreoffice, app__libreoffice__user: '{{ app__tomcat__user }}', app__libreoffice__group: '{{ app__tomcat__group }}', app__libreoffice__users_home: '{{ app__tomcat__users_home }}', use_unshared_home: true }
+    - { role: install-libreoffice, use_unshared_home: true }
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
