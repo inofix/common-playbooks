@@ -8,6 +8,8 @@
 #* details.
 #*  No arguments are mandatory.
 
+- include: install-tomcat.yml
+
 - hosts: app.liferay
   become: True
   roles:
