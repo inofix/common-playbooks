@@ -1,0 +1,12 @@
+#*  This playbook enables basic firewalling and routing and has no dependen-
+#* cies. It merely consists of a init script and a iptables dump file to be
+#* reloaded on startup.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- hosts: app.thewall
+  become: true
+  roles:
+    - install-thewall
+
