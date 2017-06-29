@@ -9,8 +9,8 @@
 
 - name: 'Overwrite the default if the workdir knows better'
   copy:
-    src: '{{ workdir }}/{{ fqdn }}/{{ app_vim_config }}'
-    dest: '{{ app_vim_config }}'
+    src: '{{ workdir }}/{{ fqdn }}/{{ app__vim__config }}'
+    dest: '{{ app__vim__config }}'
     owner: 'root'
     group: 'root'
     mode: 0644
