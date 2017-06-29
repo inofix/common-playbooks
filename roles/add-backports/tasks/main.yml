@@ -3,6 +3,13 @@
 
 - name: add the backports for jessie
   apt_repository:
+    repo: deb http://ftp.debian.org/debian stretch-backports main
+    state: present
+  when: ansible_os_family == "Debian" and ansible_distribution_release == "stretch"
+  register: stretch_backports_added
+
+- name: add the backports for jessie
+  apt_repository:
     repo: deb http://ftp.debian.org/debian jessie-backports main
     state: present
   when: ansible_os_family == "Debian" and ansible_distribution_release == "jessie"
