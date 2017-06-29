@@ -1,7 +1,21 @@
 
 # add it in a controlled way..
 
-- name: add the backports for jessie
+- name: add the backports for bullseye
+  apt_repository:
+    repo: deb http://ftp.debian.org/debian bullseye-backports main
+    state: present
+  when: ansible_os_family == "Debian" and ansible_distribution_release == "bullseye"
+  register: bullseye_backports_added
+
+- name: add the backports for buster
+  apt_repository:
+    repo: deb http://ftp.debian.org/debian buster-backports main
+    state: present
+  when: ansible_os_family == "Debian" and ansible_distribution_release == "buster"
+  register: buster_backports_added
+
+- name: add the backports for stretch
   apt_repository:
     repo: deb http://ftp.debian.org/debian stretch-backports main
     state: present
@@ -25,5 +39,5 @@
 - name: update the repository index
   apt:
     update_cache: yes
-  when: jessie_backports_added.changed or wheezy_backports_added.changed
+  when: bullseye_backports_added or buster_backports_added or stretch_backports_added or jessie_backports_added.changed or wheezy_backports_added.changed
 
