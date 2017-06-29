@@ -1,0 +1,11 @@
+---
+
+- name: install a very simplistic init script
+  template:
+    src: 'thewall.j2'
+    dest: '/etc/init.d/thewall'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
+# for now the rules are installed from the repo

@@ -1,0 +1,5 @@
+default__confdir: '/etc/inofixconf'
+default__rules: 
+  v4: '${app__inofixwall__confdir}/firewall-v4.rules'
+default__applytimeout: 44
+
