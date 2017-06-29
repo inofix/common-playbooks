@@ -1,0 +1,3 @@
+confdir: '{{ app__thewall__confdir | d(default__confdir) }}'
+rules: '{{ app__thewall__rules | d(default__rules) }}'
+applytimeout: '{{ app__thewall__applytimeout | d(default__applytimeout) }}'

@@ -1,0 +1,162 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          firewall
+# Required-Start:
+# Required-Stop:
+# X-Start-Before:    $network
+# X-Stop-After:      $network
+# Default-Start:     S
+# Default-Stop:      0 6
+# Short-Description: firewall script...
+### END INIT INFO
+### BEGIN DESCRIPTION INFO
+# This very simple IPv4 firewall solution consists of just an iptables dump
+# and this init script to restore it.
+### END DESCRIPTION INFO
+
+conffile="{{ rules.v4 }}"
+tmpfile="/tmp/iptables-save.for.comparison"
+applytimeout={{ applytimeout }}
+
+if [ -n "$2" ] ; then
+    if [ -f "$2" ] ; then
+        echo "using config: $2"
+        conffile="$2"
+    fi
+fi
+
+[ -r "$conffile" ] || exit 1
+
+# Get lsb functions
+. /lib/lsb/init-functions
+. /etc/default/rcS
+
+start()
+{
+    fail="1"
+    log_daemon_msg "starting firewall"
+    # for now, just close v6 altogether
+    lsmod | grep "ip6_tables" >/dev/null || modprobe ip6_tables
+    ip6tables -P INPUT DROP
+    ip6tables -P FORWARD DROP
+    ip6tables -P OUTPUT DROP
+    lsmod | grep "ip_tables" >/dev/null || modprobe ip_tables || fail="0"
+    if [ "$fail" -eq "1" ] ;then
+        iptables-restore $conffile
+        echo "1" > /proc/sys/net/ipv4/ip_forward
+        log_success_msg
+    else
+        log_failure_msg
+        exit 1
+    fi
+}
+stop()
+{
+    log_daemon_msg "stoping firewall"
+    ip6tables -P INPUT ACCEPT
+    ip6tables -P FORWARD ACCEPT
+    ip6tables -P OUTPUT ACCEPT
+    ip6tables -F
+    iptables -t nat -F PREROUTING
+    iptables -t nat -F POSTROUTING
+    iptables -P INPUT ACCEPT
+    iptables -P FORWARD DROP
+    iptables -P OUTPUT ACCEPT
+    iptables -F INPUT
+    iptables -F FORWARD
+    iptables -F OUTPUT
+    log_success_msg
+}
+sesam()
+{
+    log_daemon_msg "everything goes"
+    ip6tables -P INPUT ACCEPT
+    ip6tables -P FORWARD ACCEPT
+    ip6tables -P OUTPUT ACCEPT
+    ip6tables -F
+    iptables -P INPUT ACCEPT
+    iptables -P FORWARD ACCEPT
+    iptables -P OUTPUT ACCEPT
+    iptables -F INPUT
+    iptables -F FORWARD
+    iptables -F OUTPUT
+    log_success_msg
+}
+apply()
+{
+    iptables-apply -t "$applytimeout" $conffile
+}
+restore()
+{
+    iptables-restore $conffile
+}
+save()
+{
+    iptables-save > $conffile
+}
+compare()
+{
+    if [ -e "$tmpfile" ] ; then
+        echo "== please remove $tmpfile first =="
+    else
+        /sbin/iptables-save > $tmpfile
+        echo "== comparing $tmpfile with $conffile =="
+        /usr/bin/diff -dwi -I "^:" -I "^\#" $tmpfile $conffile
+        /bin/rm $tmpfile
+    fi
+}
+usage()
+{
+    echo ""
+    echo "/etc/init.d/inofixwall [ start | stop | restart | force-reload |"
+    echo "                         status | compare | sesam | restore |"
+    echo "                         save | usage | test | apply ]"
+    echo "                      start           start the firewall"
+    echo "                      stop            stop the firewall"
+    echo "                      restart         stop and start the firewall"
+    echo "                      force-reload    same as restart"
+    echo "                      status          show the current iptables (v4)"
+    echo "                      compare         show difference between config"
+    echo "                                      and running iptables"
+    echo "                      sesam           open up everything"
+    echo "                      restore         re-read the firewall rules"
+    echo "                      reload          same as restore"
+    echo "                      save            save the rules to the config"
+    echo "                      apply           test the rules, fall back if"
+    echo "                                      necessary"
+    echo "                      test            same as apply"
+    echo "                      anything els    print this help"
+}
+case $1 in
+    start)
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    restart|force-reload)
+        stop
+        start
+    ;;
+    stat*)
+        iptables-save
+    ;;
+    comp*)
+        compare
+    ;;
+    sesam)
+        sesam
+    ;;
+    restore|reload)
+        restore
+    ;;
+    save)
+        save
+    ;;
+    test|apply)
+        apply
+    ;;
+    *)
+        usage
+    ;;
+esac
