@@ -1,5 +1,13 @@
 ---
 
+- name: make sure the rc default config exists
+  file:
+    state: 'touch'
+    dest: '/etc/default/rcS'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
 - name: install a very simplistic init script
   template:
     src: 'thewall.j2'

@@ -6,6 +6,7 @@
 
 - include: install-ssh.yml
 - include: install-basic.yml
+- include: install-firewalling.yml
 - include: install-archive.yml
 - include: install-backup.yml
 - include: install-terminal-mux.yml
