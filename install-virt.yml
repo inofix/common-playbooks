@@ -21,7 +21,7 @@
   roles:
     - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg_group_name: 'libvirt'
+    - yapkg_group_name: 'libvirt part I'
     - yapkg_names:
       - 'virtinst'
       - 'virt-top'
@@ -31,7 +31,7 @@
   roles:
     - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg_group_name: 'libvirt'
+    - yapkg_group_name: 'libvirt part II'
     - yapkg_names:
       - 'libvirt-bin'
 
@@ -40,10 +40,9 @@
   roles:
     - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg_group_name: 'libvirt'
+    - yapkg_group_name: 'libvirt part II'
     - yapkg_names:
-      - 'libvirt-clients'
-      - 'libvirt-daemon'
+      - 'libvirt-daemon-system'
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
