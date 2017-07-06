@@ -16,7 +16,17 @@
     - yapkg_names:
       - 'netcat-openbsd'
 
-- hosts: host.KVM
+- hosts: host.KVM, &os.debian
+  become: True
+  roles:
+    - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
+  vars:
+    - yapkg_group_name: 'libvirt'
+    - yapkg_names:
+      - 'virtinst'
+      - 'virt-top'
+
+- hosts: host.KVM, &os.debian_jessie
   become: True
   roles:
     - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
@@ -24,8 +34,16 @@
     - yapkg_group_name: 'libvirt'
     - yapkg_names:
       - 'libvirt-bin'
-      - 'virtinst'
-      - 'virt-top'
+
+- hosts: host.KVM, &os.debian_stretch
+  become: True
+  roles:
+    - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
+  vars:
+    - yapkg_group_name: 'libvirt'
+    - yapkg_names:
+      - 'libvirt-clients'
+      - 'libvirt-daemon'
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
