@@ -1,6 +1,7 @@
 ---
 #*  This playbook wrapps the debops.apache Ansible role to install and
-#* manage the Apache httpd Web server.
+#* manage the Apache httpd Web server, debops.nginx is to be added soon,
+#* and others might follow.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  Check the following link for a list of possible configuration variables:
