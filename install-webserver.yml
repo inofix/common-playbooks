@@ -26,6 +26,9 @@
 # TODO: should this be a simple mapping here or a mandatory argument
 #    apache__vhosts: '{{ app__apache__vhosts }}'
     apache__modules: '{{ app__apache__modules }}'
+    apache__tls_cipher_suite_sets: '{{ app__openssl__cipher_suites }}'
+    apache__tls_cipher_suite_set_name: '{{ app__apache__cipher_prefered_suite }}'
+    apache__tls_honor_cipher_order: '{{ app__apache__honor_cipher_order }}'
 
   roles:
     - debops.apache/env
