@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ], when: ( app.java.jdk.default in group_names ) }
+  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ], when: ( 'app.java.jdk.default' in group_names ) }
   - { role: zwischenloesung.yapkg, yapkg_group_name: 'java6', yapkg_deb_names: [ 'openjdk-6-jdk' ], when: ( 'app.java.jdk.6' in group_names ) }
   - { role: zwischenloesung.yapkg, yapkg_group_name: 'java7', yapkg_deb_names: [ 'openjdk-7-jdk' ], when: ( 'app.java.jdk.7' in group_names ) }
   - { role: add-backports, when: ( 'app.java.jdk.8' in group_names and 'os.debian_jessie' in group_names ) }
