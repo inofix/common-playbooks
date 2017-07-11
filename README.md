@@ -9,8 +9,10 @@ Requirements
 ------------
 
 * Ansible >2.2 (for older installations check for branches)
-* Maestro
-* our reclass inventory - a public version will be released, containing the very basics, to help starting new projects
+* Maestro (https://github.com/inofix/maestro)
+* our reclass inventory (https://github.com/inofix/common-inv)
+ * as a basis for starting new projects
+ * you can have any number of parallel inventories (just define in ~/.maestro)
 
 License
 -------
