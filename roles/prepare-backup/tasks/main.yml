@@ -51,10 +51,10 @@
     path: '{{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
   register: backup_user_key_stat
 
-# this did not work: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
+# this did not work: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa'
 - name: Create ssh-keys
   when: backup_user_key_stat.stat.isreg is not defined or not backup_user_key_stat.stat.isreg
-  shell: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
+  shell: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa'
 
 - name: Test if user converted key exists
   stat:
@@ -70,10 +70,10 @@
     path: '/root/.ssh/id_rsa.pub'
   register: backup_root_key_stat
 
-# this did not work: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa.pub'
+# this did not work: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f {{ service__backup__directory }}/{{ service__backup__user }}/.ssh/id_rsa'
 - name: Create user roots ssh-keys too
   when: backup_root_key_stat.stat.isreg is not defined or not backup_root_key_stat.stat.isreg
-  shell: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f /root/.ssh/id_rsa.pub'
+  shell: 'echo -e "n\n" | ssh-keygen -N "" -q -t rsa -f /root/.ssh/id_rsa'
 
 - name: Test if root converted key exists
   stat:
