@@ -1,5 +1,6 @@
 #*  This playbook wrapps the apt (and others maybe in the future..) module
-#* to install software for backup and restore.
+#* to install software for backup and restore. See the setup-backup playbook
+#* for a complete setup.
 #*  Use '-a' to pass parameters to ansible (as '-e').
 #*  No arguments are mandatory.
 

@@ -9,7 +9,9 @@
 - include: install-basic.yml
 - include: install-firewalling.yml
 - include: install-archive.yml
-- include: install-backup.yml
+# TODO: test setup rather than install backup..
+#- include: install-backup.yml
+- include: setup-backup.yml
 - include: install-terminal-mux.yml
 - include: install-monitored.yml
 - include: install-physicals.yml
