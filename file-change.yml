@@ -4,7 +4,7 @@
 #*  As this simplifies both the tools and the file module usage,
 #* some features will possibly be missing.
 #*  The following arguments are mandatory:
-#*   - 'file' (aliases: 'path', 'dest', 'name')
+#*   - 'path' (aliases: 'dest', 'name', 'file')
 #*  The following arguments are optional:
 #*   - [ 'owner' ]
 #*   - [ 'group' ]
@@ -13,7 +13,8 @@
 
 - hosts: all
   vars:
-    file: '{{ path | d(dest) | d(name) }}'
+    path: '{{ file | d(dest) | d(name) }}'
+    state: 'file'
     owner: '{{ user }}'
   roles:
     - file-change

@@ -1,6 +1,6 @@
 
-- name: touch the file or directory
+- name: "touch the file or directory"
   file:
-    path: '{{ file }}'
+    path: '{{ path }}'
     state: 'touch'
 

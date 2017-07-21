@@ -4,13 +4,12 @@
 #*  As this simplifies both the tools and the file module usage,
 #* some features will possibly be missing.
 #*  The following arguments are mandatory:
-#*   - 'file' (aliases: 'path', 'dest', 'name', 'dir')
+#*   - 'path' (aliases: 'dest', 'name', 'file', 'dir')
 #*  The following arguments are optional:
 #*
 
 - hosts: all
   vars:
-    file: '{{ path | d(dest) | d(name) | d(dir) }}'
-    owner: '{{ user }}'
+    path: '{{ file | d(dest) | d(name) | d(dir) }}'
   roles:
     - file-rm

@@ -3,7 +3,7 @@
 #*  As this simplifies both the tool and the file module usage,
 #* some features will possibly be missing.
 #*  The following arguments are mandatory:
-#*   - 'file' (aliases: 'path', 'dest', 'name')
+#*   - 'path' (aliases: 'dest', 'name', 'file')
 #*   - 'src'
 #*  The following arguments are optional:
 #*   - [ 'owner' ]
@@ -13,7 +13,9 @@
 
 - hosts: all
   vars:
-    file: '{{ path | d(dest) | d(name) }}'
+    state: 'hard'
+    path: '{{ file | d(dest) | d(name) }}'
     owner: '{{ user }}'
   roles:
     - file-hardlink
+    - file-change
