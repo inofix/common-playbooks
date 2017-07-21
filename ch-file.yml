@@ -1,0 +1,17 @@
+#*  This playbook simply wrapps the file module. It will pass the
+#* request to the ch-own-mod role. As this simplifies the module
+#* usage, some features will possibly be missing.
+#*  The following arguments are mandatory:
+#*   - 'file' (aliases: 'path', 'dest', 'name')
+#*   - 'state' (see file_module)
+#* For optional arguments, please read the corresponding role and
+#* consult http://docs.ansible.com/ansible/latest/file_module.html
+#*
+
+- hosts: all
+  vars:
+    state: 'file'
+    file: '{{ path | d(dest) | d(name) }}'
+    owner: '{{ user }}'
+  roles:
+    - ch-own-mod

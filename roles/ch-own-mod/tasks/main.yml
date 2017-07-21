@@ -1,0 +1,21 @@
+
+- name: change ownership of the file
+  file:
+    path: '{{ file }}'
+    state: 'file'
+    owner: '{{ owner }}'
+  when: user is defined
+
+- name: change group of the file
+  file:
+    path: '{{ file }}'
+    state: 'file'
+    group: '{{ group }}'
+  when: group is defined
+
+- name: change permissions of the file
+  file:
+    path: '{{ file }}'
+    state: 'file'
+    mode: '{{ mode }}'
+  when: mode is defined
