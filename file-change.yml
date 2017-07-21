@@ -1,4 +1,5 @@
-#*  This playbook simply wrapps the file module. It will set the
+#*  This playbook simply wrapps the file module. It simulates the
+#* famous CLI tools 'chmod'/'chown'/'chgrp', and will set the
 #* user/group and permissions requested on the file or directory.
 #*  As this simplifies the file module usage, some features will
 #* possibly be missing.
