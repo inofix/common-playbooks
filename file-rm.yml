@@ -6,8 +6,7 @@
 #*  The following arguments are mandatory:
 #*   - 'file' (aliases: 'path', 'dest', 'name')
 #*   - 'state' (see file_module)
-#* For optional arguments, please read the corresponding role and
-#* consult http://docs.ansible.com/ansible/latest/file_module.html
+#*  The following arguments are optional:
 #*
 
 - hosts: all
@@ -15,4 +14,4 @@
     file: '{{ path | d(dest) | d(name) }}'
     owner: '{{ user }}'
   roles:
-    - file-touch
+    - file-rm
