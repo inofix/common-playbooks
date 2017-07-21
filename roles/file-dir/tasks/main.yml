@@ -1,0 +1,26 @@
+
+- name: just create the directory
+  file:
+    path: '{{ file }}'
+    state: 'directory'
+
+- name: change ownership of the directory
+  file:
+    path: '{{ file }}'
+    state: 'directory'
+    owner: '{{ owner }}'
+  when: user is defined
+
+- name: change group of the directory
+  file:
+    path: '{{ file }}'
+    state: 'directory'
+    group: '{{ group }}'
+  when: group is defined
+
+- name: change permissions of the directory
+  file:
+    path: '{{ file }}'
+    state: 'directory'
+    mode: '{{ mode }}'
+  when: mode is defined
