@@ -1,0 +1,7 @@
+
+- name: link to a file or directory
+  file:
+    state: 'link'
+    path: '{{ file }}'
+    src: '{{ src }}'
+

@@ -1,0 +1,19 @@
+#*  This playbook simply wrapps the file module. It simulates the
+#* famous CLI tool 'ln'. Create hardlinks to the source specified.
+#*  As this simplifies both the tool and the file module usage,
+#* some features will possibly be missing.
+#*  The following arguments are mandatory:
+#*   - 'file' (aliases: 'path', 'dest', 'name')
+#*   - 'src'
+#*  The following arguments are optional:
+#*   - [ 'owner' ]
+#*   - [ 'group' ]
+#*   - [ 'mode' ]
+#*
+
+- hosts: all
+  vars:
+    file: '{{ path | d(dest) | d(name) }}'
+    owner: '{{ user }}'
+  roles:
+    - file-hardlink
