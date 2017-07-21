@@ -17,5 +17,5 @@
     path: '{{ file | d(dest) | d(name) }}'
     owner: '{{ user }}'
   roles:
-    - file-hardlink
+    - file-link
     - file-change
