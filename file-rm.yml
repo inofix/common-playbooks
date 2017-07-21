@@ -5,7 +5,6 @@
 #* some features will possibly be missing.
 #*  The following arguments are mandatory:
 #*   - 'file' (aliases: 'path', 'dest', 'name', 'dir')
-#*   - 'state' (see file_module)
 #*  The following arguments are optional:
 #*
 
