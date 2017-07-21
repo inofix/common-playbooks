@@ -1,6 +1,7 @@
-#*  This playbook simply wrapps the file module. It will pass the
-#* request to the ch-own-mod role. As this simplifies the module
-#* usage, some features will possibly be missing.
+#*  This playbook simply wrapps the file module. It simulates the
+#* famous CLI tool 'touch'.
+#*  As this simplifies the file module usage, some features will
+#* possibly be missing.
 #*  The following arguments are mandatory:
 #*   - 'file' (aliases: 'path', 'dest', 'name')
 #*   - 'state' (see file_module)
@@ -14,4 +15,4 @@
     file: '{{ path | d(dest) | d(name) }}'
     owner: '{{ user }}'
   roles:
-    - ch-own-mod
+    - file-touch

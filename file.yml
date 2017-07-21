@@ -16,4 +16,4 @@
     owner: '{{ user }}'
   roles:
     - { role: ch-own-mod, when: state == 'file' }
-    - { role: touch, when: state == 'touch' }
+    - { role: file-touch, when: state == 'touch' }
