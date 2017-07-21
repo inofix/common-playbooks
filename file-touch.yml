@@ -11,8 +11,6 @@
 
 - hosts: all
   vars:
-    state: 'file'
     file: '{{ path | d(dest) | d(name) }}'
-    owner: '{{ user }}'
   roles:
     - file-touch
