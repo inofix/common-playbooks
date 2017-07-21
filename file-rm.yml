@@ -1,0 +1,18 @@
+#*  This playbook simply wrapps the file module. It simulates the
+#* famous CLI tools 'rm'/'rmdir'. New files/dirs are created, existing
+#* ones get new access/modification times.
+#*  As this simplifies both the tools and the file module usage,
+#* some features will possibly be missing.
+#*  The following arguments are mandatory:
+#*   - 'file' (aliases: 'path', 'dest', 'name')
+#*   - 'state' (see file_module)
+#* For optional arguments, please read the corresponding role and
+#* consult http://docs.ansible.com/ansible/latest/file_module.html
+#*
+
+- hosts: all
+  vars:
+    file: '{{ path | d(dest) | d(name) }}'
+    owner: '{{ user }}'
+  roles:
+    - file-touch
