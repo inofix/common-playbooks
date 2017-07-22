@@ -1,0 +1,20 @@
+#*  This playbook simply wrapps the file module. It simulates the
+#* famous CLI tools 'chmod'/'chown'/'chgrp', and will set the
+#* user/group and permissions requested on the file or directory.
+#*  As this simplifies both the tools and the file module usage,
+#* some features will possibly be missing.
+#*  The following arguments are mandatory:
+#*   - 'path' (aliases: 'dest', 'name', 'file')
+#*  The following arguments are optional:
+#*   - [ 'owner' ]
+#*   - [ 'group' ]
+#*   - [ 'mode' ]
+#*
+
+- hosts: all
+  vars:
+    path: '{{ file | d(dest) | d(name) }}'
+    state: 'file'
+    owner: '{{ user }}'
+  roles:
+    - file-change

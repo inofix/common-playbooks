@@ -1,0 +1,15 @@
+#*  This playbook simply wrapps the file module. It simulates the
+#* famous CLI tools 'rm'/'rmdir'. New files/dirs are created, existing
+#* ones get new access/modification times.
+#*  As this simplifies both the tools and the file module usage,
+#* some features will possibly be missing.
+#*  The following arguments are mandatory:
+#*   - 'path' (aliases: 'dest', 'name', 'file', 'dir')
+#*  The following arguments are optional:
+#*
+
+- hosts: all
+  vars:
+    path: '{{ file | d(dest) | d(name) | d(dir) }}'
+  roles:
+    - file-rm

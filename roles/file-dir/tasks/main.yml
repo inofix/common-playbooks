@@ -1,0 +1,6 @@
+
+- name: 'just create the {{ state }}'
+  file:
+    path: '{{ path }}'
+    state: '{{ state }}'
+

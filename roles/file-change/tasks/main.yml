@@ -1,0 +1,21 @@
+
+- name: "change ownership of the {{ state }}"
+  file:
+    path: '{{ path }}'
+    state: '{{ state }}'
+    owner: '{{ owner }}'
+  when: user is defined
+
+- name: "change group of the {{ state }}"
+  file:
+    path: '{{ path }}'
+    state: '{{ state }}'
+    group: '{{ group }}'
+  when: group is defined
+
+- name: "change permissions of the {{ state }}"
+  file:
+    path: '{{ path }}'
+    state: '{{ state }}'
+    mode: '{{ mode }}'
+  when: mode is defined

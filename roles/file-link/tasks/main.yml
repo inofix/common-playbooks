@@ -1,0 +1,7 @@
+
+- name: '{{ state | replace("link", "softlink") | replace("hard", "hardlink) }} to a file or directory'
+  file:
+    state: '{{ state }}'
+    path: '{{ path }}'
+    src: '{{ src }}'
+

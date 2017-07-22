@@ -1,0 +1,6 @@
+
+- name: "remove the file or directory"
+  file:
+    path: '{{ path }}'
+    state: 'absent'
+
