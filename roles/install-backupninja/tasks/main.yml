@@ -1,0 +1,12 @@
+---
+
+- name: Install the custom modules
+  template:
+    src: '{{ item }}'
+    dest: '/usr/share/backupninja/{{ item }}'
+    mode: '0644'
+    owner: 'root'
+    group: 'root'
+  with_items:
+    - 'collect'
+

@@ -1,0 +1,173 @@
+# -*- mode: sh; sh-basic-offset: 3; indent-tabs-mode: nil; -*-
+# vim: set filetype=sh sw=3 sts=3 expandtab autoindent:
+#
+# backupninja handler for plain syncing directories using rsync
+# requires: rsync find ssh
+# feedback: michael.lustenberger at inofix.ch
+
+setsection system
+getconf bash bash
+getconf mkdir mkdir
+getconf rm rm
+getconf cp cp
+getconf touch touch
+getconf mv mv
+getconf rsync rsync
+getconf ssh ssh
+getconf find find
+getconf cat cat
+getconf chown chown
+
+setsection remote
+getconf rsyncoptions "-av --delete"
+getconf direction local
+getconf user none
+getconf server none
+getconf port none
+
+setsection source
+getconf sourcedir none
+getconf exclude
+getconf seperateperms no
+
+setsection dest
+getconf destdir none
+getconf reldir none
+getconf owner none
+
+function calc_server {
+    if [ "$server" != "none" ] ; then
+        if [ "$user" != "none" ] ; then
+            server="${user}@${server}"
+        fi
+    else
+        fatal "cannot use remote mode without a remote server.."
+        exit 1
+    fi
+}
+
+function set_owner {
+    if [ "$owner" != "none" ] ; then
+        chown_dest="$chown $owner -R $destdir/$reldir*"
+    fi
+}
+
+debug 1 "this is the files collector helper.."
+
+makedirs=""
+explain=""
+rsync_action=""
+saveperms=""
+chown_dest=""
+source=""
+dest=""
+excludes=""
+
+for path in $exclude; do
+    excludes="$excludes --exclude=$path"
+done
+if [ "$excludes" != "" ] ; then
+    rsync="$rsync $excludes"
+fi
+if [ "$port" != "none" ] ; then
+    ssh="$ssh -p $port"
+    rsync="$rsync -e '$ssh'"
+fi
+
+case $direction in
+    local)
+        explain="copying $sourcedir/ to $destdir/"
+        if [ "$reldir" == "none" ] ; then
+            reldir=$(hostname)
+        fi
+        if [ -d "$sourcedir" ] && [ -d "$destdir" ] ; then
+            source="$sourcedir/"
+            dest="$destdir/$reldir/$source"
+        else
+            fatal "missing important directory: $sourcedir or $destdir"
+            exit 1
+        fi
+        if [ ! -d "$dest" ] ; then
+            makedirs="$mkdir -p $dest"
+        fi
+        rsync_action="$rsync $rsyncoptions $source $dest"
+        saveperms="$find $source -ls > $destdir/$reldir${source//\//__}.perms"
+        set_owner
+    ;;
+    push)
+        explain="sending $sourcedir/ to $destdir/ as $user on $server"
+        if [ "$reldir" == "none" ] ; then
+            reldir=$(hostname)
+        fi
+        calc_server
+        $ssh $server "test -d $destdir" 2>&1 > /dev/null ; retval=$?
+        if [ -d "$sourcedir" ] && [ $retval -eq 0 ] ; then
+            source="$sourcedir/"
+            dest="$destdir/$reldir/$source"
+        else
+            fatal "missing important directory: $sourcedir or $destdir"
+            exit 1
+        fi
+        $ssh $server "test -d $dest" 2>&1 > /dev/null ; retval=$?
+        if [ $retval -ne 0 ] ; then
+            makedirs="$ssh $server '$mkdir -p $dest'"
+        fi
+        rsync_action="$rsync $rsyncoptions $source $server:$dest"
+        saveperms="$find $source -ls | $ssh $server '$cat > $destdir/$reldir${source//\//__}.perms'"
+    ;;
+    pull)
+        explain="receiving $destdir/ from $sourcedir/ as $user on $server"
+        if [ "$reldir" == "none" ] ; then
+            reldir="$server"
+        fi
+        calc_server
+        $ssh $server "test -d $sourcedir" 2>&1 > /dev/null ; retval=$?
+        if [ -d "$destdir" ] && [ $retval -eq 0 ] ; then
+            source="$sourcedir/"
+            dest="$destdir/$reldir/$source"
+        else
+            fatal "missing important directory: $sourcedir or $destdir"
+            exit 1
+        fi
+        if [ ! -d "$dest" ] ; then
+            makedirs="$mkdir -p $dest"
+        fi
+        rsync_action="$rsync $rsyncoptions $server:$source $dest"
+        saveperms="$ssh $server '$find $source -ls' > $destdir/$reldir${source//\//__}.perms"
+        set_owner
+    ;;
+    *)
+        fatal "direction '$direction' not supported.."
+        exit 1
+    ;;
+esac
+
+if [ ! $test ]; then
+    debug 1 "doing something.."
+    info $explain
+    if [ -n "$makedirs" ] ; then
+        info "$makedirs"
+        echo $makedirs | $bash
+    fi
+    info $rsync_action
+    echo $rsync_action | $bash
+    if [ "$seperateperms" == "yes" ] ; then
+        info $saveperms
+        echo $saveperms | $bash
+    fi
+    if [ -n "$chown_dest" ] ; then
+        info $chown_dest
+        echo $chown_dest | $bash
+    fi
+else
+    debug 1 "only joking"
+    info $explain
+    info $makedirs
+    info $rsync_action
+    if [ "$seperateperms" == "yes" ] ; then
+        info $saveperms
+    fi
+    info $chown_dest
+fi
+
+
