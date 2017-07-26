@@ -6,6 +6,8 @@
 #* details.
 #*  No arguments are mandatory.
 
+- include: install-terminal-mux.yml
+
 - hosts: app.basics
   become: true
   roles:
