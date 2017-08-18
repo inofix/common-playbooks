@@ -1,0 +1,22 @@
+---
+- name: Gather the password file from the host itself.
+  shell: 'cat {{ account_store }}'
+  register: accountsfile
+  when: account_store is defined
+
+- name: Parse the file for passwords.
+  set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
+  when: accountsfile is defined
+
+- name: Configure the client to connect to the smarthost
+  template:
+    src: 'ssmtp.conf.j2'
+    dest: '{{ ssmtp__config_file }}'
+    mode: '0644'
+    owner: 'root'
+    group: 'root'
+
+- name: Add a reverse alias entry
+  lineinfile:
+    dest: '{{ ssmtp__revaliases_file }}'
+    line: 'root:{{ ssmtp__sender_alias }}:{{ ssmtp__mailhub }}'

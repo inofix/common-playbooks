@@ -1,5 +1,6 @@
-#*  This playbook wrapps the apt (and others maybe in the future..) module
-#* to install a mail server package.
+#*  This playbook downloads, unpacks, and installes the liferay workspace
+#* for a liferay development environment. For details see:
+#* https://dev.liferay.com/develop/tutorials/-/knowledge_base/7-0/liferay-workspace
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -7,18 +8,10 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.ssmtp
-  become: True
-  vars:
-    #TODO why is it not forwarded from reclass?
-    ansible_fqdn: '{{ fqdn }}'
-  roles:
-    - install-ssmtp
-
-- hosts: app.exim4
+- hosts: app.liferay.workspace
   become: True
   roles:
-    - install-exim4
+    - install-liferay-workspace
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

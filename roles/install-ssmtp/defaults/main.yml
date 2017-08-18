@@ -1,0 +1,12 @@
+---
+
+default__ssmtp__auth_method: 'PLAIN'
+default__ssmtp__auth_password: ''
+default__ssmtp__auth_user: ''
+default__ssmtp__config_file: '/etc/ssmtp/ssmtp.conf'
+default__ssmtp__revaliases_file: '/etc/ssmtp/revaliases'
+default__ssmtp__mailhub: 'mail'
+default__ssmtp__system_alias: ''
+default__ssmtp__sender_alias: ''
+default__ssmtp__use_starttls: 'YES'
+

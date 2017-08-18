@@ -1,0 +1,42 @@
+## This file is automatically edited by Ansible - any changes will be lost.. ##
+#
+# Config file for sSMTP sendmail
+#
+# The person who gets all mail for userids < 1000
+# Make this empty to disable rewriting.
+root={{ ssmtp__system_alias }}
+
+# The place where the mail goes. The actual machine name is required no 
+# MX records are consulted. Commonly mailhosts are named mail.domain.com
+mailhub={{ ssmtp__mailhub }}
+
+{% if ssmtp__use_starttls != '' %}
+UseSTARTTLS={{ ssmtp__use_starttls }}
+{% endif %}
+
+{% if ssmtp__auth_user != '' %}
+AuthUser={{ ssmtp__auth_user }}
+{% if accountinfos is defined %}
+AuthPass={{ accountinfos["ssmtp_pass"]["value"] }}
+{% elif ssmtp__auth_password != '' %}
+AuthPass={{ ssmtp__auth_password }}
+{% else %}
+AuthPass=
+{% endif %}
+AuthMethod={{ ssmtp__auth_method }}
+{% endif %}
+
+# Where will the mail seem to come from?
+#rewriteDomain=
+{% if ssmtp__sender_domain != '' %}
+rewriteDomain={{ ssmtp__sender_domain }}
+{% endif %}
+
+# The full hostname
+hostname={{ ssmtp__hostname }}
+
+# Are users allowed to set their own From: address?
+# YES - Allow the user to specify their own From: address
+# NO - Use the system generated From: address
+#FromLineOverride=YES
+
