@@ -9,6 +9,9 @@
 
 - hosts: app.ssmtp
   become: True
+  vars:
+    #TODO why is it not forwarded from reclass?
+    ansible_fqdn: '{{ fqdn }}'
   roles:
     - install-ssmtp
 
