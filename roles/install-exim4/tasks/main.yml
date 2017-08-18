@@ -5,7 +5,7 @@
 
 - name: Configure the client to connect to the smarthost
   template:
-    src: 'update-exim4.conf.conf.yml'
+    src: 'update-exim4.conf.conf.j2'
     dest: '{{ exim4__update_config_file }}'
     mode: '0644'
     owner: 'root'
