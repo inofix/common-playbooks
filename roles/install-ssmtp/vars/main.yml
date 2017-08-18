@@ -3,9 +3,11 @@ ssmtp__auth_method: '{{ app__ssmtp__auth_method | d(default__ssmtp__auth_method)
 ssmtp__auth_password: '{{ app__ssmtp__auth_password | d(default__ssmtp__auth_password) }}'
 ssmtp__auth_user: '{{ app__ssmtp__auth_user | d(default__ssmtp__auth_user) }}'
 ssmtp__config_file: '{{ app__ssmtp__config_file | d(default__ssmtp__config_file) }}'
+ssmtp__revaliases_file: '{{ app__ssmtp__revaliases_file | d(default__ssmtp__revaliases_file) }}'
 ssmtp__hostname: '{{ app__ssmtp__hostname | d(ansible_fqdn) }}'
 ssmtp__mailhub: '{{ app__ssmtp__mailhub | d(default__ssmtp__mailhub) }}'
 ssmtp__sender_domain: '{{ app__ssmtp__sender_domain | d() }}'
+ssmtp__sender_alias: '{{ app__ssmtp__sender_alias | d() }}'
 ssmtp__system_alias: '{{ app__ssmtp__system_alias | d(default__ssmtp__system_alias) }}'
 ssmtp__use_starttls: '{{ app__ssmtp__use_starttls | d(default__ssmtp__use_starttls) }}'
 

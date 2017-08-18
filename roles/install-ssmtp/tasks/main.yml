@@ -11,8 +11,12 @@
 - name: Configure the client to connect to the smarthost
   template:
     src: 'ssmtp.conf.j2'
-    dest: '{{ ssmtp_config_file }}'
+    dest: '{{ ssmtp__config_file }}'
     mode: '0644'
     owner: 'root'
     group: 'root'
 
+- name: Add a reverse alias entry
+  lineinfile:
+    dest: '{{ ssmtp__revaliases_file }}'
+    line: 'root:{{ ssmtp__sender_alias }}:{{ ssmtp__mailhub }}'

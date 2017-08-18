@@ -16,13 +16,13 @@ UseSTARTTLS={{ ssmtp__use_starttls }}
 
 {% if ssmtp__auth_user != '' %}
 AuthUser={{ ssmtp__auth_user }}
-  {% if accountinfos is defined %}
+{% if accountinfos is defined %}
 AuthPass={{ accountinfos["ssmtp_pass"]["value"] }}
-  {% elif ssmtp__auth_password != '' %}
+{% elif ssmtp__auth_password != '' %}
 AuthPass={{ ssmtp__auth_password }}
-  {% else %}
+{% else %}
 AuthPass=
-  {% endif %}
+{% endif %}
 AuthMethod={{ ssmtp__auth_method }}
 {% endif %}
 
