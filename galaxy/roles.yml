@@ -2,6 +2,7 @@
 - src: debops.postgresql
 - src: debops.postgresql_server
 - src: zwischenloesung.acme-tiny
+- src: zwischenloesung.acme-tiny-cron
 - src: zwischenloesung.acme-tiny-install
 - src: zwischenloesung.acme-tiny-setup
 - src: zwischenloesung.shariff-install
