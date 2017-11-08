@@ -11,7 +11,7 @@
 - hosts: app.acme.tiny
   become: True
   roles:
-    - zwischenloesung.acme-tiny-install
+    - inofix.acme-tiny-install
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
