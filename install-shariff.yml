@@ -7,7 +7,6 @@
 #* details.
 #*  No arguments are mandatory.
 
-# Do only on hosts with the acme-tiny application actually installed
 - hosts: app.shariff,app.php
   become: True
   roles:
