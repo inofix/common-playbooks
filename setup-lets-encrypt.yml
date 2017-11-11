@@ -21,12 +21,13 @@
 - hosts: app.acme,!app.acme.tiny
   become: True
   roles:
-    - { role: inofix.acme-tiny-setup }
+    - { role: inofix.acme-setup }
 
 # Do only on hosts with the acme-tiny application actually installed
 - hosts: app.acme.tiny
   become: True
   roles:
+    - { role: inofix.acme-request }
     - { role: inofix.acme-tiny-sign }
     - { role: inofix.acme-tiny-cron-sign }
 
