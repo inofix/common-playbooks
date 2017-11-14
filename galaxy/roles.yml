@@ -3,13 +3,10 @@
 - src: debops.postgresql_server
 - src: inofix.acme-tiny-cron-sign
 - src: inofix.acme-tiny-install
-- src: inofix.acme-tiny-setup
 - src: inofix.acme-tiny-sign
+- src: inofix.acme-request
+- src: inofix.acme-setup
 - src: inofix.yapkg
-- src: zwischenloesung.acme-tiny
-- src: zwischenloesung.acme-tiny-cron
-- src: zwischenloesung.acme-tiny-install
-- src: zwischenloesung.acme-tiny-setup
 - src: zwischenloesung.shariff-install
 - src: zwischenloesung.yapkg
 

@@ -1,20 +1,20 @@
 #*  This playbook installs and prepares everything for acme-tiny for a certain
-#* domain, that is declared by 'app__acme__tiny__domain'.
+#* domain, that is declared by 'app__acme__domain'.
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  The following arguments are mandatory:
-#*   - 'app__acme__tiny__domain'
+#*   - 'app__acme__domain'
 #*  Maestro Examples:
 #* * A single run might look like this:
 #*   `maestro.sh -H host ansible-play setup-lets-encrypt \
-#*          'app__acme__tiny__domain={{ certificate.main }}' -b`
-#* * If a certain hosts covers more than one certificate, it might be run
-#* multiple times, e.g. by issuing some command like:
+#*          'app__acme__domain={{ certificate.main }}' -b`
+#* * If a certain host covers more than one certificate, it might be run
+#* multiple times, e.g. by issuing something like:
 #*   `maestro.sh -H host ansible-play-loop setup-lets-encrypt \
-#*          "app__acme__tiny__domain=certificate.main:certificate.mail" -b`
+#*          "app__acme__domain=certificate.main:certificate.mail" -b`
 
 # Do on all hosts related to acme (zwischenloesung.acme-tiny depends on
 # zwischenloesung.acme-tiny-setup, no need to repeat)
