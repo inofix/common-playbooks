@@ -1,0 +1,28 @@
+---
+- name: "Make sure primary group exists"
+  group:
+    name: '{{ item.value.groupname }}'
+# think about it..
+#    gid: '{{ item.value.gid }}'
+  with_dict: '{{ admins }}'
+
+- name: "Make sure the user exists"
+  user:
+    name: '{{ item.value.username }}'
+    comment: '{{ item.value.fullname }}'
+    group: '{{ item.value.groupname }}'
+# not working as expected..
+#    groups: '{{ item.value.groups }}'
+#    append: 'yes'
+# think about it..
+#    uid: '{{ item.value.uid }}'
+  with_dict: '{{ admins }}'
+
+- name: "Create the authorized keys file for ssh"
+  authorized_key:
+    user: '{{ item.value.username }}'
+    key: '{{ item.value.ssh_keys | join(newline) }}'
+  vars:
+    newline: "\n"
+  with_dict: '{{ admins }}'
+

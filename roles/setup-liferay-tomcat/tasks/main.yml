@@ -92,7 +92,7 @@
 - name: edit the main tomcat server.xml
   replace:
     dest: '{{ app__tomcat__config }}'
-    regexp: 'name="localhost"\s*appBase="webapps"'
+    regexp: 'name="localhost"\s*appBase=".*"'
     replace: 'name="localhost"  appBase="{{ app__liferay__webapps }}/"'
 
 - name: edit the catalina properties, add liferay dependency .jar-libraries to common.loader
