@@ -18,16 +18,22 @@
 
 # Do on all hosts related to acme (zwischenloesung.acme-tiny depends on
 # zwischenloesung.acme-tiny-setup, no need to repeat)
-- hosts: app.acme,!app.acme.tiny
+- hosts: app.acme,!app.acme.sign
   become: True
   roles:
-    - { role: inofix.acme-setup }
+    - { role: inofix.acme-request }
+    - { role: inofix.acme-proxy }
 
 # Do only on hosts with the acme-tiny application actually installed
-- hosts: app.acme.tiny
+- hosts: app.acme.tiny,&app.acme.sign
   become: True
   roles:
     - { role: inofix.acme-request }
     - { role: inofix.acme-tiny-sign }
-    - { role: inofix.acme-tiny-cron-sign }
+    - { role: inofix.acme-tiny-sign-cron }
 
+# Restart the service (we can still later define a inhibiting role if ever needed)
+- hosts: app.acme,&app.apache
+  become: True
+  roles:
+    - { role: inofix.acme-service-apache }
