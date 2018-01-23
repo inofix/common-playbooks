@@ -25,11 +25,6 @@ DESC="LibreOffice server mode"
 LO_USER={{ user }}
 LO_GROUP={{ group }}
 LO_COMMAND="{{ lo_command }}"
-{% if users_shared_home != users_home %}
-LO_OPTIONS="--headless --env:'HOME={{ users_shared_home }}' --accept='socket,host={{ lo_host }},port={{ lo_port }};urp' --norestore --nologo --nodefault"
-{% else %}
-LO_OPTIONS="--headless --accept='socket,host={{ lo_host }},port={{ lo_port }};urp' --norestore --nologo --nodefault"
-{% endif %}
 PIDFILE="{{ lo_pid }}"
 
 if [ `id -u` -ne 0 ]; then
@@ -57,17 +52,14 @@ case "$1" in
             fi
         else
 
-#            start-stop-daemon --start \
-#                --make-pidfile --pidfile "$PIDFILE" \
-#                --user "$LO_USER" --group "$LO_GROUP" \
-#                --chuid "$LO_USER:$LO_GROUP" \
-#                --exec "$LO_COMMAND" -- $LO_OPTIONS >/dev/null &
-
             start-stop-daemon --start \
                 --make-pidfile --pidfile "$PIDFILE" \
                 --user "$LO_USER" \
                 --chuid "$LO_USER" \
-                --exec "$LO_COMMAND" -- $LO_OPTIONS >/dev/null &
+{% if users_shared_home != users_home %}
+                --chdir "{{ users_shared_home }}" \
+{% endif %}
+                --exec "$LO_COMMAND" -- '--accept=socket,host={{ lo_host }},port={{ lo_port }};urp' --headless --nofirststartwizard --norestore --nologo --nodefault >/dev/null &
 
 
             if /bin/pidof "$LO_COMMAND" ; then
