@@ -1,0 +1,6 @@
+d_user: 'libreoffice'
+d_group: 'libreoffice'
+
+d_yapkg_names:
+  - apache2
+
