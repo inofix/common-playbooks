@@ -1,4 +1,3 @@
-- src: debops.apache
 - src: debops.postgresql
 - src: debops.postgresql_server
 - src: inofix.acme-proxy
