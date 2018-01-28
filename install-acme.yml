@@ -8,10 +8,11 @@
 #*  No arguments are mandatory.
 
 # Do only on hosts with the acme-tiny application actually installed
-- hosts: app.acme.tiny
+- hosts: app.acme.tiny,&app.acme.sign
   become: True
   roles:
     - inofix.acme-tiny-install
+    - inofix.acme-tiny-sign-cron
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
