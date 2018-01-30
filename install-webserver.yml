@@ -13,22 +13,27 @@
   become: True
 
   vars:
+    app__apache__mod_pkgs: '{{ os__pkg_name.apache_mod[os__short] | d(os__pkg_name.apache_mod[os__distro]) }}'
+##    app__apache__mods: '{{ app__apache__modules | list() | unique() }}'
+    app__apache__mod_helper: '{% for key, value in app__apache__modules.iteritems() %}{% if value == True %}{{ app__apache__mod_pkgs[key] | d() }};{% endif %}{% endfor %}'
+    app__apache__yapkg_names: '{{ os__pkg_name.apache[os__short] | d(os__pkg_name.apache[os__distro]) }} + {{ app__apache__mod_helper.split(";") }}'
+
     # use fqdn if ansible_fqdn is not set
     #TODO why is it not forwarded from reclass?
-    ansible_fqdn: '{{ fqdn }}'
-    apache__default_vhost:
-      name: '{{ ansible_fqdn }}'
-      root: '/var/www/html'
-      # don't enforce https by default
-      redirect_to_https: False
-# TODO: does not work yet, mainly because of the 'raw' format which is
-# not supported in reclass
-# TODO: should this be a simple mapping here or a mandatory argument
-#    apache__vhosts: '{{ app__apache__vhosts }}'
-    apache__modules: '{{ app__apache__modules }}'
-    apache__tls_cipher_suite_sets: '{{ app__openssl__cipher_suites }}'
-    apache__tls_cipher_suite_set_name: '{{ app__apache__cipher_prefered_suite }}'
-    apache__tls_honor_cipher_order: '{{ app__apache__honor_cipher_order }}'
+#    ansible_fqdn: '{{ fqdn }}'
+#    apache__default_vhost:
+#      name: '{{ ansible_fqdn }}'
+#      root: '/var/www/html'
+#      # don't enforce https by default
+#      redirect_to_https: False
+## TODO: does not work yet, mainly because of the 'raw' format which is
+## not supported in reclass
+## TODO: should this be a simple mapping here or a mandatory argument
+##    apache__vhosts: '{{ app__apache__vhosts }}'
+#    apache__modules: '{{ app__apache__modules }}'
+#    apache__tls_cipher_suite_sets: '{{ app__openssl__cipher_suites }}'
+#    apache__tls_cipher_suite_set_name: '{{ app__apache__cipher_prefered_suite }}'
+#    apache__tls_honor_cipher_order: '{{ app__apache__honor_cipher_order }}'
 
   roles:
     - install-apache
