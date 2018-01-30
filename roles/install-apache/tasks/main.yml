@@ -1,1 +1,6 @@
 ---
+- name: "Enable modules"
+  command: 'a2enmod {{ item.key }}'
+  when: '{{ item.value }}'
+  with_dict: '{{ app__apache__modules }}'
+
