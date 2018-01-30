@@ -1,0 +1,5 @@
+---
+apache__user: '{{ app__apache__user | d(d_user) }}'
+apache__group: '{{ app__apache__group | d(d_group) }}'
+
+yapkg_names: '{{ app__apache__yapkg_names | d(d_yapkg_names) }}'
