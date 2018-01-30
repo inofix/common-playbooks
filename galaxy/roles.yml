@@ -12,6 +12,7 @@
 - src: inofix.acme-tiny-sign
 - src: inofix.acme-tiny-sign-cron
 - src: inofix.yapkg
+- src: inofix.nextcloud
 - src: zwischenloesung.shariff-install
 - src: zwischenloesung.yapkg
 

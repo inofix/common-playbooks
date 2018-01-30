@@ -1,0 +1,28 @@
+#*  This playbook installs the Nextcloud/ownCloud service directory.
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- hosts: app.nextcloud,&app.php
+  become: True
+  roles:
+    - inofix.nextcloud
+
+- hosts: app.owncloud,app,&app.php
+  become: True
+  vars:
+    nextcloud__package: 'owncloud-{{ app__owncloud__version }}'
+    nextcloud__home: ''
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+
