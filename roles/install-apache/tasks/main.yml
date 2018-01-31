@@ -4,3 +4,27 @@
   when: '{{ item.value }}'
   with_dict: '{{ app__apache__modules }}'
 
+- name: "Production level settings - part I"
+  stat:
+    path: '{{ item }}'
+  register: apache_sec_stat
+  with_items: '{{ apache__security }}'
+
+- name: "Production level settings - part II"
+  lineinfile:
+#TODO we like this one..    path: '{{ item.item }}'
+    dest: '{{ item.item }}'
+    regexp: '^ServerTokens .*'
+    line: 'ServerTokens Prod'
+  when: '{{ item.stat.exists }}'
+  with_items: '{{ apache_sec_stat.results }}'
+
+- name: "Production level settings - part III"
+  lineinfile:
+#TODO we like this one..    path: '{{ item.item }}'
+    dest: '{{ item.item }}'
+    regexp: '^ServerSignature .*'
+    line: 'ServerSignature Off'
+  when: '{{ item.stat.exists }}'
+  with_items: '{{ apache_sec_stat.results }}'
+

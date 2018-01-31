@@ -4,4 +4,9 @@ d_group: 'www-data'
 
 d_yapkg_names:
   - apache2
+  - ssl-cert
+
+d_apache__security:
+  - "/etc/apache2/conf.d/security"
+  - "/etc/apache2/conf-available/security.conf"
 
