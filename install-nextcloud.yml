@@ -1,5 +1,4 @@
-#*  This playbook installs acme-tiny either from the distro or directly
-#* from upstream github if there is no package available.
+#*  This playbook installs the Nextcloud/ownCloud service directory.
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -7,12 +6,16 @@
 #* details.
 #*  No arguments are mandatory.
 
-# Do only on hosts with the acme-tiny application actually installed
-- hosts: app.acme.tiny,&app.acme.sign
+- hosts: app.nextcloud,&app.php
   become: True
   roles:
-    - inofix.acme-tiny-install
-    - inofix.acme-tiny-sign-cron
+    - inofix.nextcloud
+
+- hosts: app.owncloud,app,&app.php
+  become: True
+  vars:
+    nextcloud__package: 'owncloud-{{ app__owncloud__version }}'
+    nextcloud__home: ''
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
