@@ -6,16 +6,29 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.nextcloud,&app.php
+# TODO include webserver and php-fpm and switch to the right user base
+#- include: install-webserver.yml
+
+- hosts: app.nextcloud,!app.php
   become: True
   roles:
     - inofix.nextcloud
 
-- hosts: app.owncloud,app,&app.php
+- hosts: app.owncloud,!app.php
   become: True
   vars:
-    nextcloud__package: 'owncloud-{{ app__owncloud__version }}'
-    nextcloud__home: ''
+    app__nextcloud__archive: '{{ app__owncloud__archive }}'
+    app__nextcloud__base: '{{ app__owncloud__base }}'
+    app__nextcloud__checksum: '{{ app__owncloud__checksum }}'
+    app__nextcloud__download_upstream: '{{ app__owncloud__download_upstream }}'
+    app__nextcloud__group: '{{ app__owncloud__group }}'
+    app__nextcloud__home: '{{ app__owncloud__home }}'
+    app__nextcloud__name: '{{ app__owncloud__name }}'
+    app__nextcloud__package: '{{ app__owncloud__package }}'
+    app__nextcloud__version: '{{ app__owncloud__version }}'
+    app__nextcloud__user: '{{ app__owncloud__user }}'
+  roles:
+    - inofix.nextcloud
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
