@@ -11,8 +11,8 @@
   hosts: app.postgresql.server
   become: True
   vars:
-    app__postgresql__s_pkg: '{{ os__pkg_name.postgresql[os__short] | os__pkg_name.postgresql[os__distro] }}'
-    app__postgresql__c_pkg: '{{ os__pkg_name.postgresql_client[os__short] | os__pkg_name.postgresql_client[os__distro] }}'
+    app__postgresql__s_pkg: '{{ os__pkg_name.postgresql[os__short] | d(os__pkg_name.postgresql[os__distro]) }}'
+    app__postgresql__c_pkg: '{{ os__pkg_name.postgresql_client[os__short] | d(os__pkg_name.postgresql_client[os__distro]) }}'
     app__postgresql__yapkg_names: '{{ app__postgresql__s_pkg }} + {{ app__postgresql__c_pkg }}'
   roles:
     - install-postgresql
@@ -21,4 +21,4 @@
   hosts: app.postgresql.client,!app.postgresql.server
   become: True
   roles:
-    - { role: inofix.yapkg, yapkg_group_name: 'the postgres db client', yapkg_names: '{{ os__pkg_name.postgresql_client[os__short] | os__pkg_name.postgresql_client[os__distro] }}' }
+    - { role: inofix.yapkg, yapkg_group_name: 'the postgres db client', yapkg_names: '{{ os__pkg_name.postgresql_client[os__short] | d(os__pkg_name.postgresql_client[os__distro]) }}' }
