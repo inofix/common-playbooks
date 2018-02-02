@@ -10,11 +10,15 @@
 - name: Setup PostgreSQL Server
   hosts: app.postgresql.server
   become: True
+  vars:
+    app__postgresql__s_pkg: '{{ os__pkg_name.postgresql[os__short] | os__pkg_name.postgresql[os__distro] }}'
+    app__postgresql__c_pkg: '{{ os__pkg_name.postgresql_client[os__short] | os__pkg_name.postgresql_client[os__distro] }}'
+    app__postgresql__yapkg_names: '{{ app__postgresql__s_pkg }} + {{ app__postgresql__c_pkg }}'
   roles:
-    - debops.postgresql_server
+    - install-postgresql
 
 - name: Setup PostgreSQL Client
   hosts: app.postgresql.client,!app.postgresql.server
   become: True
   roles:
-    - debops.postgresql
+    - { role: inofix.yapkg, yapkg_group_name: 'the postgres db client', yapkg_names: '{{ os__pkg_name.postgresql_client[os__short] | os__pkg_name.postgresql_client[os__distro] }}' }
