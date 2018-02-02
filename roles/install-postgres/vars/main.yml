@@ -1,0 +1,2 @@
+---
+postgres__yapkg_names: '{{ app__postgres__yapkg_names | d(d_yapkg_names) }}'
