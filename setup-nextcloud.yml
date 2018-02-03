@@ -1,0 +1,43 @@
+#*  This playbook installs the Nextcloud/ownCloud service directory and
+#* connects it to a database etc.
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- include: install-nextcloud.yml
+- include: install-database-system.yml
+
+- hosts: app.nextcloud,&app.postgresql
+  become: True
+  roles:
+    - setup-nextcloud-postgres
+
+- hosts: app.owncloud,&app.postgresql
+  become: True
+  vars:
+    app__nextcloud__archive: '{{ app__owncloud__archive }}'
+    app__nextcloud__base: '{{ app__owncloud__base }}'
+    app__nextcloud__checksum: '{{ app__owncloud__checksum }}'
+    app__nextcloud__db_user: '{{ app__owncloud__db_user }}'
+    app__nextcloud__download_upstream: '{{ app__owncloud__download_upstream }}'
+    app__nextcloud__group: '{{ app__owncloud__group }}'
+    app__nextcloud__home: '{{ app__owncloud__home }}'
+    app__nextcloud__name: '{{ app__owncloud__name }}'
+    app__nextcloud__package: '{{ app__owncloud__package }}'
+    app__nextcloud__version: '{{ app__owncloud__version }}'
+    app__nextcloud__user: '{{ app__owncloud__user }}'
+  roles:
+    - setup-nextcloud-postgres
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+
