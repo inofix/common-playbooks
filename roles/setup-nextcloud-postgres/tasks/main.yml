@@ -1,0 +1,46 @@
+
+#TODO allow at least for a custom port
+
+- name: test if nextcloud was installed
+  stat:
+    path: '{{ nextcloud__config }}'
+  register: nextcloud_config
+
+- name: fail if the installation is missing
+  fail:
+    msg: "nextcloud was not installed correctly on {{ app__nextcloud__base }}"
+  when: nextcloud_config.stat.isreg is not defined or not nextcloud_config.stat.isreg
+
+- name: Gather the passwords file from the host itself.
+  shell: 'cat {{ account_store }}'
+  register: accountsfile
+
+- name: Parse the file for passwords.
+  set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
+
+- name: create a db user for the nextcloud db
+  postgresql_user:
+    name: '{{ app__nextcloud__db_user }}'
+    password: '{{ accountinfos[nextcloud_db_credentails_name]["value"] }}'
+  when:
+    - postgresql__edit_db
+
+- name: create a db for nextcloud
+  postgresql_db:
+    name: '{{ app__nextcloud__db_name }}'
+    owner: '{{ app__nextcloud__db_user }}'
+    encoding: UTF-8
+    template: template0
+  when:
+    - postgresql__edit_db
+
+#- name: connect nextcloud to the newly created db
+#  blockinfile:
+#    create: yes
+#    dest: "{{ app__nextcloud__config }}"
+#    mode: 0600
+#    owner: "{{ app__nextcloud__user }}"
+#    group: "{{ app__nextcloud__group }}"
+#    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK: DB -->"
+#    block: |
+# TODO write a template..
