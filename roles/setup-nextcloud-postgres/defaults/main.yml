@@ -7,4 +7,4 @@ default__nextcloud__db_name: 'nextcloud'
 default__nextcloud__db_user: 'nextcloud'
 
 default__nextcloud_db_credentials_key: 'dbpassword'
-default__nextcloud_db_credentails_name: 'nextcloud_db'
+default__nextcloud_db_credentials_name: 'nextcloud_db'

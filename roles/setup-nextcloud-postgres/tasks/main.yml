@@ -21,7 +21,7 @@
 - name: create a db user for the nextcloud db
   postgresql_user:
     name: '{{ app__nextcloud__db_user }}'
-    password: '{{ accountinfos[nextcloud_db_credentails_name]["value"] }}'
+    password: '{{ accountinfos[nextcloud_db_credentials_name]["value"] }}'
   when:
     - postgresql__edit_db
 
