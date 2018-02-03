@@ -22,6 +22,7 @@
     app__nextcloud__base: '{{ app__owncloud__base }}'
     app__nextcloud__checksum: '{{ app__owncloud__checksum }}'
     app__nextcloud__db_user: '{{ app__owncloud__db_user }}'
+    app__nextcloud__db_name: '{{ app__owncloud__db_name }}'
     app__nextcloud__download_upstream: '{{ app__owncloud__download_upstream }}'
     app__nextcloud__group: '{{ app__owncloud__group }}'
     app__nextcloud__home: '{{ app__owncloud__home }}'

@@ -19,13 +19,17 @@
   set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
 
 - name: create a db user for the nextcloud db
+  become: True
+  become_user: '{{ postgresql__user }}'
   postgresql_user:
     name: '{{ app__nextcloud__db_user }}'
-    password: '{{ accountinfos[nextcloud_db_credentials_name]["value"] }}'
+    password: '{{ accountinfos[nextcloud__db_credentials_name]["value"] }}'
   when:
     - postgresql__edit_db
 
 - name: create a db for nextcloud
+  become: True
+  become_user: '{{ postgresql__user }}'
   postgresql_db:
     name: '{{ app__nextcloud__db_name }}'
     owner: '{{ app__nextcloud__db_user }}'

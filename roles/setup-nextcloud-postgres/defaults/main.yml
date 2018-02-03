@@ -6,5 +6,5 @@ default__postgresql__edit_db: true
 default__nextcloud__db_name: 'nextcloud'
 default__nextcloud__db_user: 'nextcloud'
 
-default__nextcloud_db_credentials_key: 'dbpassword'
-default__nextcloud_db_credentials_name: 'nextcloud_db'
+default__nextcloud__db_credentials_key: 'dbpassword'
+default__nextcloud__db_credentials_name: 'nextcloud_db'
