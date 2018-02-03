@@ -1,0 +1,13 @@
+---
+nextcloud_base: '{{ remotedirs.service }}/{{ app__nextcloud__package }}'
+dd__nextcloud__config: '{{ nextcloud_base }}/config/config.php'
+nextcloud__config: '{{ app__nextcloud__config | d(dd__nextcloud__config) }}'
+
+nextcloud__db_credentials_key: '{{ app__nextcloud__db_credentials_key | d(default__nextcloud__db_credentials_key) }}'
+nextcloud__db_credentials_name: '{{ app__nextcloud__db_credentials_name | d(default__nextcloud__db_credentials_name) }}'
+nextcloud__db_name: '{{ app__nextcloud__db_name | d(default__nextcloud__db_name) }}'
+nextcloud__db_user: '{{ app__nextcloud__db_user | d(default__nextcloud__db_user) }}'
+
+postgresql__edit_db: '{{ app__postgresql__edit_db | d(default__postgresql__edit_db) }}'
+postgresql__user: '{{ app__postgresql__user | d(default__postgresql__user) }}'
+
