@@ -30,10 +30,13 @@
   roles:
     - { role: inofix.acme-request }
     - { role: inofix.acme-tiny-sign }
-    - { role: inofix.acme-tiny-sign-cron }
+    - { role: inofix.acme-tiny-cron }
 
-# Restart the service (we can still later define a inhibiting role if ever needed)
+# Restart the service
 - hosts: app.acme,&app.apache
   become: True
   roles:
     - { role: inofix.acme-service-apache }
+
+
+
