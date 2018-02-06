@@ -1,6 +1,6 @@
 - src: inofix.acme-proxy
 - src: inofix.acme-request
-#- src: inofix.acme-service
+- src: inofix.acme-service
 - src: inofix.acme-setup
 - src: inofix.acme-tiny-install
 - src: inofix.acme-tiny-sign
