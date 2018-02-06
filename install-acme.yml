@@ -12,7 +12,7 @@
   become: True
   roles:
     - inofix.acme-tiny-install
-    - inofix.acme-tiny-sign-cron
+    - inofix.acme-tiny-cron
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
