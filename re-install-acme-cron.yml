@@ -12,8 +12,9 @@
 #*              "app__acme__tiny__domain=certificate.main:certificate.mail"`
 
 # Do only on hosts with the acme-tiny application actually installed
-- hosts: app.acme.tiny
-  become: True
-  roles:
-    - { role: zwischenloesung.acme-tiny-cron }
+#TODO disabled for now
+#- hosts: app.acme.tiny
+#  become: True
+#  roles:
+#    - { role: zwischenloesung.acme-tiny-cron }
 
