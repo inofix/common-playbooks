@@ -7,14 +7,6 @@
 #* details.
 #*  The following arguments are mandatory:
 #*   - 'app__acme__domain'
-#*  Maestro Examples:
-#* * A single run might look like this:
-#*   `maestro.sh -H host ansible-play setup-lets-encrypt \
-#*          'app__acme__domain={{ certificate.main }}' -b`
-#* * If a certain host covers more than one certificate, it might be run
-#* multiple times, e.g. by issuing something like:
-#*   `maestro.sh -H host ansible-play-loop setup-lets-encrypt \
-#*          "app__acme__domain=certificate.main:certificate.mail" -b`
 
 # Do on all hosts related to acme (zwischenloesung.acme-tiny depends on
 # zwischenloesung.acme-tiny-setup, no need to repeat)
