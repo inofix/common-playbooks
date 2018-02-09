@@ -19,6 +19,8 @@
   set_fact: 'accountinfos={{ accountsfile.stdout | from_yaml }}'
 
 - name: create a db user for the liferay db
+  become: True
+  become_user: '{{ postgresql__user }}'
   postgresql_user:
     name: '{{ app__liferay__db_user }}'
     password: '{{ accountinfos[liferay_db_credentails_name]["value"] }}'
@@ -26,6 +28,8 @@
     - postgresql__edit_db
 
 - name: create a db for liferay
+  become: True
+  become_user: '{{ postgresql__user }}'
   postgresql_db:
     name: '{{ app__liferay__db_name }}'
     owner: '{{ app__liferay__db_user }}'
