@@ -16,6 +16,7 @@
 - include: install-monitored.yml
 - include: install-physicals.yml
 - include: install-virt.yml
+- include: install-webserver.yml
 - include: install-database-system.yml
 - include: install-tomcat.yml
 - include: setup-liferay.yml
