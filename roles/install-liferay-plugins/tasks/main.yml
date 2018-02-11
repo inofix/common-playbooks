@@ -1,4 +1,5 @@
 ---
+
 - name: download and deploy liferay plugins
   environment:
     http_proxy: "{{ http_proxy }}"
@@ -9,4 +10,8 @@
     owner: "{{ app__liferay__user }}"
     group: "{{ app__liferay__group }}"
   with_items: "{{ app__liferay__plugin }}"
-  when: app__liferay__plugin is defined and app__liferay__plugin is iterable
+  when:
+    - app__liferay__plugin is defined
+    - app__liferay__plugin is iterable
+    - app__liferay__version_short in item.compat
+
