@@ -1,5 +1,5 @@
 #*  This playbook installs and prepares everything for acme-tiny for a certain
-#* domain, that is declared by 'app__acme__domain'.
+#* domain, which is declared by 'app__acme__domain'.
 #*  Note: this playbook should be used either from the main install playbook
 #* (which resolves its dependencies) or as a shorthand for an already set up
 #* system, where the dependencies are already provided.
@@ -8,8 +8,7 @@
 #*  The following arguments are mandatory:
 #*   - 'app__acme__domain'
 
-# Do on all hosts related to acme (zwischenloesung.acme-tiny depends on
-# zwischenloesung.acme-tiny-setup, no need to repeat)
+# Do on all hosts related to acme which do not sign themselves
 - hosts: app.acme,!app.acme.sign
   become: True
   roles:
