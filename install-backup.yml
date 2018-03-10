@@ -7,20 +7,20 @@
 - hosts: app.duplicity
   become: true
   roles:
-    - zwischenloesung.yapkg
+    - inofx.yapkg
   vars:
-    - yapkg_group_name: 'backup software: duplicity'
-    - yapkg_names:
+    - yapkg__task_group_name: 'backup software: duplicity'
+    - yapkg__names:
       - 'python-paramiko'
       - 'duplicity'
 
 - hosts: app.rdiff-backup
   become: true
   roles:
-    - zwischenloesung.yapkg
+    - inofix.yapkg
   vars:
-    - yapkg_group_name: 'backup software: rdiff-backup'
-    - yapkg_names:
+    - yapkg__task_group_name: 'backup software: rdiff-backup'
+    - yapkg__names:
       - 'rdiff-backup'
 
 - hosts: app.backupninja
@@ -31,10 +31,10 @@
 - hosts: app.sshfs
   become: true
   roles:
-    - zwischenloesung.yapkg
+    - inofix.yapkg
   vars:
-    - yapkg_group_name: 'remote mounts: sshfs'
-    - yapkg_names:
+    - yapkg__task_group_name: 'remote mounts: sshfs'
+    - yapkg__names:
       - 'sshfs'
 
 # not enabling this yet, as it only tracks 'today'

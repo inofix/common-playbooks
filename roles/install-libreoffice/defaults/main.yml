@@ -9,7 +9,7 @@ d_lo_pid: '/run/libreoffice.pid'
 d_lo_tmp: '{{ d_users_home }}'
 d_lo_lr_tmp: '$TC_TEMPDIR/liferay/document_conversion/'
 
-d_yapkg_names:
+d_yapkg__names:
   - libreoffice-writer
   - libreoffice-calc
   - libreoffice-pdfimport
