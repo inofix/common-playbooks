@@ -10,38 +10,38 @@
 - hosts: host.KVM
   become: True
   roles:
-    - zwischenloesung.yapkg
+    - inofix.yapkg
   vars:
-    - yapkg_group_name: 'netcat'
-    - yapkg_names:
+    - yapkg__task_group_name: 'netcat'
+    - yapkg__names:
       - 'netcat-openbsd'
 
 - hosts: host.KVM, &os.debian
   become: True
   roles:
-    - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
+    - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg_group_name: 'libvirt part I'
-    - yapkg_names:
+    - yapkg__task_group_name: 'libvirt part I'
+    - yapkg__names:
       - 'virtinst'
       - 'virt-top'
 
 - hosts: host.KVM, &os.debian_jessie
   become: True
   roles:
-    - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
+    - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg_group_name: 'libvirt part II'
-    - yapkg_names:
+    - yapkg__task_group_name: 'libvirt part II'
+    - yapkg__names:
       - 'libvirt-bin'
 
 - hosts: host.KVM, &os.debian_stretch
   become: True
   roles:
-    - { role: zwischenloesung.yapkg, when: 'ansible_virtualization_role == "host"' }
+    - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg_group_name: 'libvirt part II'
-    - yapkg_names:
+    - yapkg__task_group_name: 'libvirt part II'
+    - yapkg__names:
       - 'libvirt-daemon-system'
 
 # not enabling this yet, as it only tracks 'today'

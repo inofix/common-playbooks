@@ -11,11 +11,11 @@
 - hosts: app.basics
   become: true
   roles:
-    - zwischenloesung.yapkg
+    - inofix.yapkg
     - install-vim
   vars:
-    - yapkg_group_name: 'basic software'
-    - yapkg_names:
+    - yapkg__task_group_name: 'basic software'
+    - yapkg__names:
       - 'apt-show-versions'
       - 'cron-apt'
       - 'gawk'

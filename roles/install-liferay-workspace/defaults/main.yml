@@ -1,5 +1,5 @@
 
-yapkg_group_name: 'package manager for Node.js'
-yapkg_names:
+yapkg__task_group_name: 'package manager for Node.js'
+yapkg__names:
   - 'npm'
 

@@ -1,3 +1,3 @@
 ---
 dependencies:
-  - { role: zwischenloesung.yapkg }
+  - { role: inofix.yapkg }

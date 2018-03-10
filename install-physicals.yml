@@ -10,10 +10,10 @@
 - hosts: host.Metal
   become: True
   roles:
-    - zwischenloesung.yapkg
+    - inofix.yapkg
   vars:
-    - yapkg_group_name: 'on a physical machine'
-    - yapkg_names:
+    - yapkg__task_group_name: 'on a physical machine'
+    - yapkg__names:
       - 'kpartx'
       - 'lm-sensors'
       - 'lshw'
