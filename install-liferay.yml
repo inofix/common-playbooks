@@ -13,7 +13,7 @@
 - hosts: app.liferay
   become: True
   roles:
-    - { role: zwischenloesung.yapkg, yapkg_group_name: 'preview generation', yapkg_names: [ 'imagemagick', 'ghostscript' ] }
+    - { role: inofix.yapkg, yapkg__task_group_name: 'preview generation', yapkg__names: [ 'imagemagick', 'ghostscript' ] }
 
 - hosts: app.liferay.7
   become: True
