@@ -10,10 +10,10 @@
 - hosts: host.KVM, host.Virtual
   become: True
   roles:
-    - zwischenloesung.yapkg
+    - inofix.yapkg
   vars:
-    - yapkg_group_name: 'terminal multiplexers'
-    - yapkg_names:
+    - yapkg__task_group_name: 'terminal multiplexers'
+    - yapkg__names:
       - screen
       - tmux
 
