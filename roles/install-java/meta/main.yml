@@ -1,7 +1,7 @@
 ---
 dependencies:
-  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java', yapkg_deb_names: [ 'default-jdk' ], when: ( 'app.java.jdk.default' in group_names ) }
-  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java6', yapkg_deb_names: [ 'openjdk-6-jdk' ], when: ( 'app.java.jdk.6' in group_names ) }
-  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java7', yapkg_deb_names: [ 'openjdk-7-jdk' ], when: ( 'app.java.jdk.7' in group_names ) }
+  - { role: inofix.yapkg, yapkg__task_group_name: 'java', yapkg__names: [ 'default-jdk' ], when: ( 'app.java.jdk.default' in group_names ) }
+  - { role: inofix.yapkg, yapkg__task_group_name: 'java6', yapkg__names: [ 'openjdk-6-jdk' ], when: ( 'app.java.jdk.6' in group_names ) }
+  - { role: inofix.yapkg, yapkg__task_group_name: 'java7', yapkg__names: [ 'openjdk-7-jdk' ], when: ( 'app.java.jdk.7' in group_names ) }
   - { role: add-backports, when: ( 'app.java.jdk.8' in group_names and 'os.debian_jessie' in group_names ) }
-  - { role: zwischenloesung.yapkg, yapkg_group_name: 'java 8 from backports', yapkg_deb_names: [ 'openjdk-8-jdk' ], yapkg_update_cache: true, yapkg_default_release: 'jessie-backports', when: ( 'app.java.jdk.8' in group_names and 'os.debian_jessie' in group_names ) }
+  - { role: inofix.yapkg, yapkg__task_group_name: 'java 8 from backports', yapkg__names: [ 'openjdk-8-jdk' ], yapkg__update_cache: true, yapkg__default_release: 'jessie-backports', when: ( 'app.java.jdk.8' in group_names and 'os.debian_jessie' in group_names ) }
