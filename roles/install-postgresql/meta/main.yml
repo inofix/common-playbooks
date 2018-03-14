@@ -1,3 +1,3 @@
 allow_duplicates: yes
 dependencies:
-  - { role: inofix.yapkg, yapkg__task_group_name: 'the postgres db server', yapkg__names: '{{ postgresql__yapkg_names }}' }
+  - { role: inofix.yapkg, yapkg__task_group_name: 'the postgres db server', yapkg__names: '{{ postgresql__yapkg__names }}' }

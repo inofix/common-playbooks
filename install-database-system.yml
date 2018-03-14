@@ -13,7 +13,7 @@
   vars:
     app__postgresql__s_pkg: '{{ os__pkg_name.postgresql[os__short] | d(os__pkg_name.postgresql[os__distro]) }}'
     app__postgresql__c_pkg: '{{ os__pkg_name.postgresql_client[os__short] | d(os__pkg_name.postgresql_client[os__distro]) }}'
-    app__postgresql__yapkg_names: '{{ app__postgresql__s_pkg }} + {{ app__postgresql__c_pkg }}'
+    app__postgresql__yapkg__names: '{{ app__postgresql__s_pkg }} + {{ app__postgresql__c_pkg }}'
   roles:
     - install-postgresql
 
