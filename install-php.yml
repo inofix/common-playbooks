@@ -1,0 +1,22 @@
+#*  This playbook installs the environement for php based projects.
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- hosts: app.php.fpm
+  become: True
+  roles:
+    - inofix.php-fpm
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+
