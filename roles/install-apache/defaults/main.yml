@@ -2,7 +2,7 @@
 d_user: 'www-data'
 d_group: 'www-data'
 
-d_yapkg_names:
+d_yapkg__names:
   - apache2
   - ssl-cert
 

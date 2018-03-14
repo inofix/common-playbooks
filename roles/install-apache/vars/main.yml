@@ -4,4 +4,4 @@ apache__group: '{{ app__apache__group | d(d_group) }}'
 
 apache__security: '{{ app__apache__security | d(d_apache__security) }}'
 
-apache__yapkg_names: '{{ app__apache__yapkg_names | d(d_yapkg_names) }}'
+apache__yapkg__names: '{{ app__apache__yapkg__names | d(d_yapkg__names) }}'
