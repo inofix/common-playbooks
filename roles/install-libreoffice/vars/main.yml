@@ -9,5 +9,5 @@ lo_port: '{{ app__libreoffice__lo_port | d(d_lo_port) }}'
 lo_pid: '{{ app__libreoffice__lo_pid | d(d_lo_pid) }}'
 lo_tmp: '{{ app__libreoffice__lo_tmp | d(d_lo_tmp) }}'
 lo_lr_tmp: '{{ app__libreoffice__lo_lr_tmp | d(d_lo_lr_tmp) }}'
-yapkg__names: '{{ app__libreoffice__yapkg_names | d(d_yapkg__names) }}'
+yapkg__names: '{{ app__libreoffice__yapkg__names | d(d_yapkg__names) }}'
 

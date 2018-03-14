@@ -1,2 +1,2 @@
 ---
-postgresql__yapkg_names: '{{ app__postgresql__yapkg_names | d(d_yapkg_names) }}'
+postgresql__yapkg__names: '{{ app__postgresql__yapkg__names | d(d_yapkg__names) }}'
