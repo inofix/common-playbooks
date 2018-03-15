@@ -11,6 +11,11 @@
   roles:
     - inofix.php-fpm
 
+- hosts: app.php.fpm,app.shariff.php
+  become: True
+  roles:
+    - inofix.shariff-php
+
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
 # to be combined with something smarter as
