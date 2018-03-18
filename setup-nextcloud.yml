@@ -9,6 +9,7 @@
 
 - include: install-nextcloud.yml
 - include: install-database-system.yml
+- include: install-php.yml
 
 - hosts: app.nextcloud,app.owncloud,&app.postgresql,&app.php
   become: True
