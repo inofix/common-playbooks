@@ -6,10 +6,10 @@
     path: '{{ nextcloud__config }}'
   register: nextcloud_config
 
-- name: fail if the installation is missing
-  fail:
-    msg: "nextcloud was not installed correctly on {{ app__nextcloud__base }}"
-  when: nextcloud_config.stat.isreg is not defined or not nextcloud_config.stat.isreg
+#- name: fail if the installation is missing
+#  fail:
+#    msg: "nextcloud was not installed correctly on {{ app__nextcloud__base }}"
+#  when: nextcloud_config.stat.isreg is not defined or not nextcloud_config.stat.isreg
 
 - name: Gather the passwords file from the host itself.
   shell: 'cat {{ account_store }}'

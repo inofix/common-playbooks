@@ -2,6 +2,7 @@
 nextcloud_base: '{{ remotedirs.service }}/{{ app__nextcloud__package }}'
 dd__nextcloud__config: '{{ nextcloud_base }}/config/config.php'
 nextcloud__config: '{{ app__nextcloud__config | d(dd__nextcloud__config) }}'
+nextcloud__yapkg__names: '{{ app__nextcloud__yapkg__names }}'
 
 nextcloud__db_credentials_key: '{{ app__nextcloud__db_credentials_key | d(default__nextcloud__db_credentials_key) }}'
 nextcloud__db_credentials_name: '{{ app__nextcloud__db_credentials_name | d(default__nextcloud__db_credentials_name) }}'
