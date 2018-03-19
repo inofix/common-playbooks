@@ -26,7 +26,7 @@
   roles:
     - inofix.php-fpm
 
-- hosts: app.php.fpm,app.shariff.php
+- hosts: app.php.fpm,&app.shariff.php
   become: True
   roles:
     - inofix.shariff-php

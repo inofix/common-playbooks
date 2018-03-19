@@ -7,14 +7,15 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-nextcloud.yml
-- include: install-database-system.yml
 - include: install-php.yml
 
 - hosts: app.nextcloud,app.owncloud,&app.postgresql,&app.php
   become: True
   roles:
     - { role: inofix.yapkg, yapkg__task_group_name: 'the db connector for php', yapkg__list: '{{ os__pkg_name[app__php__pkg_key] }}' }
+
+- include: install-nextcloud.yml
+- include: install-database-system.yml
 
 - hosts: app.nextcloud,&app.postgresql,&app.php.5
   become: True
