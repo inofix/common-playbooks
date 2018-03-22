@@ -23,34 +23,5 @@
     - { role: inofix.acme-tiny-sign }
     - { role: inofix.acme-tiny-cron }
 
-# Restart the service
-- hosts: app.acme,&app.apache
-  become: True
-  roles:
-    - { role: inofix.acme-service, app__acme__service_name: 'apache' }
-
-# Restart the service
-- hosts: app.acme,&app.dovecot
-  become: True
-  roles:
-    - { role: inofix.acme-service, app__acme__service_name: 'dovecot' }
-
-# Restart the service
-- hosts: app.acme,&app.nginx
-  become: True
-  roles:
-    - { role: inofix.acme-service, app__acme__service_name: 'nginx' }
-
-# Restart the service
-- hosts: app.acme,&app.postfix
-  become: True
-  roles:
-    - { role: inofix.acme-service, app__acme__service_name: 'postfix' }
-
-# Restart the service
-- hosts: app.acme,&app.prosody
-  become: True
-  roles:
-    - { role: inofix.acme-service, app__acme__service_name: 'prosody' }
-
+include: install-acme-service.yml
 

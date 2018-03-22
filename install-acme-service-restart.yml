@@ -1,0 +1,41 @@
+#*  This playbook installs service restarter scripts for inofix.acme-*
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  The following arguments are mandatory:
+#*   - 'app__acme__domain'
+
+
+# Restart the service
+- hosts: app.acme,&app.apache
+  become: True
+  roles:
+    - { role: inofix.acme-service, app__acme__service_name: 'apache' }
+
+# Restart the service
+- hosts: app.acme,&app.dovecot
+  become: True
+  roles:
+    - { role: inofix.acme-service, app__acme__service_name: 'dovecot' }
+
+# Restart the service
+- hosts: app.acme,&app.nginx
+  become: True
+  roles:
+    - { role: inofix.acme-service, app__acme__service_name: 'nginx' }
+
+# Restart the service
+- hosts: app.acme,&app.postfix
+  become: True
+  roles:
+    - { role: inofix.acme-service, app__acme__service_name: 'postfix' }
+
+# Restart the service
+- hosts: app.acme,&app.prosody
+  become: True
+  roles:
+    - { role: inofix.acme-service, app__acme__service_name: 'prosody' }
+
+
