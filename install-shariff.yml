@@ -1,3 +1,6 @@
+#* ############################################
+#* #  DEPRECATED: use install-php.yml instead #
+#* ############################################
 #*  This playbook installs the shariff-php backend (c't/heise.de)
 #* from upstream github.
 #*  Note: this playbook should be used either from the main install playbook
