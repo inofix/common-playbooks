@@ -6,12 +6,27 @@
 #* details.
 #*  No arguments are mandatory.
 
+- hosts: app.php.5,!app.php.fpm
+  become: True
+  roles:
+    - { role: inofix.yapkg, yapkg__task_group_name: 'php5', yapkg__list: [ 'php_5', 'php' ] }
+
+- hosts: app.php.7.0,!app.php.fpm
+  become: True
+  roles:
+    - { role: inofix.yapkg, yapkg__task_group_name: 'php7.0', yapkg__list: [ 'php_7_0', 'php' ] }
+
+- hosts: app.php,!app.php.7.0,!app.php.5,!app.php.fpm
+  become: True
+  roles:
+    - { role: inofix.yapkg, yapkg__task_group_name: 'php7.0', yapkg__list: [ 'php' ] }
+
 - hosts: app.php.fpm
   become: True
   roles:
     - inofix.php-fpm
 
-- hosts: app.php.fpm,app.shariff.php
+- hosts: app.php.fpm,&app.shariff.php
   become: True
   roles:
     - inofix.shariff-php

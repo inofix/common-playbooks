@@ -1,15 +1,26 @@
 
 #TODO allow at least for a custom port
 
-- name: test if nextcloud was installed
-  stat:
-    path: '{{ nextcloud__config }}'
-  register: nextcloud_config
 
-- name: fail if the installation is missing
+- name: Check whether the sample config is available
+  stat:
+    path: "{{ nextcloud__home }}/config/config.sample.php"
+  register: nextcloud_sample_config_stat
+
+- name: Fail if sample config was missing
   fail:
-    msg: "nextcloud was not installed correctly on {{ app__nextcloud__base }}"
-  when: nextcloud_config.stat.isreg is not defined or not nextcloud_config.stat.isreg
+    msg: "Please verify manually: {{ nextcloud__home }}/config/config.sample.php was missing"
+  when: not nextcloud_sample_config_stat.stat.exists
+
+- name: Check whether the config is already done
+  stat:
+    path: "{{ nextcloud__config }}"
+  register: nextcloud_config_stat
+
+- name: Fail if config exists
+  fail:
+    msg: "Please verify manually: {{ nextcloud__config }} exists"
+  when: nextcloud_config_stat.stat.exists
 
 - name: Gather the passwords file from the host itself.
   shell: 'cat {{ account_store }}'
@@ -22,7 +33,7 @@
   become: True
   become_user: '{{ postgresql__user }}'
   postgresql_user:
-    name: '{{ app__nextcloud__db_user }}'
+    name: '{{ nextcloud__db_user }}'
     password: '{{ accountinfos[nextcloud__db_credentials_name]["value"] }}'
   when:
     - postgresql__edit_db
@@ -31,20 +42,42 @@
   become: True
   become_user: '{{ postgresql__user }}'
   postgresql_db:
-    name: '{{ app__nextcloud__db_name }}'
-    owner: '{{ app__nextcloud__db_user }}'
+    name: '{{ nextcloud__db_name }}'
+    owner: '{{ nextcloud__db_user }}'
     encoding: UTF-8
     template: template0
   when:
     - postgresql__edit_db
 
-#- name: connect nextcloud to the newly created db
-#  blockinfile:
-#    create: yes
-#    dest: "{{ app__nextcloud__config }}"
-#    mode: 0600
-#    owner: "{{ app__nextcloud__user }}"
-#    group: "{{ app__nextcloud__group }}"
-#    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK: DB -->"
-#    block: |
-# TODO write a template..
+#TODO verify that we may savely install the autoconfig again (for idempotency)
+- name: Prepare for the automatical configuration of the installation
+  template:
+    src: "autoconfig.php.j2"
+    dest: "{{ nextcloud__autoconfig }}"
+    owner: "{{ nextcloud__user }}"
+    group: "{{ nextcloud__group }}"
+    mode: "0640"
+
+# Config must be writeable for the installer it seems
+- name: Prepare the Config
+  file:
+    state: touch
+    dest: "{{ nextcloud__config }}"
+    owner: "{{ nextcloud__user }}"
+    group: "{{ nextcloud__group }}"
+    mode: "0640"
+
+# TODO needs both home and installation target dir
+# Enable the installation
+#- name: Enable nextcloud by setting the link for the webserver
+#file:
+#state: link
+
+#### NOTE not working together with the autoconfig.php ...
+#- name: install the default content
+#  become: True
+#  become_user: '{{ nextcloud__user }}'
+#  command: 'php occ maintenance:install'
+#  args:
+#    chdir: '{{ nextcloud__home }}'
+

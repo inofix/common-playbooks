@@ -9,12 +9,12 @@
 # TODO include webserver and php-fpm and switch to the right user base
 #- include: install-webserver.yml
 
-- hosts: app.nextcloud,!app.php
+- hosts: app.nextcloud
   become: True
   roles:
     - inofix.nextcloud
 
-- hosts: app.owncloud,!app.php
+- hosts: app.owncloud
   become: True
   vars:
     app__nextcloud__archive: '{{ app__owncloud__archive }}'
