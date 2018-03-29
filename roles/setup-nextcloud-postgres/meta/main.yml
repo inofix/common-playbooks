@@ -1,5 +1,5 @@
 ---
 dependencies:
   - deploy-account-store
+  - { role: add-credentials-to-store, target_file: '{{ nextcloud__config }}', credentials_key: '{{ nextcloud__admin_credentials_key }}', credentials_name: '{{ nextcloud__admin_credentials_name }}', credentials_user: '{{ nextcloud__admin_user }}', password_chars: "ascii,digits,-_+", password_length: 12 }
   - { role: add-credentials-to-store, target_file: '{{ nextcloud__config }}', credentials_key: '{{ nextcloud__db_credentials_key }}', credentials_name: '{{ nextcloud__db_credentials_name }}', credentials_user: '{{ nextcloud__db_user }}', password_chars: "ascii,digits,.-_~+=" }
-

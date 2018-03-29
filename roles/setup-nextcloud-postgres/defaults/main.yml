@@ -1,10 +1,29 @@
 ---
-default__postgresql__user: 'postgres'
-default__postgresql__group: 'postgres'
-default__postgresql__edit_db: true
+
+default__nextcloud__base: "/var/www/"
+default__nextcloud__name: "nextcloud"
+default__nextcloud__home: "{{ default__nextcloud__base }}/{{ default__nextcloud__name }}"
+default__nextcloud__data: "{{ default__nextcloud__home }}/data"
+default__nextcloud__user: "www-data"
+default__nextcloud__group: "www-data"
+
+default__nextcloud__db_type: 'pgsql'
+default__nextcloud__db_host: 'localhost'
+default__nextcloud__db_tableprefix: ''
 
 default__nextcloud__db_name: 'nextcloud'
 default__nextcloud__db_user: 'nextcloud'
 
-default__nextcloud__db_credentials_key: 'dbpassword'
+default__nextcloud__db_credentials_key: 'dbpass'
 default__nextcloud__db_credentials_name: 'nextcloud_db'
+
+default__nextcloud__admin_user: 'nextcloud'
+default__nextcloud__admin_credentials_key: 'adminpass'
+default__nextcloud__admin_credentials_name: 'nextcloud_admin'
+
+default__nextcloud__db_pass_placeholder: '%DBPASS%'
+default__nextcloud__admin_pass_placeholder: '%ADMINPASS%'
+
+default__postgresql__user: 'postgres'
+default__postgresql__group: 'postgres'
+default__postgresql__edit_db: true
