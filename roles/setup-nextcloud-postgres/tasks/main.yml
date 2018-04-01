@@ -85,7 +85,7 @@
 #- name: 'Write a cron job to be run every 15 minutes'
 #  cron:
 #    name: 'nextcloud'
-#    job: '{{ nextcloud__home }}/cron.php'
+#    job: 'php {{ nextcloud__home }}/cron.php'
 #    user: '{{ nextcloud__user }}'
 #    minute: '4,19,34,49'
 #    hour: '*'
