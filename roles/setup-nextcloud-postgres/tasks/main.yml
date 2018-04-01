@@ -87,7 +87,7 @@
 #    name: 'nextcloud'
 #    job: '{{ nextcloud__home }}/cron.php'
 #    user: '{{ nextcloud__user }}'
-#    minute: '*/4'
+#    minute: '4,19,34,49'
 #    hour: '*'
 #    day: '*'
 #    month: '*'
