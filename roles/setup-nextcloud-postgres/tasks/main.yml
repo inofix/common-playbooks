@@ -81,3 +81,14 @@
 #  args:
 #    chdir: '{{ nextcloud__home }}'
 
+### TODO
+#- name: 'Write a cron job to be run every 15 minutes'
+#  cron:
+#    name: 'nextcloud'
+#    job: 'php {{ nextcloud__home }}/cron.php'
+#    user: '{{ nextcloud__user }}'
+#    minute: '4,19,34,49'
+#    hour: '*'
+#    day: '*'
+#    month: '*'
+#    weekday: '*'
