@@ -23,5 +23,5 @@
     - { role: inofix.acme-tiny-sign }
     - { role: inofix.acme-tiny-cron }
 
-include: install-acme-service.yml
+- include: install-acme-service-restart.yml
 
