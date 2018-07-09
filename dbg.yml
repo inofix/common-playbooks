@@ -1,0 +1,15 @@
+#*  This is a testing module only. Just provide the variable
+#* you want to check as 'msg' and then ansible will tell you
+#* what value it sees for that variable.
+#*  The following arguments are mandatory:
+#*  - 'msg'
+#*  Maestro Example:
+#    * Test the reclass-variable 'service__backup__user'
+#*     `$ maestro.sh -f -H bup00 play dbg "msg={{ service__backup__user }}"`
+- hosts: all
+  vars:
+    msg: "foobar"
+  tasks:
+    - name: debugging
+      debug:
+        msg: "{{ msg }}"
