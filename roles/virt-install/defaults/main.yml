@@ -63,6 +63,8 @@ os__installer_template_list: '{{ os__installer_templates | map(attribute="dest")
 host:
   virt:
     connect: 'qemu:///system'
+    cpu:
+      type: 'host-passthrough'
     display:
       graphics: 'spice'
       video: 'qxl'
