@@ -71,6 +71,8 @@ host:
     install_console: 'console=ttyS0,115200n8'
     mode: 'hvm'
     network: 'bridge=virbr0'
+    rng:
+      backend: '/dev/urandom'
     storage:
       default:
         cache: "default"
