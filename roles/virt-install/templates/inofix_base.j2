@@ -21,7 +21,7 @@ Defaults: %inofix env_check += "SSH_CLIENT"
 %inofix ALL = (ALL:ALL) NOPASSWD: SETENV: ALL
 EOF
 
-{% for adminname, admin in admins.iteritems() %}
+{% for adminname, admin in admins.items() %}
 in-target useradd -u "{{ admin.uid }}" -G inofix -c "{{ admin.fullname }}" -s /bin/bash -m "{{ admin.username }}"
 #in-target chage -d 0 "{{ admin.username }}"
 mkdir -p "/target/home/{{ admin.username }}/.ssh"
