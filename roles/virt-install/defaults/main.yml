@@ -63,12 +63,16 @@ os__installer_template_list: '{{ os__installer_templates | map(attribute="dest")
 host:
   virt:
     connect: 'qemu:///system'
+    cpu:
+      type: 'host-passthrough'
     display:
       graphics: 'spice'
       video: 'qxl'
     install_console: 'console=ttyS0,115200n8'
     mode: 'hvm'
     network: 'bridge=virbr0'
+    rng:
+      backend: '/dev/urandom'
     storage:
       default:
         cache: "default"
