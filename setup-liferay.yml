@@ -8,6 +8,7 @@
 #* details.
 #*  No arguments are mandatory.
 
+- include: install-elasticsearch.yml
 - include: install-liferay.yml
 
 - hosts: app.liferay,&app.tomcat
