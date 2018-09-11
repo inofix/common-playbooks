@@ -1,0 +1,26 @@
+#*  This playbook wrapps the apt (and others maybe in the future..) module
+#* to install the elasticsearch package.
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- include: install-java.yml
+
+- hosts: app.elasticsearch
+  become: True
+
+  roles:
+    - { role: inofix.yapkg, yapkg__task_group_name: 'elasticsearch', yapkg__names: [ 'elasticsearch' ] }
+
+# not enabling this yet, as it only tracks 'today'
+# it is only useful for human communication and needs
+# to be combined with something smarter as
+# dpkg --get-selections
+#- hosts: all
+
+#  roles:
+#    - track-packages
+
