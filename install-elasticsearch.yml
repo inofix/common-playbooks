@@ -10,10 +10,9 @@
 - include: install-java.yml
 
 - hosts: app.elasticsearch
-  become: True
 
   roles:
-    - { role: inofix.yapkg, yapkg__task_group_name: 'elasticsearch', yapkg__names: [ 'elasticsearch' ] }
+    - { role: inofix.ansible-elasticsearch }
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
