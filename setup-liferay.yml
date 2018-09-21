@@ -26,6 +26,10 @@
   roles:
     - install-liferay-plugins
 
+- hosts: app.liferay.7,&app.elasticsearch
+  roles:
+    - { role: setup-liferay-elasticsearch }
+
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
 # to be combined with something smarter as
