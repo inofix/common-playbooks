@@ -1,0 +1,10 @@
+
+clusterName="{{ app__elasticsearch__cluster_name }}"
+
+operationMode="REMOTE"
+
+{% for n in service__portal__liferay__elasticsearch__nodes %}
+
+transportAddresses='"{{ n }}"'
+{% endfor %}
+

@@ -1,0 +1,10 @@
+---
+- name: 'Set the elasticsearch cluster in liferay'
+  become: True
+  template:
+    src: 'com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.cfg.j2'
+    dest: '{{ app__liferay__home }}/osgi/configs/com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.cfg'
+    mode: '644'
+    owner: '{{ app__liferay__user }}'
+    group: '{{ app__liferay__group }}'
+
