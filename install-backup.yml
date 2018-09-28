@@ -7,7 +7,7 @@
 - hosts: app.duplicity
   become: true
   roles:
-    - inofx.yapkg
+    - inofix.yapkg
   vars:
     - yapkg__task_group_name: 'backup software: duplicity'
     - yapkg__names:
