@@ -23,6 +23,9 @@
 
 - hosts: app.php.fpm
   become: True
+  vars:
+    # set the pkg list here for now..
+    app__php__yapkg__list: '{{ os__pkg_name | select("equalto", app__php__pkg_key) | list }}'
   roles:
     - inofix.php-fpm
 

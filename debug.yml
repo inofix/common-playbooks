@@ -5,7 +5,7 @@
 #*  - 'msg'
 #*  Maestro Example:
 #    * Test the reclass-variable 'service__backup__user'
-#*     `$ maestro.sh -f -H bup00 play dbg "msg={{ service__backup__user }}"`
+#*     `$ maestro.sh -f -H bup00 play debug "msg={{ service__backup__user }}"`
 - hosts: all
   vars:
     msg: "foobar"
