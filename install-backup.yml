@@ -27,6 +27,9 @@
   become: true
   roles:
     - install-backupninja
+  vars:
+    - yapkg__names:
+      - 'backupninja'
 
 - hosts: app.sshfs
   become: true
