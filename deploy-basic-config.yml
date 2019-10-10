@@ -7,7 +7,7 @@
 #* to the storage dir. 
 #*  No arguments are needed.
 
-- hosts: os.debian
+- hosts: os.debian:os.centos
   become: true
   roles:
     - deploy-basic
