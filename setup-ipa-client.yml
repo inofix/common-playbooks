@@ -1,0 +1,36 @@
+#*  This playbook registers a new host on the IPA domain which will
+#* create an internal DNS record and setup user authentication via
+#* LDAP/Kerberos.
+#*  Use '-a' to pass parameters to ansible (as '-e').
+#*  No arguments are mandatory.
+
+- name: Register host on IPA domain
+  hosts: host.Virtual,&os.debian_buster
+
+  vars:
+    setup_ipa_client__ipa_host_delegation: "{{ ipa.servers|first | default('ipa.' + ansible_domain) }}"
+
+  tasks:
+    - name: Check IPA server login
+      delegate_to: "{{ setup_ipa_client__ipa_host_delegation }}"
+      run_once: true
+      ping:
+
+    - name: Check for valid kerberos ticket
+      delegate_to: "{{ setup_ipa_client__ipa_host_delegation }}"
+      changed_when: false
+      command: klist
+
+    - name: Query IPA for host
+      delegate_to: "{{ setup_ipa_client__ipa_host_delegation }}"
+      # If host not joined yet, return code 2
+      failed_when: setup_ipa_client__register__host_show.rc not in [0, 2]
+      command: ipa host-show "{{ ansible_fqdn }}"
+      register: setup_ipa_client__register__host_show
+
+    - name: Add host to IPA
+      delegate_to: "{{ setup_ipa_client__ipa_host_delegation }}"
+      command: "ipa host-add --ip-address={{ ansible_default_ipv4.address }} {{ ansible_fqdn }}"
+      when: setup_ipa_client__register__host_show.rc != 0
+
+- import_playbook: deploy-keytab.yml
