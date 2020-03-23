@@ -1,0 +1,27 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT DROP [0:0]
+-A INPUT -p tcp -m state --state INVALID -j DROP
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p icmp -m icmp --icmp-type 0/0 -j ACCEPT
+-A INPUT -p icmp -m icmp --icmp-type 8/0 -m limit --limit 10/sec -j ACCEPT
+#TODO why is this not working? `if host in groups['app.sshd'] and app__sshd__port is defined`
+{% if app__sshd__port is defined %}
+-A INPUT -p tcp -m tcp --dport {{ app__sshd__port }} -m recent --update --seconds 120 --hitcount 8 --name SSH --rsource -j DROP
+-A INPUT -p tcp -m tcp --dport {{ app__sshd__port }} -m state --state NEW -m recent --set --name SSH --rsource -j ACCEPT
+{% endif %}
+-A OUTPUT -p tcp -m state --state INVALID -j DROP
+-A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+-A OUTPUT -p icmp -m icmp --icmp-type 8/0 -m limit --limit 10/sec -j ACCEPT
+-A OUTPUT -p icmp -m icmp --icmp-type 0/0 -j ACCEPT
+-A OUTPUT -o {{ thewall_net.name }} -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT
+-A OUTPUT -o {{ thewall_net.name }} -p tcp -m tcp --dport 443 -m state --state NEW -j ACCEPT
+COMMIT
+*nat
+:PREROUTING ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+COMMIT
