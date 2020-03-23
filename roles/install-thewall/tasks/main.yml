@@ -8,12 +8,46 @@
     group: 'root'
     mode: '0644'
 
-- name: install a very simplistic init script
+- name: install a very simplistic init script just to have something
   template:
     src: 'thewall.j2'
     dest: '/etc/init.d/thewall'
     owner: 'root'
     group: 'root'
     mode: '0755'
+
+- name: create the config directory
+  file:
+    dest: '{{ app__thewall__confdir }}'
+    state: directory
+    owner: 'root'
+    group: 'root'
+    mode: '0750'
+
+- name: deploy the hosts firewall config if it exists
+  copy:
+    src: '{{ workdir }}/{{ fqdn }}/{{ app__thewall__rules.v4 }}'
+    dest: '{{ app__thewall__rules.v4 }}'
+    backup: 'yes'
+    owner: 'root'
+    group: 'root'
+    mode: '0640'
+  ignore_errors: yes
+
+- name: test for a config file, in case the prior command did not create one
+  stat:
+    path: '{{ app__thewall__rules.v4 }}'
+  register: thewall_deployed
+
+- name: if there is no config yet, install a minimal default
+  template:
+    src: 'firewall-v4.rules.j2'
+    dest: '{{ app__thewall__rules.v4 }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0640'
+  when: thewall_deploy.isreg is not defined
+  vars:
+    thewall_net: '{{ host.resource[hostname].net | selectattr("primary") | first() }}'
 
 # for now the rules are installed from the repo

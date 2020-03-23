@@ -35,7 +35,7 @@
     - yapkg__names:
       - 'libvirt-bin'
 
-- hosts: host.KVM, &os.debian_stretch
+- hosts: os.debian_stretch, os.debian_buster, &host.KVM, &host.Metal
   become: True
   roles:
     - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }
