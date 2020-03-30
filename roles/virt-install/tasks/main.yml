@@ -13,9 +13,11 @@
 - name: prepare logical volume storage
   become: true
   lvol:
-    lv: '{{ new__hostname }}-{{ item.name }}'
+    lv: '{{ item.force_name | d(lv_name, true) }}'
     size: '{{ item.size | d( host.virt.storage[item.meta.pool].default_size ) }}'
     vg: '{{ host.virt.storage[item.meta.pool].volume_group }}'
+  vars:
+    lv_name: '{{ new__hostname }}-{{ item.name }}'
   with_items: '{{ new.disk }}'
   when: host.virt.storage[item.meta.pool].type == "lvm"
 
