@@ -37,5 +37,3 @@
 
   roles:
     - install-apache
-#    - debops.apache/env
-#    - debops.apache
