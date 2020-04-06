@@ -3,8 +3,7 @@
 #* all account infos needed for the local configuration files, in order to
 #* fill in passphrases and the like when the configs are put together from
 #* templates.
-#*  You might want to do a `noteify merge-all` first or set a temporary
-#* workdir via `nodeify.sh -w dir`.
+#*  You might want to do a `maestro.sh merge` first.
 #*  No arguments are needed.
 
 - hosts: all
