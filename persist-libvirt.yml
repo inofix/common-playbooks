@@ -7,7 +7,7 @@
 #* diffs right away.
 #*  No arguments are needed.
 
-- hosts: app.libvirt
+- hosts: host.KVM
 
   roles:
     - persist-libvirt
