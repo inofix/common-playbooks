@@ -6,6 +6,7 @@
 - src: inofix.acme-tiny-sign
 - src: inofix.acme-tiny-cron
 - src: inofix.ansible_elasticsearch
+- src: inofix.ansible_nginx
 - src: inofix.nextcloud
 - src: inofix.php-fpm
 - src: inofix.shariff-php

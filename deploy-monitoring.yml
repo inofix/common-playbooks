@@ -2,8 +2,7 @@
 #* configured for the host as a list to 'src'. Use '-a' to pass
 #* further parameters to ansible (as '-e'). See ansible copy for
 #* details.
-#*  You might want to do a `noteify merge-all` first or set a temporary
-#* workdir via `nodeify.sh -w dir`.
+#*  You might want to do a `maestro.sh merge` first.
 #*  No arguments are needed.
 
 - hosts: role.monitor

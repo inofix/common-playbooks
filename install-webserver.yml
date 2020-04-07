@@ -8,7 +8,7 @@
 #* https://docs.debops.org/en/latest/ansible/roles/ansible-apache/docs/defaults.html
 #*  No arguments are mandatory.
 
-- name: Setup Apache httpd Web server
+- name: Set the Apache web server up
   hosts: app.apache
   become: True
 
@@ -37,5 +37,13 @@
 
   roles:
     - install-apache
-#    - debops.apache/env
-#    - debops.apache
+
+- name: Set the NGINX web server up
+  hosts: app.nginx
+  become: True
+
+  vars:
+    app__nginx__yapkg__names: '{{ os__pkg_name.nginx[os__short] | d(os__pkg_name.nginx[os__distro]) }}'
+
+  roles:
+    - inofix.ansible_nginx

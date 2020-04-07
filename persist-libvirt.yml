@@ -1,4 +1,4 @@
-#*  This playbook wrapps the fetch module. It passes the monitoring
+#*  This playbook wrapps the fetch module. It passes the libvirt
 #* configs for each host as a list to 'src'. Use '-a' to pass
 #* further parameters to ansible (as '-e'). See ansible fetch for
 #* details. 
@@ -7,8 +7,8 @@
 #* diffs right away.
 #*  No arguments are needed.
 
-- hosts: role.monitor
-
+- hosts: host.KVM
+  become: True
   roles:
-    - persist-cmk
-    - persist-icinga
+    - persist-libvirt
+
