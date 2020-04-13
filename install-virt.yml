@@ -16,31 +16,31 @@
     - yapkg__names:
       - 'netcat-openbsd'
 
-- hosts: host.KVM, &os.debian
+- hosts: host.KVM_host, &os.debian
   become: True
   roles:
     - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg__task_group_name: 'libvirt part I'
+    - yapkg__task_group_name: 'libvirt hypervisor part I'
     - yapkg__names:
       - 'virtinst'
       - 'virt-top'
 
-- hosts: host.KVM, &os.debian_jessie
+- hosts: host.KVM_host, &os.debian_jessie
   become: True
   roles:
     - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg__task_group_name: 'libvirt part II'
+    - yapkg__task_group_name: 'libvirt hypervisor part II (<stretch)'
     - yapkg__names:
       - 'libvirt-bin'
 
-- hosts: os.debian_stretch, os.debian_buster, &host.KVM, &host.Metal
+- hosts: os.debian_stretch, os.debian_buster, &host.KVM_host, &host.Metal
   become: True
   roles:
     - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }
   vars:
-    - yapkg__task_group_name: 'libvirt part II'
+    - yapkg__task_group_name: 'libvirt hypervisor part II (>stretch)'
     - yapkg__names:
       - 'libvirt-daemon-system'
 
