@@ -5,7 +5,7 @@
     line: "{{ format[file_type].line }}"
     regexp: "{{ format[file_type].regexp }}"
 # This always happens locally in the workdir..
-  sudo: false
+  become: false
   connection: local
   with_items: "{{ file_list }}"
 
