@@ -1,4 +1,9 @@
 ---
+- name: "Enable configs"
+  command: 'a2enconf {{ item.key }}'
+  when: '{{ item.value }}'
+  with_dict: '{{ app__apache__configs }}'
+
 - name: "Enable modules"
   command: 'a2enmod {{ item.key }}'
   when: '{{ item.value }}'
