@@ -4,7 +4,7 @@
     regexp: "^{{ account_pass_key }}=.*"
     line: "{{ account_pass_key }}={{ account_password_placeholder }}"
 # This always happens locally in the workdir..
-  sudo: false
+  become: false
   connection: local
   when: account_dest_file_type == "key=val"
 
@@ -14,7 +14,7 @@
     regexp: "^{{ account_pass_key }} = .*"
     line: "{{ account_pass_key }} = {{ account_password_placeholder }}"
 # This always happens locally in the workdir..
-  sudo: false
+  become: false
   connection: local
   when: account_dest_file_type == "key = val"
 
@@ -25,7 +25,7 @@
     line: '\1"{{ account_pass_key }}": "{{ account_password_placeholder }}"\2'
     backrefs: yes
 # This always happens locally in the workdir..
-  sudo: false
+  become: false
   connection: local
   when: account_dest_file_type == "json"
 
