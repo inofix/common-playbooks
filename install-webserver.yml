@@ -15,9 +15,8 @@
   vars:
     app__apache__mod_pkgs: '{{ os__pkg_name.apache_mod[os__short] | d(os__pkg_name.apache_mod[os__distro]) }}'
 ##    app__apache__mods: '{{ app__apache__modules | list() | unique() }}'
-    app__apache__mod_helper: '{% for key, value in app__apache__modules.items() %}{% if value == True %}{{ app__apache__mod_pkgs[key] | d() }};{% endif %}{% endfor %}'
+    app__apache__mod_helper: '{% for key, value in app__apache__modules.items() %}{% if value.enable == True %}{{ app__apache__mod_pkgs[key] | d() }};{% endif %}{% endfor %}'
     app__apache__yapkg__names: '{{ os__pkg_name.apache[os__short] | d(os__pkg_name.apache[os__distro]) }} + {{ app__apache__mod_helper.split(";") }}'
-
     # use fqdn if ansible_fqdn is not set
     #TODO why is it not forwarded from reclass?
 #    ansible_fqdn: '{{ fqdn }}'
