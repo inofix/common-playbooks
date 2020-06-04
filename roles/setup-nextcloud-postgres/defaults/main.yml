@@ -26,4 +26,5 @@ default__nextcloud__admin_pass_placeholder: '%ADMINPASS%'
 
 default__postgresql__user: 'postgres'
 default__postgresql__group: 'postgres'
+default__postgresql__encrypt_password: 'yes'
 default__postgresql__edit_db: true

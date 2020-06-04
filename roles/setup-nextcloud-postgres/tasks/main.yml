@@ -35,6 +35,7 @@
   postgresql_user:
     name: '{{ nextcloud__db_user }}'
     password: '{{ accountinfos[nextcloud__db_credentials_name]["value"] }}'
+    encrypted: '{{ postgresql__encrypt_password }}'
   when:
     - postgresql__edit_db
 
