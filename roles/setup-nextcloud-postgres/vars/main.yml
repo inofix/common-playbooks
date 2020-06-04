@@ -26,4 +26,5 @@ nextcloud__admin_pass_placeholder: '{{ app__nextcloud__admin_pass_placeholder | 
 
 postgresql__edit_db: '{{ app__postgresql__edit_db | d(default__postgresql__edit_db) }}'
 postgresql__user: '{{ app__postgresql__user | d(default__postgresql__user) }}'
+postgresql__encrypt_password: '{{ app__postgresql__encrypt_password | d(default__postgresql__encrypt_password) }}'
 
