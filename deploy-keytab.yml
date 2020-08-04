@@ -1,0 +1,67 @@
+#*  This playbook exports the kerberos host keytab from IPA and deploys
+#* it on a host to /etc/krb5.keytab.
+#*  It requires your Ansible user to have SSH access to the IPA server
+#* and a valid kerberos ticket with the required export permissions
+#* already issued.
+#*  No arguments are needed.
+
+- name: Export Kerberos keytab from IPA and deploy it on host
+  hosts: host.Virtual,&os.debian_buster
+
+  vars:
+    deploy_keytab__ipa_host_delegation: "{{ ipa.servers|first | default('ipa.' + ansible_domain) }}"
+
+  tasks:
+    - name: Query keytab
+      become: True
+      stat:
+        path: /etc/krb5.keytab
+      register: deploy_keytab__register_keytab
+
+    - name: Run tasks to install host keytab
+      block:
+        - name: Create temporary directory
+          delegate_to: "{{ deploy_keytab__ipa_host_delegation }}"
+          tempfile:
+            state: directory
+            prefix: "keytab."
+          register: deploy_keytab__register_tempdir
+
+        - name: Export host keytab
+          delegate_to: "{{ deploy_keytab__ipa_host_delegation }}"
+          command: >
+            /usr/sbin/ipa-getkeytab
+            -s {{ deploy_keytab__ipa_host_delegation }}
+            -p host/{{ ansible_fqdn }}
+            -k {{ deploy_keytab__register_tempdir.path }}/krb5.keytab
+
+        - name: Fetch keytab from IPA server
+          delegate_to: "{{ deploy_keytab__ipa_host_delegation }}"
+          fetch:
+            src: "{{ deploy_keytab__register_tempdir.path }}/krb5.keytab"
+            # copy file to playbook directory
+            dest: "./"
+            flat: yes
+
+        - name: Copy keytab to host
+          become: True
+          copy:
+            src: "krb5.keytab"
+            dest: "/etc/krb5.keytab"
+            owner: root
+            group: root
+            mode: 0600
+
+        - name: Remove temporary directory
+          delegate_to: "{{ deploy_keytab__ipa_host_delegation }}"
+          file:
+            path: "{{ deploy_keytab__register_tempdir.path }}"
+            state: absent
+
+        - name: Remove temporary keytab
+          delegate_to: localhost
+          file:
+            path: "krb5.keytab"
+            state: absent
+
+      when: not deploy_keytab__register_keytab.stat.exists
