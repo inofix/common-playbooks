@@ -8,6 +8,7 @@
 
 - hosts: app.sudo
   become: true
+  become_method: "su"
   roles:
     - inofix.yapkg
   vars:
