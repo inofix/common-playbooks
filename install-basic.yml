@@ -13,7 +13,7 @@
   gather_facts: false
   tasks:
     - name: "Make sure python2 is installed on this debian host: check for the command"
-      raw: 'test -e /usr/bin/python'
+      raw: 'test -e {{ ansible_python_interpreter }}'
       ignore_errors: true
       register: is_python_installed
     - name: "Make sure python2 is installed on this debian host: install it"
