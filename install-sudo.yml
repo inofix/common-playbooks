@@ -6,7 +6,21 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.sudo
+# Get the host ready for ansible, only 'raw' method is available..
+- hosts: os.debian.stretch
+  become: true
+  become_method: "su"
+  gather_facts: false
+  tasks:
+    - name: "Make sure python2 is installed on this debian host: check for the command"
+      raw: 'test -e {{ ansible_python_interpreter }}'
+      ignore_errors: true
+      register: is_python_installed
+    - name: "Make sure python2 is installed on this debian host: install it if necessary"
+      raw: 'apt -y update && apt install -y python2'
+      when: is_python_installed.rc != 0
+
+- hosts: os.debian_stretch
   become: true
   become_method: "su"
   roles:
