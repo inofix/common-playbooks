@@ -24,7 +24,6 @@
     - yapkg__task_group_name: 'libvirt hypervisor part I'
     - yapkg__names:
       - 'virtinst'
-      - 'virt-top'
 
 - hosts: host.KVM_host, &os.debian_jessie
   become: True
