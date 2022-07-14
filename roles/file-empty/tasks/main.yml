@@ -1,0 +1,45 @@
+
+- name: "check what there is left to do: regular file or directory"
+  stat:
+    path: '{{ path }}'
+  register: fe_stat
+
+- name: "empty the file"
+  copy:
+    dest: '{{ path }}'
+    content: ""
+    force: yes
+  when:
+    - fe_stat.stat.isreg is defined
+    - fe_stat.stat.isreg
+    - fe_stat.stat.size > 0
+
+- name: "register all files in the directory"
+  find:
+    path: '{{ path }}'
+    file_type: file
+  register: fe_files
+  when:
+    - fe_stat.stat.isdir is defined
+    - fe_stat.stat.isdir
+
+- name: "register all subdirectories in the directory"
+  find:
+    path: '{{ path }}'
+    file_type: directory
+  register: fe_directories
+  when:
+    - fe_stat.stat.isdir is defined
+    - fe_stat.stat.isdir
+
+- name: "remove files and subdirs inside the directory"
+  file:
+    path: '{{ item.path }}'
+    state: absent
+  with_items: 
+    - "{{ fe_files.files }}"
+    - "{{ fe_directories.files }}"
+  when:
+    - fe_stat.stat.isdir is defined
+    - fe_stat.stat.isdir
+

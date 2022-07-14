@@ -11,3 +11,7 @@
     owner: 'root'
     group: 'root'
 
+- name: Run dpkg-reconfigure on debian (based) hosts
+  command: dpkg-reconfigure -fnoninteractive exim4-config
+  when:
+     - ansible_pkg_mgr == "apt"

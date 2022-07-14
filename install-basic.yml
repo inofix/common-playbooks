@@ -6,6 +6,9 @@
 #* details.
 #*  No arguments are mandatory.
 
+- include: install-sudo.yml
+- include: deploy-accounts-store.yml
+- include: install-ssh.yml
 - include: install-terminal-mux.yml
 
 - hosts: app.basics
@@ -28,7 +31,6 @@
       - 'ntpdate'
       - 'ntp'
       - 'strace'
-      - 'sudo'
       - 'xml2'
 
 # not enabling this yet, as it only tracks 'today'

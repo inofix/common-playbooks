@@ -24,7 +24,6 @@
     - yapkg__task_group_name: 'libvirt hypervisor part I'
     - yapkg__names:
       - 'virtinst'
-      - 'virt-top'
 
 - hosts: host.KVM_host, &os.debian_jessie
   become: True
@@ -35,7 +34,7 @@
     - yapkg__names:
       - 'libvirt-bin'
 
-- hosts: os.debian_stretch, os.debian_buster, &host.KVM_host, &host.Metal
+- hosts: os.debian_stretch, os.debian_buster, os.debian_bullseye, &host.KVM_host, &host.Metal
   become: True
   roles:
     - { role: inofix.yapkg, when: 'ansible_virtualization_role == "host"' }

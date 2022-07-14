@@ -17,6 +17,7 @@
 -A OUTPUT -o lo -j ACCEPT
 -A OUTPUT -p icmp -m icmp --icmp-type 8/0 -m limit --limit 10/sec -j ACCEPT
 -A OUTPUT -p icmp -m icmp --icmp-type 0/0 -j ACCEPT
+-A OUTPUT -o {{ thewall_net.name }} -p udp -m udp -m multiport --dports 53,123 -j ACCEPT
 -A OUTPUT -o {{ thewall_net.name }} -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT
 -A OUTPUT -o {{ thewall_net.name }} -p tcp -m tcp --dport 443 -m state --state NEW -j ACCEPT
 COMMIT

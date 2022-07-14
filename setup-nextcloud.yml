@@ -49,3 +49,7 @@
 #  roles:
 #    - track-packages
 
+
+##TODO crontab user www-php (or so..)
+# 4,19,34,49 * * * * php /srv/nextcloud/cron.php
+##TODO email

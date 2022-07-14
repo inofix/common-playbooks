@@ -4,8 +4,6 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: deploy-accounts-store.yml
-- include: install-ssh.yml
 - include: install-basic.yml
 - include: install-firewalling.yml
 - include: install-archive.yml
