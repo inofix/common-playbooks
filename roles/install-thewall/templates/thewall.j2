@@ -14,18 +14,11 @@
 # and this init script to restore it.
 ### END DESCRIPTION INFO
 
-conffile="{{ rules.v4 }}"
-tmpfile="/tmp/iptables-save.for.comparison"
+conf4file="{{ rules.v4 }}"
+conf6file="{{ rules.v4 }}"
+tmp4file="/tmp/iptables-save.for.comparison"
+tmp6file="/tmp/ip6tables-save.for.comparison"
 applytimeout={{ applytimeout }}
-
-if [ -n "$2" ] ; then
-    if [ -f "$2" ] ; then
-        echo "using config: $2"
-        conffile="$2"
-    fi
-fi
-
-[ -r "$conffile" ] || exit 1
 
 # Get lsb functions
 . /lib/lsb/init-functions
@@ -33,17 +26,21 @@ fi
 
 start()
 {
-    fail="1"
+    fail="0"
     log_daemon_msg "starting firewall"
-    # for now, just close v6 altogether
-    lsmod | grep "ip6_tables" >/dev/null || modprobe ip6_tables
+    echo "as per default, close everything..."
+    lsmod | grep "ip6_tables" >/dev/null || modprobe ip6_tables || fail="1"
     ip6tables -P INPUT DROP
     ip6tables -P FORWARD DROP
     ip6tables -P OUTPUT DROP
-    lsmod | grep "ip_tables" >/dev/null || modprobe ip_tables || fail="0"
-    if [ "$fail" -eq "1" ] ;then
-        iptables-restore $conffile
+    lsmod | grep "ip_tables" >/dev/null || modprobe ip_tables || fail="2"
+    iptables -P INPUT DROP
+    iptables -P FORWARD DROP
+    iptables -P OUTPUT DROP
+    if [ "$fail" -eq "0" ] ;then
+        [ -r "$conf4file" ] && iptables-restore $conf4file
         echo "1" > /proc/sys/net/ipv4/ip_forward
+        [ -r "$conf6file" ] && ip6tables-restore $conf6file
         log_success_msg
     else
         log_failure_msg
@@ -84,25 +81,36 @@ sesam()
 }
 apply()
 {
-    iptables-apply -t "$applytimeout" $conffile
+    [ -r "$conf4file" ] && iptables-apply -t "$applytimeout" $conf4file
+    [ -r "$conf6file" ] && ip6tables-apply -t "$applytimeout" $conf6file
 }
 restore()
 {
-    iptables-restore $conffile
+    [ -r "$conf4file" ] && iptables-restore $conf4file
+    [ -r "$conf6file" ] && ip6tables-restore $conf6file
 }
 save()
 {
-    iptables-save > $conffile
+    iptables-save > $conf4file
+    ip6tables-save > $conf6file
 }
 compare()
 {
-    if [ -e "$tmpfile" ] ; then
-        echo "== please remove $tmpfile first =="
+    if [ -e "$tmp4file" ] ; then
+        echo "== please remove $tmp4file first =="
     else
-        /sbin/iptables-save > $tmpfile
-        echo "== comparing $tmpfile with $conffile =="
-        /usr/bin/diff -dwi -I "^:" -I "^\#" $tmpfile $conffile
-        /bin/rm $tmpfile
+        /sbin/iptables-save > $tmp4file
+        echo "== comparing IPv4 $tmp4file with $conf4file =="
+        /usr/bin/diff -dwi -I "^:" -I "^\#" $tmp4file $conf4file
+        /bin/rm $tmp4file
+    fi
+    if [ -e "$tmp6file" ] ; then
+        echo "== please remove $tmp6file first =="
+    else
+        /sbin/iptables-save > $tmp6file
+        echo "== comparing IPv4 $tmp6file with $conf6file =="
+        /usr/bin/diff -dwi -I "^:" -I "^\#" $tmp6file $conf6file
+        /bin/rm $tmp6file
     fi
 }
 usage()
