@@ -5,7 +5,7 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.docker, &os.debian.bullseye
+- hosts: app.docker, &os.debian.bullseye, &os.debian.bullseye-backports
   become: true
   roles:
     - inofix.yapkg
