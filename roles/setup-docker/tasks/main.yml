@@ -1,0 +1,58 @@
+---
+
+- name: Check whether the docker directory already exists
+  stat:
+    path: "{{ docker__path }}"
+  register: docker_path_stat
+
+- name: Fail in case the target directory already existed
+  fail:
+    msg: "Please verify manually: {{ docker__path }} already existed (not overwriting)"
+  when: docker_path_stat.stat.exists
+
+- name: Check whether the volume group exists
+  stat:
+    path: "/dev/{{ docker__vg_name }}"
+  register: docker_vg_stat
+
+- name: Fail if the expected volume group was missing
+  fail:
+    msg: "Please verify manually: /dev/{{ docker_vg_name }} was missing"
+  when: not docker_vg_stat.stat.exists
+
+- name: Check whether the logical volume exists
+  stat:
+    path: "/dev/{{ docker__vg_name }}/{{ docker__lv_name }}"
+  register: docker_lv_stat
+
+- name: Create a new logical volume (TODO no resize yet..)
+  lvol:
+      vg: '{{ docker__vg_name }}'
+      lv: '{{ docker__lv_name }}'
+      size: '{{ docker__lv_size }}'
+  when: not docker_lv_stat.stat.exists
+
+- name: Create a file system
+  filesystem:
+    fstype: '{{ docker__fs_type }}'
+    dev: '/dev/{{ docker__vg_name }}/{{ docker__lv_name }}'
+  when: not docker_lv_stat.stat.exists
+
+- name: Create the mount point
+  file:
+    path: '{{ docker__path }}'
+    state: directory
+    mode: '0755'
+
+- name: Add an entry to fstab
+  lineinfile:
+    path: '/etc/fstab'
+    regexp: '{{ docker__path }}'
+    line: '/dev/{{ docker__vg_name }}/{{ docker__lv_name }} {{ docker__path }} {{ docker__fs_type }} {{ docker__fs_options }} 0 2'
+
+- name: Mount it, finally...
+  mount:
+    path: '{{ docker__path }}'
+    state: mounted
+    src: '/dev/{{ docker__vg_name }}/{{ docker__lv_name }}'
+    fstype: '{{ docker__fs_type }}'

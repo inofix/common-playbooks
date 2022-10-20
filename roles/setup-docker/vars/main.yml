@@ -1,0 +1,7 @@
+---
+docker__vg_name: '{{ app__docker__vg_name | d(default__docker__vg_name) }}'
+docker__lv_name: '{{ app__docker__lv_name | d(default__docker__lv_name) }}'
+docker__lv_size: '{{ app__docker__lv_size | d(default__docker__lv_size) }}'
+docker__fs_type: '{{ app__docker__fs_type | d(default__docker__fs_type) }}'
+docker__fs_options: '{{ app__docker__fs_options | d(default__docker__fs_options) }}'
+docker__path: '{{ app__docker__path | d(default__docker__path) }}'

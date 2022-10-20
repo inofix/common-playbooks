@@ -1,0 +1,9 @@
+---
+
+default__docker__vg_name: "vg_main"
+default__docker__lv_name: "docker"
+default__docker__lv_size: "8G"
+default__docker__fs_type: "ext4"
+default__docker__fs_options: "noatime,nodev,nosuid"
+default__docker__path: "/var/lib/docker"
+

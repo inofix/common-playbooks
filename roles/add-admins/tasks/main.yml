@@ -6,16 +6,22 @@
 #    gid: '{{ item.value.gid }}'
   with_dict: '{{ admins }}'
 
+- name: "Make sure all system groups exist"
+  group:
+    name: '{{ item }}'
+    system: yes
+  with_list: '{{ admins.values() | list | map(attribute="groups") | flatten | sort | unique }}'
+
 - name: "Make sure the user exists"
   user:
     name: '{{ item.value.username }}'
     comment: '{{ item.value.fullname }}'
     group: '{{ item.value.groupname }}'
-# not working as expected..
-#    groups: '{{ item.value.groups }}'
-#    append: 'yes'
+    groups: '{{ item.value.groups }}'
+    append: 'yes'
 # think about it..
 #    uid: '{{ item.value.uid }}'
+#TODO, something like, but checking the path first    shell: '{{ item.value.shell | d("/usr/bin/false") }}' - wait, these are admins though.. ;)
   with_dict: '{{ admins }}'
 
 - name: "Create the authorized keys file for ssh"

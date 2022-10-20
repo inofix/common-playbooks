@@ -5,9 +5,10 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.docker, &os.debian.bullseye, &os.debian.bullseye-backports
+- hosts: app.docker, &os.debian_bullseye
   become: true
   roles:
+    - add-backports
     - inofix.yapkg
   vars:
     - yapkg__task_group_name: 'basic software'

@@ -1,0 +1,13 @@
+#*  This playbook prepares the system for the `install-docker` playbook (to be
+#* found here in the same repo).
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  No arguments are mandatory.
+
+- hosts: app.docker, &os.debian_bullseye
+  become: true
+  roles:
+    - setup-docker
+
+- include: install-docker.yml
+- include: add-admins.yml
