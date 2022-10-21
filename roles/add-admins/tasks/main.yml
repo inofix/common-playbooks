@@ -18,6 +18,7 @@
     comment: '{{ item.value.fullname }}'
     group: '{{ item.value.groupname }}'
     groups: '{{ item.value.groups }}'
+    shell: '{{ item.value.shell }}'
     append: 'yes'
 # think about it..
 #    uid: '{{ item.value.uid }}'
