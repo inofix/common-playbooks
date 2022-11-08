@@ -1,5 +1,6 @@
 #*  This playbook prepares the system for the `install-docker` playbook (to be
-#* found here in the same repo).
+#* found here in the same repo). It basically prepares a new logical volume and
+#* organizes the users. To only install docker, use the aforementioned playbook.
 #*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
 #* details.
 #*  No arguments are mandatory.
