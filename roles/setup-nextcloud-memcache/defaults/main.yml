@@ -1,0 +1,4 @@
+---
+default__nextcloud__home: "/var/www/nextcloud"
+default__nextcloud__relative_config_path: "config/config.php"
+default__nextcloud__user: "www-data"

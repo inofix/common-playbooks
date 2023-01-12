@@ -1,0 +1,9 @@
+---
+
+- name: Reconfigure Nextcloud to use the local APCu memcache
+  lineinfile:
+    line: "  'memcache.local' => '\\OC\\Memcache\\APCu',"
+    regexp: "^ *'memcache.local' => .*,$"
+    insertbefore: '^\);$'
+    path: '{{ nextcloud__config_path }}'
+    state: 'present'

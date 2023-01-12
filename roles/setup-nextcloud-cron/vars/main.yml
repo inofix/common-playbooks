@@ -1,0 +1,3 @@
+---
+nextcloud__user: '{{ app__nextcloud__user | d(default__nextcloud__user) }}'
+nextcloud__home: '{{ app__nextcloud__home | d(default__nextcloud__home) }}'

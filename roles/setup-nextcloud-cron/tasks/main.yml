@@ -1,0 +1,12 @@
+---
+
+- name: Install a cron job to be run in the background
+  cron:
+    minute: "*/5*"
+    hour: "*"
+    day: "*"
+    weekday: "*"
+    month: "*"
+    user: '{{ nextcloud__user }}'
+    job: '{{ nextcloud__home }}/cron.php }}'
+
