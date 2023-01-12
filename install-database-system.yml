@@ -7,7 +7,7 @@
 #* https://docs.debops.org/en/latest/ansible/roles/ansible-postgresql/docs/defaults.html
 #*  No arguments are mandatory.
 
-- name: Setup PostgreSQL Server
+- name: Install PostgreSQL Server
   hosts: app.postgresql.server
   become: True
   vars:
@@ -17,7 +17,7 @@
   roles:
     - install-postgresql
 
-- name: Setup PostgreSQL Client
+- name: Install PostgreSQL Client
   hosts: app.postgresql.client,!app.postgresql.server
   become: True
   roles:
