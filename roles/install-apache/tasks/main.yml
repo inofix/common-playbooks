@@ -2,12 +2,12 @@
 - name: "Enable configs"
   command: 'a2enconf {{ item.value.name }}'
   when: '{{ item.value.enable }}'
-  with_dict: '{{ app__apache__configs }}'
+  with_dict: '{{ app__apache__configs | d({}) }}'
 
 - name: "Enable modules"
   command: 'a2enmod {{ item.value.name }}'
   when: '{{ item.value.enable }}'
-  with_dict: '{{ app__apache__modules }}'
+  with_dict: '{{ app__apache__modules | d({}) }}'
 
 - name: "Production level settings - part I"
   stat:
