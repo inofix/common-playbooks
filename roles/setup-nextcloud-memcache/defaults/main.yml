@@ -1,4 +1,6 @@
 ---
 default__nextcloud__home: "/var/www/nextcloud"
 default__nextcloud__relative_config_path: "config/config.php"
+# e.g. for debian bullseye: /etc/php/7.4/cli/conf.d/90-apcu-custom.ini
+default__php__cli_apc_custom_config: "/etc/php/7.4/cli/conf.d/90-apcu-custom.ini"
 default__nextcloud__user: "www-data"

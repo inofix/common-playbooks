@@ -1,3 +1,4 @@
 ---
 nextcloud__user: '{{ app__nextcloud__user | d(default__nextcloud__user) }}'
 nextcloud__config_path: '{{ app__nextcloud__home | d(default__nextcloud__home) }}/{{ app__nextcloud__relative_config_path | d(default__nextcloud__relative_config_path) }}'
+php__cli_apc_custom_config: '{{ app__php__cli_apc_custom_config | d(default__php__cli_apc_custom_config) }}"

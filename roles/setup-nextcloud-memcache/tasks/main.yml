@@ -1,5 +1,13 @@
 ---
 
+- name: Enable the local APCu memcache for the cli
+  lineinfile:
+    line: "apc.enable_cli=1"
+    regexp: "^apc.enable_cli=.*$"
+    insertafter: 'EOF'
+    path: '{{ php__cli_apc_custom_config }}'
+    state: 'present'
+
 - name: Reconfigure Nextcloud to use the local APCu memcache
   lineinfile:
     line: "  'memcache.local' => '\\OC\\Memcache\\APCu',"
