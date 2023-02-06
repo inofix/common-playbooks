@@ -1,0 +1,14 @@
+---
+- name: "download wordpress"
+
+
+- name: "unpack wordpress"
+  unarchive:
+tar xzvf wordpress-4.9.1.tar.gz
+=> wordpress
+
+
+- name: "install wordpress"
+
+
+

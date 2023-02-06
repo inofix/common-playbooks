@@ -10,6 +10,8 @@ default__exim4__client_user: ''
 
 default__exim4__client_password: ''
 
+default__exim4__local_interfaces: '127.0.0.1 ; ::1'
+
 default__exim4__server_mode: 'local'
 
 default__exim4__smart_host: ''

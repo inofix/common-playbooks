@@ -1,0 +1,8 @@
+---
+# defaults file for wordpress-install
+http_proxy: ""
+default__wordpress__base: "/srv/"
+default__wordpress__package: "wordpress-4.9.1.tar.gz"
+default__wordpress__home: "/${app__wordpress__base}/${app__wordpress__package}"
+default__wordpress__checksum: "sha256:a94ae99cda7666bfd482b36f268ad240a3bde2a66724e1312dabf068a9555100"
+default__wordpress__download_upstream: "https://wordpress.org/${app__wordpress__package}"

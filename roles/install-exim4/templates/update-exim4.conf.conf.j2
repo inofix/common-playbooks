@@ -19,7 +19,7 @@
 
 dc_eximconfig_configtype='{{ exim4__server_mode }}'
 dc_other_hostnames='{{ exim4__mail_name }}'
-dc_local_interfaces='127.0.0.1 ; ::1'
+dc_local_interfaces='{{ exim4__local_interfaces }}'
 dc_readhost='{{ exim4__sender_domain }}'
 dc_relay_domains=''
 dc_minimaldns='false'

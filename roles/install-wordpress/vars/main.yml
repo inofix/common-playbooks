@@ -1,0 +1,7 @@
+---
+# vars file for wordpress-install
+wordpress__base: '{{ app__wordpress__base | d(default__wordpress__base) }}'
+wordpress__package: '{{ app__wordpress__package | d(default__wordpress__package) }}'
+wordpress__home: '{{ app__wordpress__home | d(default__wordpress__home) }}'
+wordpress__checksum: '{{ app__wordpress__checksum | d(default__wordpress__checksum) }}'
+wordpress__download_ustream: '{{ app__wordpress__download_ustream | d(default__wordpress__download_ustream) }}'
