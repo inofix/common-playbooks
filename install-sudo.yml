@@ -20,7 +20,7 @@
       raw: 'apt -y update && apt install -y python2'
       when: is_python_installed.rc != 0
 
-- hosts: os.debian_stretch os.debian_buster os.debian_bullseye
+- hosts: os.debian_stretch os.debian_buster os.debian_bullsey os.debian_bookworm
   become: true
   become_method: "su"
   roles:
