@@ -7,6 +7,19 @@
     group: 'root'
     mode: '0755'
 
+# Log must be writeable
+- name: Prepare the log file
+  file:
+    state: touch
+    dest: "{{ fail2ban__sshd_log }}"
+    owner: "{{ fail2ban__user }}"
+    group: "{{ fail2ban__group }}"
+    mode: "0640"
+
+- name: "remove default config in debian if it is there..."
+  file:
+    path: '{{ fail2ban__remove_debian_default_if_it_exists }}'
+    state: absent
 
 - name: "remove default config in debian if it is there..."
   file:

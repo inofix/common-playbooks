@@ -1,5 +1,7 @@
 ---
 
+fail2ban__user: '{{ app__fail2ban__user | d(default__fail2ban__user) }}'
+fail2ban__group: '{{ app__fail2ban__group | d(default__fail2ban__group) }}'
 fail2ban__sshd: '{{ app__fail2ban__sshd | d(default__fail2ban__sshd) }}'
 fail2ban__sshd_port: '{{ app__fail2ban__sshd_port | d(default__fail2ban__sshd_port) }}'
 fail2ban__sshd_conf: '{{ app__fail2ban__sshd_conf | d(default__fail2ban__sshd_conf) }}'

@@ -1,5 +1,7 @@
 ---
 
+default__fail2ban__user: 'root'
+default__fail2ban__group: 'adm'
 default__fail2ban__sshd: false
 default__fail2ban__sshd_port: 22
 default__fail2ban__sshd_conf: '/etc/fail2ban/jail.d/sshd.conf'
