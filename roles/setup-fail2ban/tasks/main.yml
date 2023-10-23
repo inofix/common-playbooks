@@ -1,0 +1,15 @@
+---
+- name: install the sshd jail config
+  template:
+    src: 'sshd.conf.j2'
+    dest: '{{ fail2ban__sshd_conf }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+
+
+- name: "remove default config in debian if it is there..."
+  file:
+    path: '{{ fail2ban__remove_debian_default_if_it_exists }}'
+    state: absent
+

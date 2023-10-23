@@ -1,0 +1,9 @@
+[ssh]
+
+enabled = true
+port    = {{ fail2ban__sshd_port }}
+filter  = sshd
+logpath  = {{ fail2ban__sshd_log }}
+maxretry = 5
+bantime = 21600
+

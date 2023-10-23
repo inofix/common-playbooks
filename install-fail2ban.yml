@@ -7,8 +7,8 @@
 - hosts: app.sshd
   become: true
   roles:
-    - { role: inofix.yapkg, when: 'app__sshd__fail2ban == true' }
-#    - setup-fail2ban
+    - { role: inofix.yapkg, when: 'app__fail2ban__sshd == true' }
+    - setup-fail2ban
   vars:
     - yapkg__task_group_name: 'fail2ban software'
     - yapkg__names:
