@@ -28,10 +28,18 @@
       - 'less'
       - 'lsb-release'
       - 'nmon'
-      - 'ntpdate'
-      - 'ntp'
       - 'strace'
       - 'xml2'
+
+- hosts: app.ntpdate
+  become: true
+  roles:
+    - inofix.yapkg
+  vars:
+    - yapkg__task_group_name: 'basic software'
+    - yapkg__names:
+      - 'ntpdate'
+      - 'ntp'
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
