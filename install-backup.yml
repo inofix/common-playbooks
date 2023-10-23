@@ -4,6 +4,23 @@
 #*  Use '-a' to pass parameters to ansible (as '-e').
 #*  No arguments are mandatory.
 
+- hosts: app.backupninja
+  become: true
+  roles:
+    - install-backupninja
+  vars:
+    - yapkg__names:
+      - 'backupninja'
+
+- hosts: app.borg
+  become: true
+  roles:
+    - inofix.yapkg
+  vars:
+    - yapkg__task_group_name: 'backup software: borg'
+    - yapkg__names:
+      - 'borgbackup'
+
 - hosts: app.duplicity, &debian_bullseye
   become: true
   roles:
@@ -32,14 +49,6 @@
     - yapkg__task_group_name: 'backup software: rdiff-backup'
     - yapkg__names:
       - 'rdiff-backup'
-
-- hosts: app.backupninja
-  become: true
-  roles:
-    - install-backupninja
-  vars:
-    - yapkg__names:
-      - 'backupninja'
 
 - hosts: app.sshfs
   become: true
