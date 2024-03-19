@@ -4,10 +4,10 @@
 #* details.
 #*  No arguments are mandatory.
 
-- hosts: app.sshd
+- hosts: app.fail2ban, &app.sshd
   become: true
   roles:
-    - { role: inofix.yapkg, when: 'app__fail2ban__sshd == true' }
+    - inofix.yapkg
     - setup-fail2ban
   vars:
     - yapkg__task_group_name: 'fail2ban software'

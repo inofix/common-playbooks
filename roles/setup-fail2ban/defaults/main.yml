@@ -6,5 +6,6 @@ default__fail2ban__sshd: false
 default__fail2ban__sshd_port: 22
 default__fail2ban__sshd_conf: '/etc/fail2ban/jail.d/sshd.conf'
 default__fail2ban__remove_debian_default_if_it_exists: '/etc/fail2ban/jail.d/defaults-debian.conf'
-default__fail2ban__sshd_log: '/var/log/fail2ban_sshd.log'
+default__fail2ban__systemd_journald: 'SYSTEMD'
+default__fail2ban__sshd_log: '{{ default__fail2ban__systemd_journald }}'
 

@@ -3,7 +3,11 @@
 enabled = true
 port    = {{ fail2ban__sshd_port }}
 filter  = sshd
-logpath  = {{ fail2ban__sshd_log }}
+{% if fail2ban__logpath == fail2ban__systemd_journald %}
+    backend = systemd
+{% else %}
+    logpath  = {{ fail2ban__sshd_log }}
+{% endif %}
 maxretry = 5
 bantime = 21600
 
