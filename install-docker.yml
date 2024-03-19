@@ -5,13 +5,23 @@
 #* details.
 #*  No arguments are mandatory.
 
+- hosts: app.docker, &os.debian_bookworm
+  become: true
+  roles:
+    - inofix.yapkg
+  vars:
+    - yapkg__task_group_name: 'docker container solution'
+    - yapkg__names:
+      - 'docker.io'
+      - 'docker-compose'
+
 - hosts: app.docker, &os.debian_bullseye
   become: true
   roles:
     - add-backports
     - inofix.yapkg
   vars:
-    - yapkg__task_group_name: 'basic software'
+    - yapkg__task_group_name: 'docker container solution'
     - yapkg__names:
       - 'docker.io'
       - 'docker-compose'
