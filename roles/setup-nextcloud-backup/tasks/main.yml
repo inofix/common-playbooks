@@ -1,0 +1,33 @@
+---
+- name: Do not proceed if there is no supported db registered
+  ansible.builtin.fail:
+    msg: Please use a supported db here, which currently are: pgsql
+  when: nextcloud__db_type != "pgsql"
+
+- name: Prepare the backup directory
+  file:
+    state: directory
+    name: '{{ nextcloud__backup_base }}'
+    owner: '{{ nextcloud__backup_user }}'
+    group: '{{ nextcloud__backup_group }}'
+    mode: '0750'
+
+- name: Install the backup script
+  template:
+    src: "nextcloud-backup.sh.j2"
+    dest: "{{ nextcloud__backup_scripts }}/nextcloud-backup.sh"
+    mode: "0750"
+    owner: '{{ nextcloud__meta_user }}'
+    group: '{{ nextcloud__meta_group }}'
+
+- name: Install a cron job to be run in the background
+  cron:
+    minute: '{{ nextcloud__backup_cron_minute }}'
+    hour: '{{ nextcloud__backup_cron_hour }}'
+    day: '{{ nextcloud__backup_cron_day }}'
+    weekday: '{{ nextcloud__backup_cron_weekday }}'
+    month: '{{ nextcloud__backup_cron_month }}'
+    user: '{{ nextcloud__meta_user }}'
+    job: '{{ nextcloud__backup_scritps }}/nextcloud-backup.sh'
+  when: nextcloud__backup_cron_enabled
+

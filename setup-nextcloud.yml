@@ -50,6 +50,11 @@
   roles:
     - setup-nextcloud-cron
 
+- hosts: app.nextcloud,&app.php,&app.nextcloud.backup
+  become: True
+  roles:
+    - setup-nextcloud-backup
+
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
 # to be combined with something smarter as
@@ -59,7 +64,3 @@
 #  roles:
 #    - track-packages
 
-
-##TODO crontab user www-php (or so..)
-# 4,19,34,49 * * * * php /srv/nextcloud/cron.php
-##TODO email

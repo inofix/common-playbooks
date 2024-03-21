@@ -1,0 +1,35 @@
+---
+nextcloud__meta_user: '{{ app__nextcloud__meta_user | d(default__nextcloud__meta_user) }}'
+nextcloud__user: '{{ app__nextcloud__user | d(default__nextcloud__user }}'
+#nextcloud__group: '{{ app__nextcloud__group | d(default__nextcloud__group }}'
+
+nextcloud__base: '{{ app__nextcloud__base | d(default__nextcloud__base) }}'
+nextcloud__name: '{{ app__nextcloud__name | d(default__nextcloud__name) }}'
+
+nextcloud__home: '{{ app__nextcloud__home | d(default__nextcloud__home) }}'
+nextcloud__data_is_extra: '{{ app__nextcloud__data_is_extra | d(default__nextcloud__data_is_extra) }}'
+nextcloud__data: '{{ app__nextcloud__data | d(default__nextcloud__data) }}'
+nextcloud__config: '{{ app__nextcloud__config | d(default__nextcloud__config) }}'
+
+nextcloud__db_type: '{{ app__nextcloud__db_type | d(default__nextcloud__db_type) }}'
+#nextcloud__db_host: '{{ app__nextcloud__db_host | d(default__nextcloud__db_host) }}'
+nextcloud__db_name: '{{ app__nextcloud__db_name | d(default__nextcloud__db_name) }}'
+nextcloud__db_dump_user: '{{ app__nextcloud__db_user | d(default__nextcloud__db_user) }}'
+nextcloud__db_base: '{{ app__nextcloud__db_base | d(default__nextcloud__db_base) }}'
+
+nextcloud__backup_user: '{{ app__nextcloud__backup_user | d(default__nextcloud__backup_user) }}'
+nextcloud__backup_group: '{{ app__nextcloud__backup_group | d(default__nextcloud__backup_group) }}'
+nextcloud__backup_base: '{{ app__nextcloud__backup_base | d(default__nextcloud__backup_base) }}'
+nextcloud__backup_scripts: '{{ app__nextcloud__backup_scripts | d(default__nextcloud__backup_scripts) }}'
+nextcloud__backup_home: '{{ app__nextcloud__backup_home | d(default__nextcloud__backup_home) }}'
+nextcloud__backup_data: '{{ app__nextcloud__backup_data | d(default__nextcloud__backup_data) }}'
+nextcloud__backup_db: '{{ app__nextcloud__backup_db | d(default__nextcloud__backup_db) }}'
+nextcloud__backup_db_dump: '{{ app__nextcloud__backup_db_dump | d(default__nextcloud__backup_db_dump) }}'
+nextcloud__backup_cron_enabled: '{{ app__nextcloud__backup_cron_enabled | d(default__nextcloud__backup_cron_enabled) }}'
+nextcloud__backup_cron_minute: '{{ app__nextcloud__backup_cron_minute | d(default__nextcloud__backup_cron_minute) }}'
+nextcloud__backup_cron_hour: '{{ app__nextcloud__backup_cron_hour | d(default__nextcloud__backup_cron_hour) }}'
+nextcloud__backup_cron_day: '{{ app__nextcloud__backup_cron_day | d(default__nextcloud__backup_cron_day) }}'
+nextcloud__backup_cron_weekday: '{{ app__nextcloud__backup_cron_weekday | d(default__nextcloud__backup_cron_weekday) }}'
+nextcloud__backup_cron_month: '{{ app__nextcloud__backup_cron_month | d(default__nextcloud__backup_cron_month) }}'
+
+

@@ -1,0 +1,34 @@
+---
+default__nextcloud__meta_user: "root"
+default__nextcloud__user: "www-data"
+#default__nextcloud__group: "www-data"
+
+default__nextcloud__base: '/var/www/'
+default__nextcloud__name: 'nextcloud'
+
+default__nextcloud__home: '{{ default__nextcloud__base }}/{{ default__nextcloud__name }}'
+default__nextcloud__data_is_extra: True
+default__nextcloud__data: '{{ default__nextcloud__home }}-data'
+default__nextcloud__config: '{{ default__nextcloud__home }}/confg/config.php'
+
+default__nextcloud__db_type: 'pgsql'
+#default__nextcloud__db_host: 'localhost'
+default__nextcloud__db_name: 'nextcloud'
+default__nextcloud__db_dump_user: 'postgres'
+default__nextcloud__db_base: '/var/lib/postgres/'
+
+default__nextcloud__backup_user: 'backup'
+default__nextcloud__backup_group: 'backup'
+default__nextcloud__backup_base: '/srv/backups/{{ default__nextcloud__name }}'
+default__nextcloud__backup_scripts: '{{ default__nextcloud__base }}/bin/'
+default__nextcloud__backup_home: '{{ default__nextcloud__base }}/{{ default__nextcloud__home }}'
+default__nextcloud__backup_data: '{{ default__nextcloud__base }}/{{ default__nextcloud__data }}'
+default__nextcloud__backup_db: '{{ default__nextcloud__base }}/{{ default__nextcloud__db_base }}'
+default__nextcloud__backup_db_dump: '{{ default__nextcloud__backup_db }}/{{ default__nextcloud__db_name }}.sql'
+default__nextcloud__backup_cron_enabled: True
+default__nextcloud__backup_cron_minute: '23'
+default__nextcloud__backup_cron_hour: '4'
+default__nextcloud__backup_cron_day: '*'
+default__nextcloud__backup_cron_weekday: '*' 
+default__nextcloud__backup_cron_month: '*'
+
