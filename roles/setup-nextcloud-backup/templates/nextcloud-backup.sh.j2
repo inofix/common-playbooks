@@ -270,11 +270,11 @@ if [ "${check_mode/,/}" == "true" ] ; then
         "rsync $rsync_verbose -a --delete \"${nextcloud_data}/\" \"${nextcloud_backup_data}/\"" \
          $toggle_interactive $toggle_dry_run
 {% endif %}
-fi
 
-ask_first "Do you agree to set nextcloud back into 'production mode'? [Y/n]" \
-    "sed -i \"s;^  'maintenance' => true,;  'maintenance' => false,;\" \"${nextcloud_config}\"" \
-    $toggle_interactive $toggle_dry_run
+    ask_first "Do you agree to set nextcloud back into 'production mode'? [Y/n]" \
+        "sed -i \"s;^  'maintenance' => true,;  'maintenance' => false,;\" \"${nextcloud_config}\"" \
+        $toggle_interactive $toggle_dry_run
+fi
 
 
 # Clean up, i.e. make sure the remote backup can access the data
