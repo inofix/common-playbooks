@@ -7,7 +7,7 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-liferay.yml
+- import_playbook: install-liferay.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

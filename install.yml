@@ -4,23 +4,23 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-basic.yml
-- include: install-firewalling.yml
-- include: install-archive.yml
+- import_playbook: install-basic.yml
+- import_playbook: install-firewalling.yml
+- import_playbook: install-archive.yml
 # TODO: test setup rather than install backup..
-#- include: install-backup.yml
-- include: setup-backup.yml
-- include: install-terminal-mux.yml
-- include: install-monitored.yml
-- include: install-physicals.yml
-- include: install-virt.yml
-- include: install-docker.yml
-- include: install-webserver.yml
-- include: install-database-system.yml
-- include: install-tomcat.yml
-- include: setup-liferay.yml
-- include: install-libreoffice.yml
-- include: install-php.yml
+#- import_playbook: install-backup.yml
+- import_playbook: setup-backup.yml
+- import_playbook: install-terminal-mux.yml
+- import_playbook: install-monitored.yml
+- import_playbook: install-physicals.yml
+- import_playbook: install-virt.yml
+- import_playbook: install-docker.yml
+- import_playbook: install-webserver.yml
+- import_playbook: install-database-system.yml
+- import_playbook: install-tomcat.yml
+- import_playbook: setup-liferay.yml
+- import_playbook: install-libreoffice.yml
+- import_playbook: install-php.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

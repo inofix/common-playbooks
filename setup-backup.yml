@@ -3,7 +3,7 @@
 #*  Use '-a' to pass parameters to ansible (as '-e').
 #*  No arguments are mandatory.
 
-- include: install-backup.yml
+- import_playbook: install-backup.yml
 
 - hosts: app.backupninja
   become: true

@@ -6,12 +6,11 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-sudo.yml
-- include: add-admins.yml
-- include: install-fail2ban.yml
-- include: deploy-accounts-store.yml
-- include: install-ssh.yml
-- include: install-terminal-mux.yml
+- import_playbook: add-admins.yml
+- import_playbook: install-fail2ban.yml
+- import_playbook: deploy-accounts-store.yml
+- import_playbook: install-ssh.yml
+- import_playbook: install-terminal-mux.yml
 
 - hosts: app.basics
   become: true

@@ -8,8 +8,8 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-elasticsearch.yml
-- include: install-liferay.yml
+- import_playbook: install-elasticsearch.yml
+- import_playbook: install-liferay.yml
 
 - hosts: app.liferay,&app.tomcat
   become: True

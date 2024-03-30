@@ -8,7 +8,7 @@
 #* details.
 #*  No arguments are mandatory.
 
-- include: install-tomcat.yml
+- import_playbook: install-tomcat.yml
 
 - hosts: app.liferay
   become: True
