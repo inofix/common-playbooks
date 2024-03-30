@@ -8,7 +8,7 @@
 - hosts: app.archive
   become: True
   roles:
-    - { role: inofix.yapkg, yapkg__task_group_name: 'archive', yapkg__names: [ 'zip', 'unzip' ] }
+    - { role: inofix.yapkg, yapkg__task_group_name: 'archive', yapkg__names: [ 'bzip2', 'unzip', 'xz-utils', 'zip' ] }
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs
