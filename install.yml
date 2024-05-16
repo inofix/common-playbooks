@@ -15,12 +15,12 @@
 - import_playbook: install-physicals.yml
 - import_playbook: install-virt.yml
 - import_playbook: install-docker.yml
+- import_playbook: install-php.yml
 - import_playbook: install-webserver.yml
 - import_playbook: install-database-system.yml
 - import_playbook: install-tomcat.yml
 - import_playbook: setup-liferay.yml
 - import_playbook: install-libreoffice.yml
-- import_playbook: install-php.yml
 
 # not enabling this yet, as it only tracks 'today'
 # it is only useful for human communication and needs

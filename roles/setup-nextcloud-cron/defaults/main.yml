@@ -1,3 +1,5 @@
 ---
+default__nextcloud__base: "/srv"
+default__nextcloud__package: "nextcloud"
 default__nextcloud__home: "{{ default__nextcloud__base }}/{{ default__nextcloud__package }}"
 default__nextcloud__user: "www-data"

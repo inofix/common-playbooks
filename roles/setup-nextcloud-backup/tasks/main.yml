@@ -1,13 +1,21 @@
 ---
 - name: Do not proceed if there is no supported db registered
   ansible.builtin.fail:
-    msg: Please use a supported db here, which currently are: pgsql
+    msg: "Please use a supported db here, which currently are: pgsql"
   when: nextcloud__db_type != "pgsql"
 
 - name: Prepare the backup directory
   file:
     state: directory
     name: '{{ nextcloud__backup_base }}'
+    owner: '{{ nextcloud__backup_user }}'
+    group: '{{ nextcloud__backup_group }}'
+    mode: '0750'
+
+- name: Prepare the scripts directory
+  file:
+    state: directory
+    name: '{{ nextcloud__backup_scripts }}'
     owner: '{{ nextcloud__backup_user }}'
     group: '{{ nextcloud__backup_group }}'
     mode: '0750'
@@ -28,6 +36,6 @@
     weekday: '{{ nextcloud__backup_cron_weekday }}'
     month: '{{ nextcloud__backup_cron_month }}'
     user: '{{ nextcloud__meta_user }}'
-    job: '{{ nextcloud__backup_scritps }}/nextcloud-backup.sh'
+    job: '{{ nextcloud__backup_scripts }}/nextcloud-backup.sh'
   when: nextcloud__backup_cron_enabled
 

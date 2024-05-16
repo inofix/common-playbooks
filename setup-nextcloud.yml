@@ -53,6 +53,7 @@
 - hosts: app.nextcloud,&app.php,&app.nextcloud.backup
   become: True
   roles:
+    - prepare-backup
     - setup-nextcloud-backup
 
 # not enabling this yet, as it only tracks 'today'

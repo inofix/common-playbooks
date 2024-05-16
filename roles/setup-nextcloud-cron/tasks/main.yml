@@ -8,5 +8,5 @@
     weekday: "*"
     month: "*"
     user: '{{ nextcloud__user }}'
-    job: '{{ nextcloud__home }}/cron.php }}'
+    job: '[ -r {{ nextcloud__home }}/cron.php ] && php {{ nextcloud__home }}/cron.php'
 
