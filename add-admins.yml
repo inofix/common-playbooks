@@ -1,5 +1,5 @@
 
-- hosts: all
+- hosts: admins
   become: true
   roles:
     - add-admins
