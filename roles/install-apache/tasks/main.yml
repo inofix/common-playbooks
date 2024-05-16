@@ -1,12 +1,12 @@
 ---
 - name: "Enable configs"
   command: 'a2enconf {{ item.value.name }}'
-  when: '{{ item.value.enable }}'
+  when: item.value.enable
   with_dict: '{{ app__apache__configs | d({}) }}'
 
 - name: "Enable modules"
   command: 'a2enmod {{ item.value.name }}'
-  when: '{{ item.value.enable }}'
+  when: item.value.enable
   with_dict: '{{ app__apache__modules | d({}) }}'
 
 - name: "Production level settings - part I"
@@ -21,7 +21,7 @@
     dest: '{{ item.item }}'
     regexp: '^ServerTokens .*'
     line: 'ServerTokens Prod'
-  when: '{{ item.stat.exists }}'
+  when: item.stat.exists
   with_items: '{{ apache_sec_stat.results }}'
 
 - name: "Production level settings - part III"
@@ -30,6 +30,6 @@
     dest: '{{ item.item }}'
     regexp: '^ServerSignature .*'
     line: 'ServerSignature Off'
-  when: '{{ item.stat.exists }}'
+  when: item.stat.exists
   with_items: '{{ apache_sec_stat.results }}'
 
