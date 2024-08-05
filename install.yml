@@ -6,6 +6,7 @@
 
 - import_playbook: install-basic.yml
 - import_playbook: install-firewalling.yml
+- import_playbook: install-sudo.yml
 - import_playbook: install-archive.yml
 # TODO: test setup rather than install backup..
 #- import_playbook: install-backup.yml
