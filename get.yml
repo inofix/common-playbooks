@@ -1,7 +1,9 @@
 #*  This playbook simply wrapps the fetch module. Per default it gets
 #* a certain file from the server and puts it in the workdir.
 #*  The following arguments are mandatory:
-#*   - ( 'file' ) or ( 'src' and 'dest' )
+#*   - 'files'
+#* Maestro Example:
+#*    `$ maestro.sh -f -H bup00 play get 'files=["/etc/hosts","/etc/network/interfaces"]'
 
 - hosts: all
 

@@ -1,0 +1,7 @@
+file: '{{ files | d(default__file) }}'
+files_len: '{{ files | length }}'
+src_files: '{% if files_len > 0 %}{{ files }}{% else %}[{{ file }}]{% endif %}'
+dest: '{{ workdir | d(default__workdir) }}'
+fail_on_missing: '{{ default__fail_on_missing }}'
+flat: '{{ default__flat }}'
+validate_checksum: '{{ default__validate_checksum }}'

@@ -1,6 +1,8 @@
-src: '{{ file }}'
-dest: '{{ workdir }}'
-fail_on_missing: no
-flat:
-validate_checksum: yes
+
+default__file: ''
+default__workdir: 'workdir'
+default__fail_on_missing: False
+default__flat: False
+default__validate_checksum: True
+
 

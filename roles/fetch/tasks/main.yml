@@ -1,7 +1,10 @@
+
+
 - name: get file(s) from remote host
   fetch:
-    src: '{{ src }}'
+    src: '{{ item }}'
     dest: '{{ dest }}'
     fail_on_missing: '{{ fail_on_missing }}'
     flat: '{{ flat }}'
     validate_checksum: '{{ validate_checksum }}'
+  with_items: '{{ files }}'
