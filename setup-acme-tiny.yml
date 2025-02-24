@@ -8,15 +8,15 @@
 #*  The following arguments are mandatory:
 #*   - 'app__acme__domain'
 
-# Do on all hosts related to acme which do not sign themselves
-- hosts: app.acme,!app.acme.sign
+# Do on all hosts related to acme-tiny (not acme.sh) which do not sign themselves
+- hosts: app.acme,!app.acme.sh,!app.acme.sign
   become: True
   roles:
     - { role: inofix.acme-request }
     - { role: inofix.acme-proxy }
 
 # Do only on hosts with the acme-tiny application actually installed
-- hosts: app.acme.tiny,&app.acme.sign
+- hosts: app.acme.tiny,!app.acme.sh,&app.acme.sign
   become: True
   roles:
     - { role: inofix.acme-request }

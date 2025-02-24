@@ -9,31 +9,31 @@
 
 
 # Restart the service
-- hosts: app.acme,&app.apache
+- hosts: app.acme,!app.acme.sh,&app.apache
   become: True
   roles:
     - { role: inofix.acme-service, app__acme__service_name: 'apache' }
 
 # Restart the service
-- hosts: app.acme,&app.dovecot
+- hosts: app.acme,!app.acme.sh,&app.dovecot
   become: True
   roles:
     - { role: inofix.acme-service, app__acme__service_name: 'dovecot' }
 
 # Restart the service
-- hosts: app.acme,&app.nginx
+- hosts: app.acme,!app.acme.sh,&app.nginx
   become: True
   roles:
     - { role: inofix.acme-service, app__acme__service_name: 'nginx' }
 
 # Restart the service
-- hosts: app.acme,&app.postfix
+- hosts: app.acme,!app.acme.sh,&app.postfix
   become: True
   roles:
     - { role: inofix.acme-service, app__acme__service_name: 'postfix' }
 
 # Restart the service
-- hosts: app.acme,&app.prosody
+- hosts: app.acme,!app.acme.sh,&app.prosody
   become: True
   roles:
     - { role: inofix.acme-service, app__acme__service_name: 'prosody' }
