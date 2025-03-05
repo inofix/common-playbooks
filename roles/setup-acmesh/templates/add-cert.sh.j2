@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# TODO vars
+cd "{{ acme__sh__work_dir }}"
+. "./dns_{{ dom.dns_module }}_credentials"
+
+"{{ acme__sh__command }}" --issue --dns "dns_{{ dom.dns_module }}" {% if 'keylength' in dom and dom.keylength %}--keylength {{ dom.keylength }} {% endif %}\
+{% for d in dom.san %}
+    --domain {{ d }} {% if 'acme_proxy' in dom and dom.acme_proxy %}--challenge-alias {{ d }}.{{ dom.acme_proxy }} {% endif %}\
+{% endfor %}
+# extra line to end the above "\"
+
+{% if dom.deploy is mapping %}
+export DEPLOY_SSH_USER="{{ dom.deploy.user }}"
+export DEPLOY_SSH_SERVER="{{ dom.deploy.target_host }}"
+export DEPLOY_SSH_KEYFILE="{{ dom.deploy.key }}"
+export DEPLOY_SSH_FULLCHAIN="{{ dom.deploy.chain }}"
+export DEPLOY_SSH_CAFILE="{{ dom.deploy.ca }}"
+export DEPLOY_SSH_REMOTE_CMD="{{ dom.deploy.command }}"
+"{{ acme__sh__command }}" --deploy --domain "{{ dom.domain }}" --deploy-hook "{{ dom.deploy.method }}"
+{% endif %}
+

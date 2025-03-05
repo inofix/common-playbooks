@@ -1,0 +1,140 @@
+
+# service_host
+# acme_host
+
+- name: 'Create a group for acme certificate renewal, distribution and service configuration'
+  group:
+    name: '{{ acme__sh__group }}'
+    system: True
+
+- name: 'Create a user for acme certificate renewal, distribution and service configuration'
+  user:
+    name: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    system: True
+    createhome: True
+    home: '{{ acme__sh__home }}'
+
+- name: 'Create the ssh config directory for the new user - any user gets one'
+  file:
+    state: directory
+    path: '{{ acme__sh__home }}/.ssh'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0700'
+
+- name: 'Test if the user key exists - prevent overwriting'
+  stat:
+    path: '{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}.pub'
+  register: acme__user_key_stat
+
+- name: 'Create ssh-keys - even if not used later, it will not hurt..'
+  when: acme__user_key_stat.stat.isreg is not defined or not acme__user_key_stat.stat.isreg
+  shell: 'echo -e "n\n" | ssh-keygen -N "" -q -t {{ acme__ssh__key_type }}{{ acme__ssh__key_length__option }} -f {{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}'
+
+- name: 'Copy the pub-key back to the ansible host for later use'
+  fetch:
+    src: '{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}.pub'
+    dest: '{{ acme__local__work_dir }}'
+    validate_checksum: true
+
+#- name: 'Copy the pub-key of the signing host onto the service host TODO...'
+# TODO maybe we want a separate data structure for deployment anyway in order to support multi sign/deploy..
+
+- name: 'Set the permissions on the private key file'
+  file:
+    path: '{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}'
+    state: file
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0600'
+
+- name: 'Set the permissions on the public key file'
+  file:
+    path: '{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}.pub'
+    state: file
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0644'
+
+- name: "Prepare the scripts directory"
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: directory
+    name: '{{ acme__sh__bin_dir }}'
+    mode: '0755'
+
+- name: "Install HAProxy service restart scripts"
+  when: "'app.acme.sh.service' in group_names and 'app.haproxy' in group_names"
+  template:
+    src: "restart_haproxy.sh.j2"
+    dest: "{{ acme__sh__bin_dir }}/restart_haproxy.sh"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: 'Allow access to restart the service from the remote host that sent the resp. cert'
+  when: "'app.acme.sh.service' in group_names and 'app.haproxy' in group_names"
+  lineinfile:
+    dest: '{{ acme__sh__home }}/.ssh/authorized_keys'
+    line: 'command="{{ acme__sh__bin_dir }}/restart_haproxy.sh" {{ lookup("file", pub_key_file) }}'
+    create: 'yes'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0600'
+  vars:
+    pub_key_file: '{{ acme__local__work_dir }}/{{ fqdn }}/{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}.pub'
+
+- name: 'Create an empty placeholder for the cert chain, which the user "acme" is able to write'
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: touch
+    path: '{{ acme__certificate.available[item].deploy.chain }}'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0644'
+  with_items: '{{ acme__certificate.enabled }}'
+
+- name: 'Create an empty ca cert, which the user "acme" is able to write'
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: touch
+    path: '{{ acme__certificate.available[item].deploy.ca }}'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0644'
+  with_items: '{{ acme__certificate.enabled }}'
+
+- name: 'Create an empty key file, which the user "acme" is able to write'
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: touch
+    path: '{{ acme__certificate.available[item].deploy.ca }}'
+    owner: '{{ acme__user }}'
+    group: '{{ acme__group }}'
+    mode: '0644'
+  with_items: '{{ acme__certificate.enabled }}'
+
+- name: "Install per domain setup scripts"
+  when: "'app.acme.sh.sign' in group_names"
+  vars:
+    dom: "{{ acme__certificate.available[item] }}"
+  template:
+    src: "add-cert.sh.j2"
+    dest: "{{ acme__sh__work_dir }}/{{ acme__certificate.available[item].domain }}.add-cert.sh"
+    owner: "{{ acme__sh__user }}"
+    group: "{{ acme__sh__group }}"
+    mode: "0755"
+  with_items: "{{ acme__certificate.enabled }}"
+
+#- name: "Create a cron job to renew the certs on a regular basis"
+#  when: "'app.acme.sh.sign' in group_names"
+#  cron:
+#    minute: "{{ acme__sh__cron_minute }}"
+#    hour: "{{ acme__sh__cron_hour }}"
+#    day: "{{ acme__sh__cron_day }}"
+#    weekday: "{{ acme__sh__cron_weekday }}"
+#    month: "{{ acme__sh__cron_month }}"
+#    user: '{{ acme__sh__cron_user }}'
+#    job: '{{ acme__sh__cron_job }}'
+

@@ -1,0 +1,49 @@
+#!/bin/bash
+# Restart haproxy if a newer certificate was signed.
+
+if [ `id -u` -ne 0 ] ; then
+    echo "This script has to be run by root."
+    exit 3
+fi
+
+do_restart=1
+fail=""
+for d in "{{ acme__sh__config_dir }}"/* ; do
+    test -d "$d" || continue
+    dom="${d##*/}"
+    test -r "${d}/{{ acme__sh__chain_basename }}" || fail="${fail};${d}/{{ acme__sh__chain_basename }}"
+    test -r "${d}/${dom}.{{ acme__sh__key_suffix }}" || fail="${fail};${d}/${dom}.{{ acme__sh__key_suffix }}"
+    if [ "${d}/{{ acme__sh__chain_basename }}" -nt "${d}/${dom}.pem" ] ; then
+        do_restart=0
+        cat "${d}/${dom}.{{ acme__sh__key_suffix }}" > "${d}/${dom}.pem"
+        cat "${d}/{{ acme__sh__chain_basename }}" >> "${d}/${dom}.pem"
+        ln -sf "${d}/${dom}.pem" "/etc/haproxy/certs/${dom}.pem" || fail="$fail;${dom}"
+    fi
+done
+
+date -u +'%Y-%m-%d %H:%M:%S Restarting HAProxy:'
+
+if [ -n "$fail" ] ; then
+    echo "  failed cert signing for ${fail:1}."
+fi
+if [ "$do_restart" -ne 0 ] ; then
+    echo "  no new certs found..."
+    exit 2
+fi
+
+if [ -x "/bin/systemctl" ] ; then
+    the_action="/bin/systemctl restart haproxy.service"
+elif [ -x "/etc/init.d/haproxy" ] ; then
+    the_action="/etc/init.d/haproxy restart"
+else
+    the_action="killall -SIGUSR2 haproxy"
+fi
+
+if $the_action ; then
+    echo "  HAProxy successfully restarted."
+else
+    echo "  failed to restart HAProxy."
+    exit 1
+fi
+
+

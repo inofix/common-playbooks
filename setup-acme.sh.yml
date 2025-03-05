@@ -1,0 +1,18 @@
+#*  This playbook installs and prepares everything for acme.sh. The domains
+#* to work with are provided as 'app__acme__certificates'. There is one dict
+#* in that dict, it lists all available domains and their resp. configs, and
+#* a list of domains to actively use.
+#*  Note: this playbook should be used either from the main install playbook
+#* (which resolves its dependencies) or as a shorthand for an already set up
+#* system, where the dependencies are already provided.
+#*  Use '-a' to pass parameters to ansible (as '-e'). See ansible fetch for
+#* details.
+#*  The following arguments are mandatory:
+#*   - 'app__acme__certificates.available'
+#*   - 'app__acme__certificates.enabled'
+
+- hosts: app.acme.sh
+  become: True
+  roles:
+    - setup-acmesh
+

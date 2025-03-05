@@ -1,0 +1,27 @@
+---
+acme__certificate: "{{ app__acme__certificate | d(default__acme__certificate) }}"
+acme__local__work_dir: "{{ workdir | d(default__local__work_dir) }}"
+acme__sh__user: "{{ app__acme__sh__user | d(default__acme__sh__user) }}"
+acme__sh__group: "{{ app__acme__sh__group | d(default__acme__sh__group) }}"
+acme__sh__download_upstream: "{{ app__acme__sh__download_upstream | d(default__acme__sh__download_upstream) }}"
+acme__sh__checksum: "{{ app__acme__sh__checksum | d(default__acme__sh__checksum) }}"
+acme__sh__bin_dir: "{{ app__acme__sh__bin_dir | d(default__acme__sh__bin_dir) }}"
+acme__sh__command: "{{ app__acme__sh__command | d(default__acme__sh__command) }}"
+acme__sh__home: "{{ app__acme__sh__home | d(default__acme__sh__home) }}"
+acme__sh__config_dir: "{{ app__acme__sh__config_dir | d(default__acme__sh__config_dir) }}"
+acme__sh__chain_basename: "{{ app__acme__sh__chain_basename | d(default__acme__sh__chain_basename) }}"
+acme__sh__log_dir: "{{ app__acme__sh__log_dir | d(default__acme__sh__log_dir) }}"
+acme__sh__work_dir: "{{ app__acme__sh__work_dir | d(default__acme__sh__work_dir) }}"
+acme__sh__cert_suffix: "{{ app__acme__sh__cert_suffix | d(default__acme__sh__cert_suffix) }}"
+acme__sh__key_suffix: "{{ app__acme__sh__key_suffix | d(default__acme__sh__key_suffix) }}"
+acme__sh__ca_basename: "{{ app__acme__sh__ca_basename | d(default__acme__sh__ca_basename) }}"
+acme__sh__cron_user: "{{ app__acme__sh__cron_user | d(default__acme__sh__cron_user) }}"
+acme__sh__cron_job: "{{ app__acme__sh__cron_job | d(default__acme__sh__cron_job) }}"
+acme__sh__cron_minute: "{{ app__acme__sh__cron_minute | d(default__acme__sh__cron_minute) }}"
+acme__sh__cron_hour: "{{ app__acme__sh__cron_hour | d(default__acme__sh__cron_hour) }}"
+acme__sh__cron_day: "{{ app__acme__sh__cron_day | d(default__acme__sh__cron_day) }}"
+acme__sh__cron_month: "{{ app__acme__sh__cron_month | d(default__acme__sh__cron_month) }}"
+acme__sh__cron_weekday: "{{ app__acme__sh__cron_weekday | d(default__acme__sh__cron_weekday) }}"
+acme__ssh__key_type: '{{ app__acme__ssh__key_type | d(default__acme__ssh__key_type, true) }}'
+acme__ssh__key_length: '{{ app__acme__ssh__key_length | d(default__acme__ssh__key_length, true) }}'
+acme__ssh__key_length__option: '{% if acme__ssh__key_length and acme__ssh__key_length | length %} -b {{ acme__ssh__key_length }}{% endif %}'

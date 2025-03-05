@@ -1,0 +1,47 @@
+---
+# install service-reload on service_host
+default__local__work_dir: "/tmp/my_ansible_workdir/"
+default__acme__sh__user: "acme"
+default__acme__sh__group: "acme"
+default__acme__sh__download_upstream: ""
+default__acme__sh__checksum: "sha256:"
+default__acme__sh__home: "/var/lib/acme/"
+default__acme__sh__bin_dir: "/var/lib/acme/bin/"
+default__acme__sh__command: "{{ default__acme__sh__bin_dir }}/acme.sh"
+default__acme__sh__config_dir: "/var/lib/acme/"
+default__acme__sh__log_dir: "/var/log/acme/"
+default__acme__sh__work_dir: "/var/lib/acme/acme/"
+default__acme__sh__cert_suffix: "cer"
+default__acme__sh__key_suffix: "key"
+default__acme__sh__ca_basename: "ca.{{ default__acme__sh__cert_suffix }}"
+default__acme__sh__cert_basename: "fullchain.{{ default__acme__sh__cert_suffix }}"
+default__acme__sh__cron_user: "{{ default__acme__sh__user }}"
+default__acme__sh__cron_job: "{{ default__acme__sh__user }}"
+default__acme__sh__cron_minute: '42'
+default__acme__sh__cron_hour: '2'
+default__acme__sh__cron_day: '*'
+default__acme__sh__cron_month: '*'
+default__acme__sh__cron_weekday: '*'
+default__acme__ssh__key_type: 'ed25519'
+default__acme__ssh__key_length: ''
+default__acme__certificate:
+  enabled:
+    - "net_example"
+  available:
+    net_example:
+      acme_proxy: 'example.com' # --challenge-alias
+      app: "acme.sh" # purely informative
+      method: "dns" # purely informative
+      dns_module: ""
+      domain: "example.net" # --domain
+      san: [ "example.net", "www.example.net" ]
+      deploy:
+        method: "ssh" # only 'ssh' was tested here
+        user: "{{ default__acme__sh__user }}"
+        target_host: ""
+        key: "/etc/ssl/acme/example.net.key"
+        cert: "/etc/ssl/acme/example.net.cer"
+        chain: "/etc/ssl/acme/fullchain.cer"
+        ca: "/etc/ssl/acme/example.net/ca.cer"
+        command: "" # restart the service
+
