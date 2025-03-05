@@ -69,9 +69,10 @@
 
 - name: 'Create an empty placeholder for the cert chain, which the user "acme" is able to write'
   when: "'app.acme.sh.service' in group_names"
-  file:
-    state: touch
-    path: '{{ acme__certificate.available[item].deploy.chain }}'
+  copy:
+    content: ""
+    force: false
+    dest: '{{ acme__certificate.available[item].deploy.chain }}'
     owner: '{{ acme__sh__user }}'
     group: '{{ acme__sh__group }}'
     mode: '0644'
@@ -79,9 +80,10 @@
 
 - name: 'Create an empty ca cert, which the user "acme" is able to write'
   when: "'app.acme.sh.service' in group_names"
-  file:
-    state: touch
-    path: '{{ acme__certificate.available[item].deploy.ca }}'
+  copy:
+    content: ""
+    force: false
+    dest: '{{ acme__certificate.available[item].deploy.ca }}'
     owner: '{{ acme__sh__user }}'
     group: '{{ acme__sh__group }}'
     mode: '0644'
@@ -89,9 +91,10 @@
 
 - name: 'Create an empty key file, which the user "acme" is able to write'
   when: "'app.acme.sh.service' in group_names"
-  file:
-    state: touch
-    path: '{{ acme__certificate.available[item].deploy.ca }}'
+  copy:
+    content: ""
+    force: false
+    dest: '{{ acme__certificate.available[item].deploy.ca }}'
     owner: '{{ acme__sh__user }}'
     group: '{{ acme__sh__group }}'
     mode: '0644'
