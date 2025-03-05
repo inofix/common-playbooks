@@ -15,18 +15,20 @@ fi
 
 do_restart=1
 fail=""
-for d in "{{ acme__sh__config_dir }}"/* ; do
-    test -d "$d" || continue
-    dom="${d##*/}"
-    test -r "${d}/{{ acme__sh__chain_basename }}" || fail="${fail};${d}/{{ acme__sh__chain_basename }}"
-    test -r "${d}/${dom}.{{ acme__sh__key_suffix }}" || fail="${fail};${d}/${dom}.{{ acme__sh__key_suffix }}"
-    if [ "${d}/{{ acme__sh__chain_basename }}" -nt "${d}/${dom}.pem" ] ; then
+{% for item in acme__certificate.enabled %}
+if [ -d "{{ acme__sh__config_dir }}/{{ acme__certificate.available[item].domain }}" ] ; then
+    test -r "{{ acme__certificate.available[item].deploy.chain }}" || fail="${fail};{{ acme__certificate.available[item].deploy.chain }}"
+    test -r "{{ acme__certificate.available[item].deploy.key }}" || fail="${fail};{{ acme__certificate.available[item].deploy.key }}"
+    if [ "{{ acme__certificate.available[item].deploy.chain }}" -nt "{{ acme__sh__config_dir }}/{{ acme__certificate.available[item].domain }}.pem" ] ; then
         do_restart=0
-        cat "${d}/${dom}.{{ acme__sh__key_suffix }}" > "${d}/${dom}.pem"
-        cat "${d}/{{ acme__sh__chain_basename }}" >> "${d}/${dom}.pem"
-        ln -sf "${d}/${dom}.pem" "/etc/haproxy/certs/${dom}.pem" || fail="$fail;${dom}"
+        cat "{{ acme__certificate.available[item].deploy.key }}" >> "{{ acme__sh__config_dir }}/{{ acme__certificate.available[item].domain }}.pem"
+        cat "{{ acme__certificate.available[item].deploy.chain }}" >> "{{ acme__sh__config_dir }}/{{ acme__certificate.available[item].domain }}.pem"
+        ln -sf "{{ acme__sh__config_dir }}/{{ acme__certificate.available[item].domain }}.pem" "/etc/haproxy/certs/{{ acme__certificate.available[item].domain }}.pem" || fail="$fail;{{ acme__certificate.available[item].domain }}.pem"
     fi
-done
+else
+    fail="${fail};{{ acme__certificate.available[item].domain }}"
+fi
+{% endfor %}
 
 date -u +'%Y-%m-%d %H:%M:%S Restarting HAProxy:'
 
@@ -47,7 +49,8 @@ else
 fi
 
 if $the_action ; then
-    echo "  HAProxy successfully restarted."
+    exit 0
+    #echo "  HAProxy successfully restarted."
 else
     echo "  failed to restart HAProxy."
     exit 1

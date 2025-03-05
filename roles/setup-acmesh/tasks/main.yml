@@ -57,6 +57,44 @@
     group: '{{ acme__sh__group }}'
     mode: '0644'
 
+- name: "Prepare the certificate directories"
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: directory
+    name: '{{ acme__sh__config_dir }}/{{ acme__certificate.available[item].domain }}'
+    mode: '0755'
+  with_items: '{{ acme__certificate.enabled }}'
+
+- name: 'Create an empty placeholder for the cert chain, which the user "acme" is able to write'
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: touch
+    path: '{{ acme__certificate.available[item].deploy.chain }}'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0644'
+  with_items: '{{ acme__certificate.enabled }}'
+
+- name: 'Create an empty ca cert, which the user "acme" is able to write'
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: touch
+    path: '{{ acme__certificate.available[item].deploy.ca }}'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0644'
+  with_items: '{{ acme__certificate.enabled }}'
+
+- name: 'Create an empty key file, which the user "acme" is able to write'
+  when: "'app.acme.sh.service' in group_names"
+  file:
+    state: touch
+    path: '{{ acme__certificate.available[item].deploy.ca }}'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
+    mode: '0644'
+  with_items: '{{ acme__certificate.enabled }}'
+
 - name: "Prepare the scripts directory"
   when: "'app.acme.sh.service' in group_names"
   file:
@@ -84,36 +122,6 @@
     mode: '0600'
   vars:
     pub_key_file: '{{ acme__local__work_dir }}/{{ fqdn }}/{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}.pub'
-
-- name: 'Create an empty placeholder for the cert chain, which the user "acme" is able to write'
-  when: "'app.acme.sh.service' in group_names"
-  file:
-    state: touch
-    path: '{{ acme__certificate.available[item].deploy.chain }}'
-    owner: '{{ acme__sh__user }}'
-    group: '{{ acme__sh__group }}'
-    mode: '0644'
-  with_items: '{{ acme__certificate.enabled }}'
-
-- name: 'Create an empty ca cert, which the user "acme" is able to write'
-  when: "'app.acme.sh.service' in group_names"
-  file:
-    state: touch
-    path: '{{ acme__certificate.available[item].deploy.ca }}'
-    owner: '{{ acme__sh__user }}'
-    group: '{{ acme__sh__group }}'
-    mode: '0644'
-  with_items: '{{ acme__certificate.enabled }}'
-
-- name: 'Create an empty key file, which the user "acme" is able to write'
-  when: "'app.acme.sh.service' in group_names"
-  file:
-    state: touch
-    path: '{{ acme__certificate.available[item].deploy.ca }}'
-    owner: '{{ acme__user }}'
-    group: '{{ acme__group }}'
-    mode: '0644'
-  with_items: '{{ acme__certificate.enabled }}'
 
 - name: "Install per domain setup scripts"
   when: "'app.acme.sh.sign' in group_names"
