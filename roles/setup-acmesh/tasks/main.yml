@@ -62,6 +62,8 @@
   file:
     state: directory
     name: '{{ acme__sh__config_dir }}/{{ acme__certificate.available[item].domain }}'
+    owner: '{{ acme__sh__user }}'
+    group: '{{ acme__sh__group }}'
     mode: '0755'
   with_items: '{{ acme__certificate.enabled }}'
 
