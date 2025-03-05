@@ -14,7 +14,7 @@
 
 - name: write out todays software package changes
   blockinfile:
-    block: '{{ software_package_changes.stdout }}\n'
+    block: '{{ software_package_changes.stdout }}'
     dest: '{{ workdir }}/{{ fqdn }}/_packages.wiki'
     create: true
     marker: ""
