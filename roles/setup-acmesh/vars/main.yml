@@ -25,3 +25,4 @@ acme__sh__cron_weekday: "{{ app__acme__sh__cron_weekday | d(default__acme__sh__c
 acme__ssh__key_type: '{{ app__acme__ssh__key_type | d(default__acme__ssh__key_type, true) }}'
 acme__ssh__key_length: '{{ app__acme__ssh__key_length | d(default__acme__ssh__key_length, true) }}'
 acme__ssh__key_length__option: '{% if acme__ssh__key_length and acme__ssh__key_length | length %} -b {{ acme__ssh__key_length }}{% endif %}'
+acme__ssh__pub_key_hosts: '{{ service.certificate | dict2items | selectattr("value.deploy", "defined") | map(attribute="value.deploy.source_host") | unique  }}'

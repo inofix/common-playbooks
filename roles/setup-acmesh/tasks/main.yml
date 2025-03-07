@@ -116,17 +116,38 @@
     group: "root"
     mode: "0755"
 
-- name: 'Allow access to restart the service from the remote host that sent the resp. cert'
-  when: "'app.acme.sh.service' in group_names and 'app.haproxy' in group_names"
+- name: 'Allow the ssh user to execute the service restart scripts as super user'
+  when: "'app.acme.sh.service' in group_names and 'app.haproxy' in group_names and 'app.sudo' in group_names"
+  lineinfile:
+    dest: '/etc/sudoers.d/acme'
+    line: 'acme ALL=(root) NOPASSWD: /usr/local/bin/restart_haproxy.sh'
+    create: 'yes'
+    owner: 'root'
+    group: 'root'
+    mode: '0600'
+
+- name: 'Allow ssh access to restart the service from the remote host that sent the resp. cert - install the pub-key.'
+  when: "'app.acme.sh.service' in group_names"
   lineinfile:
     dest: '{{ acme__sh__home }}/.ssh/authorized_keys'
-    line: 'command="{{ acme__sh__bin_dir }}/restart_haproxy.sh" {{ lookup("file", pub_key_file) }}'
+    line: '{{ lookup("file", pub_key_file) }}'
     create: 'yes'
     owner: '{{ acme__sh__user }}'
     group: '{{ acme__sh__group }}'
     mode: '0600'
   vars:
-    pub_key_file: '{{ acme__local__work_dir }}/{{ fqdn }}/{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}.pub'
+    pub_key_file: '{{ acme__local__work_dir }}/{{ item }}/{{ acme__sh__home }}/.ssh/id_{{ acme__ssh__key_type }}.pub'
+  with_items: '{{ acme__ssh__pub_key_hosts }}'
+
+- name: 'Allow ssh access to restart the service from the remote host that sent the resp. cert - configure AllowUsers.'
+  when: "'app.acme.sh.service' in group_names"
+  lineinfile:
+    dest: '/etc/ssh/sshd_config.d/acme.conf'
+    line: 'AllowUsers acme'
+    create: 'yes'
+    owner: 'root'
+    group: 'root'
+    mode: '0600'
 
 - name: "Install per domain setup scripts"
   when: "'app.acme.sh.sign' in group_names"
