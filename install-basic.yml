@@ -29,6 +29,7 @@
       - 'less'
       - 'lsb-release'
       - 'nmon'
+      - 'rsync'
       - 'strace'
       - 'xml2'
 
