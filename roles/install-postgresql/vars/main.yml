@@ -1,2 +1,4 @@
 ---
-postgresql__yapkg__names: '{{ app__postgresql__yapkg__names | d(d_yapkg__names) }}'
+postgresql__s_pkg: '{{ os__pkg_name.postgresql[os__short] | d(os__pkg_name.postgresql[os__distro]) }}'
+postgresql__c_pkg: '{{ os__pkg_name.postgresql_client[os__short] | d(os__pkg_name.postgresql_client[os__distro]) }}'
+postgresql__yapkg__names: '{{ postgresql__s_pkg + postgresql__c_pkg | d(default__yapkg__names) }}'
