@@ -1,0 +1,6 @@
+---
+- hosts: service.basin,&app.postgresql
+  become: yes
+
+  roles:
+    - setup-postgres-basin

@@ -1,0 +1,14 @@
+---
+default_db_users:
+  - name: 'admin'
+    group: 'omni_admin'
+    credentials_key: 'postgres_basin_admin'
+default_user_comment: 'DB User'
+default_password_chars: "ascii,digits,.-_~+="
+default_db_name: 'test'
+default_postgresql_user: 'postgres'
+default_postgresql_group: 'postgres'
+default_schema_files_path: "/var/lib/postgresql/basin_sql/"
+default_postgresql_version: "15"
+default_postgresql_config_path: "/etc/postgresql/"
+default_postgresql_cron_config_basename: "pg_cron.conf"
