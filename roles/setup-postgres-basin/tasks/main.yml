@@ -29,6 +29,19 @@
   become: yes
   become_user: "{{ postgresql_user }}"
 
+- name: "Insert an entry for every user:address mapping."
+  ansible.builtin.blockinfile:
+    path: "{{ pg_hba_path }}" 
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }} #"
+    insertafter: EOF
+    block: |
+      {% for a in item.address %}
+        host    {{ db_name }}     {{ item.name }}        {{ a }}        {{ item.pw_hash | d(default_password_hash, true) }}
+      {% endfor %}
+  loop: '{{ db_users }}'
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
 - name: "Configure the db for pg_cron"
   ansible.builtin.template:
     src: '{{ templates.pg_cron.src }}'
@@ -119,40 +132,7 @@
   become: yes
   become_user: "{{ postgresql_user }}"
 
-- name: "Configure remote user access"
-  ansible.builtin.template:
-    src: '{{ templates.pg_hba.src }}'
-    dest: '{{ templates.pg_hba.dest }}'
-    mode: "0750"
-    owner: '{{ postgresql_user }}'
-    group: '{{ postgresql_group }}'
-
 #TODO projects template
 #TODO sourcetypes / sources
 #TODO create tables, triggers, functions, etc.
-
-- name: "fail here.."
-  fail:
-    msg: "debug.."
-
-- name: "Allow md5 connection for the db user"
-  postgresql_pg_hba:
-    dest: "~/data/pg_hba.conf"
-    contype: host
-    databases: all
-    method: md5
-    users: "{{ db_user }}"
-    create: true
-  become: yes
-  become_user: postgres
-  notify: restart postgres
- 
-- name: "Load SQL script into a variable"
-  set_fact:
-    migration_sql: "{{ lookup('file', 'conf/migration.sql') }}"
-
-- name: "Execute script from variable"
-  command: "psql {{ db_name }} -c {{ migration_sql }}"
-  become_user: postgres
-  register: sql_response_variable
 

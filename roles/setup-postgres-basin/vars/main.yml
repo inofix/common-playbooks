@@ -20,7 +20,6 @@ templates:
     src: "pg_cron.conf.j2"
     dest: "{{ app__postgresql__pg_cron__config | d(g_postgresql_config_path ~ default_postgresql_cron_config_basename, true) }}"
 
-pg_hba:
-  dest: "{{ app__postgresql__hba | d(g_postgresql_config_path ~ default_postgresql_cron_config_basename, true) }}"
+pg_hba_path: "{{ app__postgresql__hba | d(g_postgresql_config_path ~ default_postgresql_cron_config_basename, true) }}"
 
 

@@ -5,6 +5,7 @@ default_db_users:
     credentials_key: 'postgres_basin_admin'
 default_user_comment: 'DB User'
 default_password_chars: "ascii,digits,.-_~+="
+default_password_hash: "scram-sha-256"
 default_db_name: 'test'
 default_postgresql_user: 'postgres'
 default_postgresql_group: 'postgres'
