@@ -1,0 +1,138 @@
+---
+
+- name: "For every future user, add new credentials to the store"
+  ansible.builtin.include_role:
+    name: add-credentials-to-store
+  loop: "{{ db_users }}"
+  loop_control:
+    loop_var: item
+  vars:
+    target_file: ''
+    credentials_key: "unused"
+    credentials_name: "{{ item.credentials_name }}"
+    credentials_user: "{{ item.name }}"
+    password_chars: "{{ item.password_chars | d(default_password_chars, true) }}"
+
+- name: "Get the db schema files in place"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ schema_files_path }}/"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: "0640"
+  loop: "{{ schema_files.values() | list }}"
+
+- name: "Create app database"
+  community.postgresql.postgresql_db:
+    state: present
+    name: "{{ db_name }}"
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Insert an entry for every user:address mapping."
+  ansible.builtin.blockinfile:
+    path: "{{ pg_hba_path }}" 
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }} #"
+    insertafter: EOF
+    block: |
+      {% for a in item.address %}
+        host    {{ db_name }}     {{ item.name }}        {{ a }}        {{ item.pw_hash | d(default_password_hash, true) }}
+      {% endfor %}
+  loop: '{{ db_users }}'
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Configure the db for pg_cron"
+  ansible.builtin.template:
+    src: '{{ templates.pg_cron.src }}'
+    dest: '{{ templates.pg_cron.dest }}'
+    mode: "0750"
+    owner: '{{ postgresql_user }}'
+    group: '{{ postgresql_group }}'
+
+- name: "Restart PostgreSQL"
+  ansible.builtin.command: >
+    systemctl restart postgresql
+
+- name: "Install the extentions needed"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.extensions }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Create the roles and privledges"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.roles }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Create the tables"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.tables }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Create the views"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.views }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Create the functionss"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.functions }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Create the triggers"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.triggers }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Create the cron jobs"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.cron }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Insert the version info"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.version }}
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Get the password from file if possible"
+  register: accountsfile
+  ansible.builtin.slurp:
+    src: "{{ account_store }}"
+
+- name: "Get the credentials from file"
+  ansible.builtin.set_fact: 'accountinfos={{ accountsfile["content"] | b64decode | from_yaml }}'
+
+- name: "Create requested user(s)"
+  community.postgresql.postgresql_user:
+    login_db: '{{ db_name }}'
+    state: present
+    name: '{{ item.name }}'
+    password: '{{ accountinfos[item.credentials_name]["value"] }}'
+    comment: '{{ item.comment | d(default_user_comment) }}'
+  loop: '{{ db_users }}'
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+- name: "Ensure user is a member of the omni_admin group"
+  community.postgresql.postgresql_membership:
+    login_db: postgres
+    group: "{{ item.group }}"
+    target_roles:
+      - "{{ item.name }}"
+    state: present
+  loop: '{{ db_users }}'
+  become: yes
+  become_user: "{{ postgresql_user }}"
+
+#TODO projects template
+#TODO sourcetypes / sources
+#TODO create tables, triggers, functions, etc.
+

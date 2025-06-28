@@ -1,0 +1,10 @@
+---
+#*  This playbook installs the PostgresBasin db-app that can be used to
+#* organize a multi-project data pond for measurement data.
+#*  No arguments are mandatory.
+
+- hosts: service.basin,&app.postgresql
+  become: yes
+
+  roles:
+    - setup-postgres-basin
