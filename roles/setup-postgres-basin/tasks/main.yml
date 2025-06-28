@@ -121,7 +121,7 @@
   become: yes
   become_user: "{{ postgresql_user }}"
 
-- name: "Ensure user is a member of the omni_admin group"
+- name: "Ensure user is a member of its respective group"
   community.postgresql.postgresql_membership:
     login_db: postgres
     group: "{{ item.group }}"
