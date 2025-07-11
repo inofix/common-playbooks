@@ -7,6 +7,15 @@ default_user_comment: 'DB User'
 default_password_chars: "ascii,digits,.-_~+="
 default_password_hash: "scram-sha-256"
 default_db_name: 'test'
+default_db_projects:
+  foobar:
+    name: 'Foobar'
+    uuid: '00000000-0000-0000-0000-000000000000'
+    sources:
+      - uuid: '00000000-0000-0000-0000-000000000001'
+        name: 'Test'
+        typename: ''
+        typeuuid: ''
 default_postgresql_user: 'postgres'
 default_postgresql_group: 'postgres'
 default_schema_files_path: "/var/lib/postgresql/basin_sql/"
