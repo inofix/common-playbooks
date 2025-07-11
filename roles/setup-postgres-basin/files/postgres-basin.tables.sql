@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS shadow_contacts (
     version INTEGER NOT NULL DEFAULT 0,
     name TEXT NOT NULL,
     uuid UUID,
-    icard text,
+    icard TEXT,
     created TIMESTAMPTZ NULL,
     lastmodifieddate TIMESTAMPTZ NULL,
     lastmodifieduser INTEGER NULL,
