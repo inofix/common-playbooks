@@ -39,7 +39,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- new projects create recording partitions
-CREATE OR REPLACE FUNCTION insert_project()
+CREATE OR REPLACE FUNCTION insert_project_post_process()
 RETURNS TRIGGER AS $$
 BEGIN
     PERFORM manage_recordings_partitions();
