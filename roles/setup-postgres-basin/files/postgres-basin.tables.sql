@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS shadow_users (
     version INTEGER NOT NULL DEFAULT 0,
     name TEXT NOT NULL,
     email TEXT NOT NULL,
+    passhash TEXT DEFAULT NULL,
     idtoken TEXT DEFAULT NULL,
     idtokenhash VARCHAR(8) DEFAULT NULL,
     idtokentype VARCHAR(16) DEFAULT NULL,
