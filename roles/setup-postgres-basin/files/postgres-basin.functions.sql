@@ -15,10 +15,11 @@ CREATE OR REPLACE FUNCTION perform_insert_projects(
 DECLARE
     project_id INTEGER;
     latest_version INTEGER;
+    created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version)
-    INTO project_id, latest_version
+    SELECT id, MAX(version), created
+    INTO project_id, latest_version, created_ts
     FROM shadow_projects
     WHERE uri = in_uri;
 
@@ -29,6 +30,7 @@ BEGIN
         RETURNING id INTO project_id;
 
         latest_version := 0;
+        created_ts := NOW();
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -50,7 +52,7 @@ BEGIN
     )
     VALUES (
         project_id, latest_version, in_uri, in_name, in_uuid,
-        in_meta, NOW(), NOW(), in_user
+        in_meta, created_ts, NOW(), in_user
     );
 
     RETURN project_id;
@@ -70,20 +72,22 @@ CREATE OR REPLACE FUNCTION perform_insert_persons(
 DECLARE
     person_id INTEGER;
     latest_version INTEGER;
+    created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version)
-    INTO person_id, latest_version
+    SELECT id, MAX(version), created
+    INTO person_id, latest_version, created_ts
     FROM shadow_persons
     WHERE uuid = in_uuid;
 
     IF person_id IS NULL THEN
         -- Create new anchor
-        INSERT INTO persons(version)
+        INSERT INTO persons(version, uri, name, uuid)
         VALUES (0, in_uri, in_name, in_uuid)
         RETURNING id INTO person_id;
 
         latest_version := 0;
+        created_ts := NOW();
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -107,7 +111,7 @@ BEGIN
     VALUES (
         person_id, latest_version, in_uri, in_name, in_uuid,
         in_extid, in_extidtype, in_isnatural,
-        NOW(), NOW(), in_user
+        created_ts, NOW(), in_user
     );
 
     RETURN person_id;
@@ -124,20 +128,22 @@ CREATE OR REPLACE FUNCTION perform_insert_contacts(
 DECLARE
     contact_id INTEGER;
     latest_version INTEGER;
+    created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version)
-    INTO contact_id, latest_version
+    SELECT id, MAX(version), created
+    INTO contact_id, latest_version, created_ts
     FROM shadow_contacts
     WHERE uuid = in_uuid;
 
     IF contact_id IS NULL THEN
         -- Create new anchor
-        INSERT INTO contacts(version)
+        INSERT INTO contacts(version, uri, name, uuid)
         VALUES (0, in_uri, in_name, in_uuid)
         RETURNING id INTO contact_id;
 
         latest_version := 0;
+        created_ts := NOW();
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -161,7 +167,7 @@ BEGIN
     VALUES (
         contact_id, latest_version, in_uri, in_name, in_uuid,
         in_icard,
-        NOW(), NOW(), in_user
+        created_ts, NOW(), in_user
     );
 
     RETURN contact_id;
@@ -182,16 +188,17 @@ DECLARE
     user_id INTEGER;
     realperson_id INTEGER;
     latest_version INTEGER;
+    created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to link to an existing person first
     SELECT id INTO realperson_id
     FROM shadow_persons
-    WHERE uri = in_uri
+    WHERE uri = in_uri -- URI is the same for user and person..
     LIMIT 1;
 
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version)
-    INTO user_id, latest_version
+    SELECT id, MAX(version), created
+    INTO user_id, latest_version, created_ts
     FROM shadow_users
     WHERE uuid = in_uuid;
 
@@ -202,6 +209,7 @@ BEGIN
         RETURNING id INTO user_id;
 
         latest_version := 0;
+        created_ts := NOW();
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -227,7 +235,7 @@ BEGIN
         user_id, latest_version, in_name,
         in_email, in_passhash, in_idtoken, in_idtokenhash,
         in_idtokentype, realperson_id,
-        NOW(), NOW(), in_user
+        created_ts, NOW(), in_user
     );
 
     RETURN user_id;
@@ -250,6 +258,7 @@ DECLARE
     role_id INTEGER;
     project_id INTEGER;
     latest_version INTEGER;
+    created_ts TIMESTAMPTZ;
 BEGIN
     -- First verify the mandatory project affiliation
     SELECT id INTO project_id
@@ -263,8 +272,8 @@ BEGIN
     END IF;
 
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version)
-    INTO role_id, latest_version
+    SELECT id, MAX(version), created
+    INTO role_id, latest_version, created_ts
     FROM shadow_roles
     WHERE uuid = in_uuid;
 
@@ -275,6 +284,7 @@ BEGIN
         RETURNING id INTO role_id;
 
         latest_version := 0;
+        created_ts := NOW();
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -299,7 +309,7 @@ BEGIN
         role_id, latest_version, in_name, in_uri,
         project_id, in_isowner,
         in_canread, in_canedit, in_cancreate, in_cangrant,
-        NOW(), NOW(), in_user
+        created_ts, NOW(), in_user
     );
 
     RETURN role_id;
@@ -326,10 +336,11 @@ CREATE OR REPLACE FUNCTION perform_insert_sourcetypes(
 DECLARE
     sourcetype_id INTEGER;
     latest_version INTEGER;
+    created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version)
-    INTO sourcetype_id, latest_version
+    SELECT id, MAX(version), created
+    INTO sourcetype_id, latest_version, created_ts
     FROM shadow_sourcetypes
     WHERE uuid = in_uuid;
 
@@ -340,6 +351,7 @@ BEGIN
         RETURNING id INTO sourcetype_id;
 
         latest_version := 0;
+        created_ts := NOW();
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -367,7 +379,7 @@ BEGIN
         in_class, in_devicetype, in_realmname, in_realmuuid,
         in_contentencoding, in_contenttype, in_contentrdfxtypes,
         in_unit, in_unitencoding, in_tolerance, in_meta,
-        NOW(), NOW(), in_user
+        created_ts, NOW(), in_user
     );
 
     RETURN sourcetype_id;
@@ -407,6 +419,7 @@ DECLARE
     parent_source_id INTEGER;
     maintainer_person_id INTEGER;
     latest_version INTEGER;
+    created_ts TIMESTAMPTZ;
 BEGIN
     -- First verify the mandatory project affiliation
     SELECT id INTO project_id
@@ -457,8 +470,8 @@ BEGIN
     END IF;
 
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version)
-    INTO source_id, latest_version
+    SELECT id, MAX(version), created
+    INTO source_id, latest_version, created_ts
     FROM shadow_sources
     WHERE uuid = in_uuid;
 
@@ -469,6 +482,7 @@ BEGIN
         RETURNING id INTO source_id;
 
         latest_version := 0;
+        created_ts := NOW();
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -500,7 +514,7 @@ BEGIN
         in_alt, in_lat, in_lon, in_mapzoom, in_geohash,
         in_timezone, in_startdate, in_stopdate, in_samplerate,
         in_meta, in_maintainerpersonid, in_softwareversion, in_hardwareversion,
-        NOW(), NOW(), in_user
+        created_ts, NOW(), in_user
     );
 
     RETURN source_id;
