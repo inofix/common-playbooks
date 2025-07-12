@@ -1,6 +1,512 @@
 
 -- # create functions
 
+-- Create a function per shadow table to properly split the infos
+--- (let's keep tracking every update in the shadow table, if needed
+--- later, a redundancy field could be added to call out unchanged
+--- versions...)
+CREATE OR REPLACE FUNCTION perform_insert_projects(
+    in_name TEXT,
+    in_uri TEXT,
+    in_uuid UUID,
+    in_meta JSONB DEFAULT NULL,
+    in_user INTEGER DEFAULT NULL
+) RETURNS INTEGER AS $$
+DECLARE
+    project_id INTEGER;
+    latest_version INTEGER;
+BEGIN
+    -- Try to find existing id and max version via UUID
+    SELECT id, MAX(version)
+    INTO project_id, latest_version
+    FROM shadow_projects
+    WHERE uri = in_uri;
+
+    IF project_id IS NULL THEN
+        -- Create new anchor
+        INSERT INTO projects(version, uri, name, uuid)
+        VALUES (0, in_uri, in_name, in_uuid)
+        RETURNING id INTO project_id;
+
+        latest_version := 0;
+    ELSE
+        -- Prepare next version
+        latest_version := latest_version + 1;
+
+        -- Update pointer
+        UPDATE projects
+            SET
+                version = latest_version,
+                uri = in_uri,
+                name = in_name,
+                uuid = in_uuid
+         WHERE id = project_id;
+    END IF;
+
+    -- Insert new shadow row
+    INSERT INTO shadow_projects (
+        id, version, uri, name, uuid,
+        meta, created, lastmodifieddate, lastmodifieduser
+    )
+    VALUES (
+        project_id, latest_version, in_uri, in_name, in_uuid,
+        in_meta, NOW(), NOW(), in_user
+    );
+
+    RETURN project_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION perform_insert_persons(
+    in_name TEXT,
+    in_uri TEXT,
+    in_uuid UUID DEFAULT NULL,
+    in_extid TEXT DEFAULT NULL,
+    in_exttype TEXT DEFAULT NULL,
+    in_isnatural BOOLEAN DEFAULT True,
+    in_user INTEGER DEFAULT NULL
+) RETURNS INTEGER AS $$
+DECLARE
+    person_id INTEGER;
+    latest_version INTEGER;
+BEGIN
+    -- Try to find existing id and max version via UUID
+    SELECT id, MAX(version)
+    INTO person_id, latest_version
+    FROM shadow_persons
+    WHERE uuid = in_uuid;
+
+    IF person_id IS NULL THEN
+        -- Create new anchor
+        INSERT INTO persons(version)
+        VALUES (0, in_uri, in_name, in_uuid)
+        RETURNING id INTO person_id;
+
+        latest_version := 0;
+    ELSE
+        -- Prepare next version
+        latest_version := latest_version + 1;
+
+        -- Update pointer
+        UPDATE persons
+            SET
+                version = latest_version,
+                uri = in_uri,
+                name = in_name,
+                uuid = in_uuid
+        WHERE id = person_id;
+    END IF;
+
+    -- Insert new shadow row
+    INSERT INTO shadow_persons (
+        id, version, uri, name, uuid,
+        extid, extidtype, isnatural,
+        created, lastmodifieddate, lastmodifieduser
+    )
+    VALUES (
+        person_id, latest_version, in_uri, in_name, in_uuid,
+        in_extid, in_extidtype, in_isnatural,
+        NOW(), NOW(), in_user
+    );
+
+    RETURN person_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION perform_insert_contacts(
+    in_name TEXT,
+    in_uri TEXT,
+    in_uuid UUID DEFAULT NULL,
+    in_icard TEXT DEFAULT NULL,
+    in_user INTEGER DEFAULT NULL
+) RETURNS INTEGER AS $$
+DECLARE
+    contact_id INTEGER;
+    latest_version INTEGER;
+BEGIN
+    -- Try to find existing id and max version via UUID
+    SELECT id, MAX(version)
+    INTO contact_id, latest_version
+    FROM shadow_contacts
+    WHERE uuid = in_uuid;
+
+    IF contact_id IS NULL THEN
+        -- Create new anchor
+        INSERT INTO contacts(version)
+        VALUES (0, in_uri, in_name, in_uuid)
+        RETURNING id INTO contact_id;
+
+        latest_version := 0;
+    ELSE
+        -- Prepare next version
+        latest_version := latest_version + 1;
+
+        -- Update pointer
+        UPDATE contacts
+            SET
+                version = latest_version,
+                uri = in_uri,
+                name = in_name,
+                uuid = in_uuid
+        WHERE id = contact_id;
+    END IF;
+
+    -- Insert new shadow row
+    INSERT INTO shadow_contacts (
+        id, version, uri, name, uuid,
+        icard,
+        created, lastmodifieddate, lastmodifieduser
+    )
+    VALUES (
+        contact_id, latest_version, in_uri, in_name, in_uuid,
+        in_icard,
+        NOW(), NOW(), in_user
+    );
+
+    RETURN contact_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION perform_insert_users(
+    in_name TEXT,
+    in_uri TEXT,
+    in_email TEXT,
+    in_passhash TEXT DEFAULT NULL,
+    in_idtoken TEXT DEFAULT NULL,
+    in_idtokenhash TEXT DEFAULT NULL,
+    in_idtokentype VARCHAR(16) DEFAULT NULL,
+    in_user INTEGER DEFAULT NULL
+) RETURNS INTEGER AS $$
+DECLARE
+    user_id INTEGER;
+    realperson_id INTEGER;
+    latest_version INTEGER;
+BEGIN
+    -- Try to link to an existing person first
+    SELECT id INTO realperson_id
+    FROM shadow_persons
+    WHERE uri = in_uri
+    LIMIT 1;
+
+    -- Try to find existing id and max version via UUID
+    SELECT id, MAX(version)
+    INTO user_id, latest_version
+    FROM shadow_users
+    WHERE uuid = in_uuid;
+
+    IF user_id IS NULL THEN
+        -- Create new anchor
+        INSERT INTO users(version)
+        VALUES (0, in_uri, in_name, in_uuid)
+        RETURNING id INTO user_id;
+
+        latest_version := 0;
+    ELSE
+        -- Prepare next version
+        latest_version := latest_version + 1;
+
+        -- Update pointer
+        UPDATE users
+            SET
+                version = latest_version,
+                uri = in_uri,
+                name = in_name,
+                uuid = in_uuid
+        WHERE id = user_id;
+    END IF;
+
+    -- Insert new shadow row
+    INSERT INTO shadow_users (
+        id, version, name,
+        email, passhash, idtoken, idtokenhash,
+        idtokentype, realpersonid,
+        created, lastmodifieddate, lastmodifieduser
+    )
+    VALUES (
+        user_id, latest_version, in_name,
+        in_email, in_passhash, in_idtoken, in_idtokenhash,
+        in_idtokentype, realperson_id,
+        NOW(), NOW(), in_user
+    );
+
+    RETURN user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION perform_insert_roles(
+    in_name TEXT,
+    in_project_uuid UUID,
+    in_uri TEXT DEFAULT NULL,
+    in_isowner BOOLEAN DEFAULT False,
+    in_canread BOOLEAN DEFAULT False,
+    in_canedit BOOLEAN DEFAULT False,
+    in_cancreate BOOLEAN DEFAULT False,
+    in_candelete BOOLEAN DEFAULT False,
+    in_cangrant BOOLEAN DEFAULT False,
+    in_user INTEGER DEFAULT NULL
+) RETURNS INTEGER AS $$
+DECLARE
+    role_id INTEGER;
+    project_id INTEGER;
+    latest_version INTEGER;
+BEGIN
+    -- First verify the mandatory project affiliation
+    SELECT id INTO project_id
+    FROM shadow_projects
+    WHERE uuid = in_project_uuid
+    LIMIT 1;
+
+    IF project_id IS NULL THEN
+        RAISE EXCEPTION 'Project for role "%" not found, UUID: "%"',
+            in_name, in_project_uuid;
+    END IF;
+
+    -- Try to find existing id and max version via UUID
+    SELECT id, MAX(version)
+    INTO role_id, latest_version
+    FROM shadow_roles
+    WHERE uuid = in_uuid;
+
+    IF role_id IS NULL THEN
+        -- Create new anchor
+        INSERT INTO roles(version)
+        VALUES (0, in_uri, in_name)
+        RETURNING id INTO role_id;
+
+        latest_version := 0;
+    ELSE
+        -- Prepare next version
+        latest_version := latest_version + 1;
+
+        -- Update pointer
+        UPDATE roles
+            SET
+                version = latest_version,
+                uri = in_uri,
+                name = in_name,
+        WHERE id = role_id;
+    END IF;
+
+    -- Insert new shadow row
+    INSERT INTO shadow_roles (
+        id, version, name, uri,
+        projectid, isowner,
+        canread, canedit, cancreate, cangrant,
+        created, lastmodifieddate, lastmodifieduser
+    )
+    VALUES (
+        role_id, latest_version, in_name, in_uri,
+        project_id, in_isowner,
+        in_canread, in_canedit, in_cancreate, in_cangrant,
+        NOW(), NOW(), in_user
+    );
+
+    RETURN role_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION perform_insert_sourcetypes(
+    in_name TEXT,
+    in_uuid UUID,
+    in_uri TEXT DEFAULT NULL,
+    in_class TEXT DEFAULT NULL,
+    in_devicetype TEXT DEFAULT NULL,
+    in_realmname TEXT DEFAULT NULL,
+    in_realmuuid UUID DEFAULT NULL,
+    in_contentencoding VARCHAR(32) DEFAULT NULL,
+    in_contenttype VARCHAR(32) DEFAULT NULL,
+    in_contentrdfxtypes TEXT DEFAULT NULL,
+    in_unit VARCHAR(16) DEFAULT NULL,
+    in_unitencoding VARCHAR(16) DEFAULT NULL,
+    in_tolerance INTEGER DEFAULT NULL,
+    in_meta JSONB DEFAULT NULL,
+    in_user INTEGER DEFAULT NULL
+) RETURNS INTEGER AS $$
+DECLARE
+    sourcetype_id INTEGER;
+    latest_version INTEGER;
+BEGIN
+    -- Try to find existing id and max version via UUID
+    SELECT id, MAX(version)
+    INTO sourcetype_id, latest_version
+    FROM shadow_sourcetypes
+    WHERE uuid = in_uuid;
+
+    IF sourcetype_id IS NULL THEN
+        -- Create new anchor
+        INSERT INTO sourcetypes(version)
+        VALUES (0, in_uri, in_name, in_uuid)
+        RETURNING id INTO sourcetype_id;
+
+        latest_version := 0;
+    ELSE
+        -- Prepare next version
+        latest_version := latest_version + 1;
+
+        -- Update pointer
+        UPDATE sourcetypes
+            SET
+                version = latest_version,
+                uri = in_uri,
+                name = in_name,
+                uuid = in_uuid
+        WHERE id = sourcetype_id;
+    END IF;
+
+    -- Insert new shadow row
+    INSERT INTO shadow_sourcetypes (
+        id, version, uri, name, uuid,
+        class, devicetype, realmname, realmuuid,
+        contentencoding, contenttype, contentrdfxtypes,
+        unit, unitencoding, tolerance, meta,
+        created, lastmodifieddate, lastmodifieduser
+    )
+    VALUES (
+        sourcetype_id, latest_version, in_uri, in_name, in_uuid,
+        in_class, in_devicetype, in_realmname, in_realmuuid,
+        in_contentencoding, in_contenttype, in_contentrdfxtypes,
+        in_unit, in_unitencoding, in_tolerance, in_meta,
+        NOW(), NOW(), in_user
+    );
+
+    RETURN sourcetype_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- TODO LTREE function..
+
+CREATE OR REPLACE FUNCTION perform_insert_sources(
+    in_name TEXT,
+    in_uuid UUID,
+    in_parent_uuid UUID,
+    in_project_uuid UUID,
+    in_sourcetype_uuid UUID,
+    in_tree LTREE DEFAULT NULL,
+    in_extid TEXT DEFAULT NULL,
+    in_context TEXT DEFAULT NULL,
+    in_alt DOUBLE PRECISION DEFAULT NULL,
+    in_lat DOUBLE PRECISION DEFAULT NULL,
+    in_lon DOUBLE PRECISION DEFAULT NULL,
+    in_mapzoom INTEGER DEFAULT NULL,
+    in_geohash VARCHAR(12) DEFAULT NULL,
+    in_timezone TEXT DEFAULT NULL,
+    in_startdate TIMESTAMPTZ DEFAULT NULL,
+    in_stopdate TIMESTAMPTZ DEFAULT NULL,
+    in_samplerate INTEGER DEFAULT NULL,
+    in_meta JSONB DEFAULT NULL,
+    in_maintainer_uri TEXT DEFAULT NULL,
+    in_softwareversion TEXT DEFAULT NULL,
+    in_hardwareversion TEXT DEFAULT NULL,
+    in_user INTEGER DEFAULT NULL
+) RETURNS INTEGER AS $$
+DECLARE
+    source_id INTEGER;
+    project_id INTEGER;
+    sourcetype_id INTEGER;
+    parent_source_id INTEGER;
+    maintainer_person_id INTEGER;
+    latest_version INTEGER;
+BEGIN
+    -- First verify the mandatory project affiliation
+    SELECT id INTO project_id
+    FROM shadow_projects
+    WHERE uuid = in_project_uuid
+    LIMIT 1;
+
+    IF project_id IS NULL THEN
+        RAISE EXCEPTION 'Project for source "%" not found, UUID: "%"',
+            in_name, in_project_uuid;
+    END IF;
+
+    -- Every source is expected to have a corresponding type entry
+    SELECT id INTO sourcetype_id
+    FROM shadow_sourcetypes
+    WHERE uuid = in_sourcetype_uuid
+    LIMIT 1;
+
+    IF sourcetype_id IS NULL THEN
+        RAISE EXCEPTION 'Sourcetype for source "%" not found, UUID: "%"',
+            in_name, in_sourcetype_uuid;
+    END IF;
+
+    -- Try to link to an existing parent source first
+    IF in_parent_uuid IS NOT NULL THEN
+        SELECT id INTO parent_source_id
+        FROM shadow_sources
+        WHERE uuid = in_parent_uuid
+        LIMIT 1;
+
+        IF parent_source_id IS NULL THEN
+            RAISE EXCEPTION 'Parent for source "%" not found, UUID: "%"',
+                in_name, in_sources_uuid;
+        END IF;
+    END IF;
+
+    -- Try to link to an existing person first
+    IF in_maintainer_uri IS NOT NULL THEN
+        SELECT id INTO maintainer_person_id
+        FROM shadow_persons
+        WHERE uri = in_maintainer_uri
+        LIMIT 1;
+
+        IF maintainer_person_id IS NULL THEN
+            RAISE EXCEPTION 'Maintainer for source "%" not found, UUID: "%"',
+                in_name, in_maintainer_uri;
+        END IF;
+    END IF;
+
+    -- Try to find existing id and max version via UUID
+    SELECT id, MAX(version)
+    INTO source_id, latest_version
+    FROM shadow_sources
+    WHERE uuid = in_uuid;
+
+    IF source_id IS NULL THEN
+        -- Create new anchor
+        INSERT INTO sources(version)
+        VALUES (0, in_uri, in_name, in_uuid)
+        RETURNING id INTO source_id;
+
+        latest_version := 0;
+    ELSE
+        -- Prepare next version
+        latest_version := latest_version + 1;
+
+        -- Update pointer
+        UPDATE sources
+            SET
+                version = latest_version,
+                uri = in_uri,
+                name = in_name,
+                uuid = in_uuid
+        WHERE id = source_id;
+    END IF;
+
+    -- Insert new shadow row
+    INSERT INTO shadow_sources (
+        id, version, uuid, name,
+        extid, tree, context, sourcetypeid,
+        projectid, parentid,
+        alt, lat, lon, mapzoom, geohash,
+        timezone, startdate, stopdate, samplerate,
+        meta, maintainerpersonid, softwareversion, hardwareversion,
+        created, lastmodifieddate, lastmodifieduser
+    )
+    VALUES (
+        source_id, latest_version, in_uuid, in_name,
+        in_extid, in_tree, in_context, in_sourcetypeid,
+        in_project_id, in_parentid,
+        in_alt, in_lat, in_lon, in_mapzoom, in_geohash,
+        in_timezone, in_startdate, in_stopdate, in_samplerate,
+        in_meta, in_maintainerpersonid, in_softwareversion, in_hardwareversion,
+        NOW(), NOW(), in_user
+    );
+
+    RETURN source_id;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Create a function to manage partitions and subpartitions
 CREATE OR REPLACE FUNCTION manage_recordings_partitions()
 RETURNS void AS $$
@@ -61,7 +567,7 @@ BEGIN
     END IF;
     -- Create a lock file to block new processes, resp. quit if another process is running..
     PERFORM pg_advisory_lock(1);
-    BEGIN        
+    BEGIN
     -- Select the IDs of the valid and invalid records
         SELECT array_agg(rs.id) INTO staging_valid_ids
         FROM recordings_staging rs
