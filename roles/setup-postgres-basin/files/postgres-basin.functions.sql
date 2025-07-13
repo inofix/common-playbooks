@@ -394,7 +394,7 @@ CREATE OR REPLACE FUNCTION perform_insert_sources(
     in_parent_uuid UUID,
     in_project_uuid UUID,
     in_sourcetype_uuid UUID,
-    in_tree LTREE DEFAULT NULL,
+    in_path LTREE DEFAULT NULL,
     in_extid TEXT DEFAULT NULL,
     in_context TEXT DEFAULT NULL,
     in_alt DOUBLE PRECISION DEFAULT NULL,
@@ -500,7 +500,7 @@ BEGIN
     -- Insert new shadow row
     INSERT INTO shadow_sources (
         id, version, uuid, name,
-        extid, tree, context, sourcetypeid,
+        extid, path, context, sourcetypeid,
         projectid, parentid,
         alt, lat, lon, mapzoom, geohash,
         timezone, startdate, stopdate, samplerate,
@@ -509,7 +509,7 @@ BEGIN
     )
     VALUES (
         source_id, latest_version, in_uuid, in_name,
-        in_extid, in_tree, in_context, in_sourcetypeid,
+        in_extid, in_path, in_context, in_sourcetypeid,
         in_project_id, in_parentid,
         in_alt, in_lat, in_lon, in_mapzoom, in_geohash,
         in_timezone, in_startdate, in_stopdate, in_samplerate,

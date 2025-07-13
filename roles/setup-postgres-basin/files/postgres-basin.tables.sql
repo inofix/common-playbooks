@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS sources (
     name TEXT DEFAULT NULL,
     uri TEXT DEFAULT NULL,
     uuid UUID DEFAULT NULL,
-    tree LTREE NOT NULL, -- hierarchical info
+    path LTREE NOT NULL, -- hierarchical info
     version INTEGER NOT NULL -- see shadow
 );
 
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS shadow_sources (
     uuid UUID DEFAULT gen_random_uuid(), -- global id
     uri TEXT DEFAULT NULL, -- one source, many projects...?
     extid TEXT DEFAULT NULL, -- alternative for preexisting external reference if needed
-    tree LTREE NOT NULL, -- hierarchical info
+    path LTREE NOT NULL, -- hierarchical info
     name TEXT NOT NULL, -- short name, usually part of 'tree'..
     context TEXT DEFAULT NULL, --
     sourcetypeid INTEGER REFERENCES sourcetypes(id) NOT NULL,

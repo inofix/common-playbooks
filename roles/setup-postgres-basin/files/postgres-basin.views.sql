@@ -10,7 +10,7 @@ SELECT
     COALESCE(recordings.lon, sources.lon) AS lon,
     COALESCE(recordings.alt, sources.alt) AS alt,
     COALESCE(recordings.geohash, sources.geohash) AS geohash,
-    sources.tree,
+    sources.path,
     sources.name
 FROM
     sources
