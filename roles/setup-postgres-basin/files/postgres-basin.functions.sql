@@ -521,6 +521,101 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Create some functions to check for anchor/shadow coherence
+-- 1. return a table with the id-version pairs missing (hopefully empty)
+CREATE OR REPLACE FUNCTION check_shadow_differences(anchor_table TEXT, shadow_table TEXT)
+RETURNS TABLE(id INTEGER, version INTEGER) AS $$
+DECLARE
+    sql TEXT;
+BEGIN
+    -- Validate that both tables exist
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_class WHERE relname = anchor_table AND relkind = 'r'
+    ) THEN
+        RAISE EXCEPTION 'Anchor table "%" does not exist.', anchor_table;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_class WHERE relname = shadow_table AND relkind = 'r'
+    ) THEN
+        RAISE EXCEPTION 'Shadow table "%" does not exist.', shadow_table;
+    END IF;
+
+    -- Build the query
+    sql := format(
+        $$SELECT a.id, a.version
+            FROM %I a
+       LEFT JOIN %I s
+              ON a.id = s.id AND a.version = s.version
+         WHERE s.id IS NULL$$,
+        anchor_table,
+        shadow_table
+    );
+
+    RETURN QUERY EXECUTE sql;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. verify that the table from above really is empty..
+CREATE OR REPLACE FUNCTION shadow_is_consistent(anchor_table TEXT, shadow_table TEXT)
+RETURNS BOOLEAN AS $$
+DECLARE
+    mismatch_count INTEGER;
+BEGIN
+    -- Count the number of missing entries by querying the first function
+    SELECT COUNT(*) INTO mismatch_count
+    FROM check_shadow_differences(anchor_table, shadow_table);
+
+    -- True = everything matched
+    RETURN mismatch_count = 0;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3. complain if the above two tests fail for any of our table pairs.
+CREATE OR REPLACE FUNCTION enforce_shadow_consistency()
+RETURNS VOID AS $$
+BEGIN
+    -- Example: Projects
+    IF NOT shadow_is_consistent('projects', 'shadow_projects') THEN
+        RAISE EXCEPTION 'Shadow inconsistency detected in table "projects"';
+    END IF;
+
+    -- Example: Persons
+    IF NOT shadow_is_consistent('persons', 'shadow_persons') THEN
+        RAISE EXCEPTION 'Shadow inconsistency detected in table "persons"';
+    END IF;
+
+    -- Example: Contacts
+    IF NOT shadow_is_consistent('contacts', 'shadow_contacts') THEN
+        RAISE EXCEPTION 'Shadow inconsistency detected in table "contacts"';
+    END IF;
+
+    -- Example: Users
+    IF NOT shadow_is_consistent('users', 'shadow_users') THEN
+        RAISE EXCEPTION 'Shadow inconsistency detected in table "users"';
+    END IF;
+
+    -- Example: Roles
+    IF NOT shadow_is_consistent('roles', 'shadow_roles') THEN
+        RAISE EXCEPTION 'Shadow inconsistency detected in table "roles"';
+    END IF;
+
+    -- Example: Sourcetypes
+    IF NOT shadow_is_consistent('sourcetypes', 'shadow_sourcetypes') THEN
+        RAISE EXCEPTION 'Shadow inconsistency detected in table "sourcetypes"';
+    END IF;
+
+    -- Example: Sources
+    IF NOT shadow_is_consistent('sources', 'shadow_sources') THEN
+        RAISE EXCEPTION 'Shadow inconsistency detected in table "sources"';
+    END IF;
+
+    RAISE NOTICE 'Shadow consistency verified for all checked tables.';
+END;
+$$ LANGUAGE plpgsql;
+
+-- 4. now, let's call it from pg_cron..?
+
 -- Create a function to manage partitions and subpartitions
 CREATE OR REPLACE FUNCTION manage_recordings_partitions()
 RETURNS void AS $$
