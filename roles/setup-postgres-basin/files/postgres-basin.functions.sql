@@ -18,10 +18,12 @@ DECLARE
     created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version), created
+    SELECT id, version, created
     INTO project_id, latest_version, created_ts
     FROM shadow_projects
-    WHERE uri = in_uri;
+    WHERE uri = in_uri
+    ORDER BY version DESC
+    LIMIT 1;
 
     IF project_id IS NULL THEN
         -- Create new anchor
@@ -75,10 +77,12 @@ DECLARE
     created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version), created
+    SELECT id, version, created
     INTO person_id, latest_version, created_ts
     FROM shadow_persons
-    WHERE uuid = in_uuid;
+    WHERE uuid = in_uuid
+    ORDER BY version DESC
+    LIMIT 1;
 
     IF person_id IS NULL THEN
         -- Create new anchor
@@ -131,10 +135,12 @@ DECLARE
     created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version), created
+    SELECT id, version, created
     INTO contact_id, latest_version, created_ts
     FROM shadow_contacts
-    WHERE uuid = in_uuid;
+    WHERE uuid = in_uuid
+    ORDER BY version DESC
+    LIMIT 1;
 
     IF contact_id IS NULL THEN
         -- Create new anchor
@@ -197,10 +203,12 @@ BEGIN
     LIMIT 1;
 
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version), created
+    SELECT id, version, created
     INTO user_id, latest_version, created_ts
     FROM shadow_users
-    WHERE uuid = in_uuid;
+    WHERE uuid = in_uuid
+    ORDER BY version DESC
+    LIMIT 1;
 
     IF user_id IS NULL THEN
         -- Create new anchor
@@ -272,10 +280,12 @@ BEGIN
     END IF;
 
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version), created
+    SELECT id, version, created
     INTO role_id, latest_version, created_ts
     FROM shadow_roles
-    WHERE uuid = in_uuid;
+    WHERE uuid = in_uuid
+    ORDER BY version DESC
+    LIMIT 1;
 
     IF role_id IS NULL THEN
         -- Create new anchor
@@ -294,7 +304,7 @@ BEGIN
             SET
                 version = latest_version,
                 uri = in_uri,
-                name = in_name,
+                name = in_name
         WHERE id = role_id;
     END IF;
 
@@ -339,10 +349,12 @@ DECLARE
     created_ts TIMESTAMPTZ;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version), created
+    SELECT id, version, created
     INTO sourcetype_id, latest_version, created_ts
     FROM shadow_sourcetypes
-    WHERE uuid = in_uuid;
+    WHERE uuid = in_uuid
+    ORDER BY version DESC
+    LIMIT 1;
 
     IF sourcetype_id IS NULL THEN
         -- Create new anchor
@@ -385,8 +397,6 @@ BEGIN
     RETURN sourcetype_id;
 END;
 $$ LANGUAGE plpgsql;
-
--- TODO LTREE function..
 
 CREATE OR REPLACE FUNCTION perform_insert_sources(
     in_name TEXT,
@@ -470,10 +480,12 @@ BEGIN
     END IF;
 
     -- Try to find existing id and max version via UUID
-    SELECT id, MAX(version), created
+    SELECT id, version, created
     INTO source_id, latest_version, created_ts
     FROM shadow_sources
-    WHERE uuid = in_uuid;
+    WHERE uuid = in_uuid
+    ORDER BY version DESC
+    LIMIT 1;
 
     IF source_id IS NULL THEN
         -- Create new anchor
@@ -542,12 +554,11 @@ BEGIN
     END IF;
 
     -- Build the query
-    sql := format(
-        $$SELECT a.id, a.version
+    sql := format('SELECT a.id, a.version
             FROM %I a
        LEFT JOIN %I s
               ON a.id = s.id AND a.version = s.version
-         WHERE s.id IS NULL$$,
+         WHERE s.id IS NULL',
         anchor_table,
         shadow_table
     );
@@ -616,6 +627,7 @@ $$ LANGUAGE plpgsql;
 
 -- 4. now, let's call it from pg_cron..?
 
+
 -- Create a function to manage partitions and subpartitions
 CREATE OR REPLACE FUNCTION manage_recordings_partitions()
 RETURNS void AS $$
@@ -661,7 +673,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 
 -- processing staged recordings and clean up or warn
 CREATE OR REPLACE FUNCTION process_staged_recordings()
