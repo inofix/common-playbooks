@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS shadow_sources (
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
     lastmodifieduser INTEGER DEFAULT NULL,
     PRIMARY KEY(id, version),
-    UNIQUE(tree, version),
+    UNIQUE(path, version),
     UNIQUE(uuid, version),
     UNIQUE(name, version)
 );
