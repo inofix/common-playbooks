@@ -227,7 +227,7 @@ DECLARE
 BEGIN
     -- Try to link to an existing person first
     SELECT id INTO realperson_id
-    FROM shadow_persons
+    FROM persons
     WHERE uri = in_uri -- URI is the same for user and person..
     LIMIT 1;
 
@@ -306,7 +306,7 @@ DECLARE
 BEGIN
     -- First verify the mandatory project affiliation
     SELECT id INTO project_id
-    FROM shadow_projects
+    FROM projects
     WHERE uuid = in_project_uuid
     LIMIT 1;
 
@@ -407,7 +407,7 @@ BEGIN
 
     IF sourcetype_id IS NULL THEN
         -- Create new anchor
-        INSERT INTO sourcetypes(version)
+        INSERT INTO sourcetypes(version, uri, name, uuid)
         VALUES (0, in_uri, in_name, in_uuid)
         RETURNING id INTO sourcetype_id;
 
@@ -453,6 +453,7 @@ CREATE OR REPLACE FUNCTION perform_insert_sources(
     in_parent_uuid UUID,
     in_project_uuid UUID,
     in_sourcetype_uuid UUID,
+    in_uri TEXT DEFAULT NULL,
     in_path LTREE DEFAULT NULL,
     in_extid TEXT DEFAULT NULL,
     in_context TEXT DEFAULT NULL,
@@ -476,6 +477,8 @@ DECLARE
     project_id INTEGER;
     sourcetype_id INTEGER;
     parent_source_id INTEGER;
+    uri_ TEXT;
+    uri__ TEXT;
     maintainer_person_id INTEGER;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
@@ -483,7 +486,7 @@ DECLARE
 BEGIN
     -- First verify the mandatory project affiliation
     SELECT id INTO project_id
-    FROM shadow_projects
+    FROM projects
     WHERE uuid = in_project_uuid
     LIMIT 1;
 
@@ -499,8 +502,8 @@ BEGIN
     END IF;
 
     -- Every source is expected to have a corresponding type entry
-    SELECT id INTO sourcetype_id
-    FROM shadow_sourcetypes
+    SELECT id, uri INTO sourcetype_id, uri_
+    FROM sourcetypes
     WHERE uuid = in_sourcetype_uuid
     LIMIT 1;
 
@@ -511,8 +514,8 @@ BEGIN
 
     -- Try to link to an existing parent source first
     IF in_parent_uuid IS NOT NULL THEN
-        SELECT id INTO parent_source_id
-        FROM shadow_sources
+        SELECT id, uri INTO parent_source_id, uri__
+        FROM sources
         WHERE uuid = in_parent_uuid
         LIMIT 1;
 
@@ -522,10 +525,19 @@ BEGIN
         END IF;
     END IF;
 
+    -- Set uri_ to either input, or sourcetype.uri; fall back to parent.uri
+    IF in_uri IS NULL THEN
+        IF uri_ IS NULL THEN
+            uri_ := uri__;
+        END IF;
+    ELSE
+        uri_ := in_uri;
+    END IF;
+
     -- Try to link to an existing person first
     IF in_maintainer_uri IS NOT NULL THEN
         SELECT id INTO maintainer_person_id
-        FROM shadow_persons
+        FROM persons
         WHERE uri = in_maintainer_uri
         LIMIT 1;
 
@@ -545,8 +557,8 @@ BEGIN
 
     IF source_id IS NULL THEN
         -- Create new anchor
-        INSERT INTO sources(version)
-        VALUES (0, in_uri, in_name, in_uuid)
+        INSERT INTO sources(version, uri, name, uuid)
+        VALUES (0, uri_, in_name, in_uuid)
         RETURNING id INTO source_id;
 
         latest_version := 0;
@@ -559,7 +571,7 @@ BEGIN
         UPDATE sources
             SET
                 version = latest_version,
-                uri = in_uri,
+                uri = uri_,
                 name = in_name,
                 uuid = in_uuid
         WHERE id = source_id;
@@ -567,7 +579,7 @@ BEGIN
 
     -- Insert new shadow row
     INSERT INTO shadow_sources (
-        id, version, uuid, name,
+        id, version, uuid, name, uri,
         extid, path, context, sourcetypeid,
         projectid, parentid,
         alt, lat, lon, mapzoom, geohash,
@@ -577,12 +589,12 @@ BEGIN
         created, lastmodifieddate, lastmodifieduser
     )
     VALUES (
-        source_id, latest_version, in_uuid, in_name,
-        in_extid, in_path, in_context, in_sourcetypeid,
-        in_project_id, in_parentid,
+        source_id, latest_version, in_uuid, in_name, uri_,
+        in_extid, in_path, in_context, sourcetype_id,
+        project_id, parent_source_id,
         in_alt, in_lat, in_lon, in_mapzoom, in_geohash,
         in_timezone, in_startdate, in_stopdate, in_samplerate,
-        in_meta, in_maintainerpersonid,
+        in_meta, maintainer_person_id,
         in_softwareversion, in_hardwareversion,
         created_ts, NOW(), the_user
     );
