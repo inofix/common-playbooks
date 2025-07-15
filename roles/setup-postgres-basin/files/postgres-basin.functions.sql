@@ -8,27 +8,41 @@
 CREATE OR REPLACE FUNCTION perform_insert_projects(
     in_name TEXT,
     in_uri TEXT,
-    in_uuid UUID,
+    in_uuid UUID DEFAULT NULL,
     in_meta JSONB DEFAULT NULL,
-    in_user INTEGER DEFAULT NULL
+    in_the_user TEXT DEFAULT NULL -- editing user (overridable in apps...)
 ) RETURNS INTEGER AS $$
 DECLARE
     project_id INTEGER;
+    uuid_ UUID;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    the_user TEXT;
 BEGIN
     -- Try to find existing id and max version via UUID
-    SELECT id, version, created
-    INTO project_id, latest_version, created_ts
+    SELECT id, uuid, version, created
+    INTO project_id, uuid_, latest_version, created_ts
     FROM shadow_projects
     WHERE uri = in_uri
     ORDER BY version DESC
     LIMIT 1;
 
+    IF in_uuid IS NULL THEN
+        uuid_ := gen_random_uuid();
+    ELSE
+        uuid_ := in_uuid;
+    END IF;
+
+    IF in_the_user IS NULL THEN
+        the_user := SESSION_USER;
+    ELSE
+        the_user := in_the_user;
+    END IF;
+
     IF project_id IS NULL THEN
         -- Create new anchor
         INSERT INTO projects(version, uri, name, uuid)
-        VALUES (0, in_uri, in_name, in_uuid)
+        VALUES (0, in_uri, in_name, uuid_)
         RETURNING id INTO project_id;
 
         latest_version := 0;
@@ -43,7 +57,7 @@ BEGIN
                 version = latest_version,
                 uri = in_uri,
                 name = in_name,
-                uuid = in_uuid
+                uuid = uuid_
          WHERE id = project_id;
     END IF;
 
@@ -53,8 +67,8 @@ BEGIN
         meta, created, lastmodifieddate, lastmodifieduser
     )
     VALUES (
-        project_id, latest_version, in_uri, in_name, in_uuid,
-        in_meta, created_ts, NOW(), in_user
+        project_id, latest_version, in_uri, in_name, uuid_,
+        in_meta, created_ts, NOW(), the_user
     );
 
     RETURN project_id;
@@ -69,20 +83,27 @@ CREATE OR REPLACE FUNCTION perform_insert_persons(
     in_extid TEXT DEFAULT NULL,
     in_exttype TEXT DEFAULT NULL,
     in_isnatural BOOLEAN DEFAULT True,
-    in_user INTEGER DEFAULT NULL
+    in_the_user TEXT DEFAULT NULL -- editing user (overridable in apps...)
 ) RETURNS INTEGER AS $$
 DECLARE
     person_id INTEGER;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    the_user TEXT;
 BEGIN
     -- Try to find existing id and max version via UUID
     SELECT id, version, created
     INTO person_id, latest_version, created_ts
     FROM shadow_persons
-    WHERE uuid = in_uuid
+    WHERE uri = in_uri
     ORDER BY version DESC
     LIMIT 1;
+
+    IF in_the_user IS NULL THEN
+        the_user := SESSION_USER;
+    ELSE
+        the_user := in_the_user;
+    END IF;
 
     IF person_id IS NULL THEN
         -- Create new anchor
@@ -115,7 +136,7 @@ BEGIN
     VALUES (
         person_id, latest_version, in_uri, in_name, in_uuid,
         in_extid, in_extidtype, in_isnatural,
-        created_ts, NOW(), in_user
+        created_ts, NOW(), the_user
     );
 
     RETURN person_id;
@@ -127,12 +148,13 @@ CREATE OR REPLACE FUNCTION perform_insert_contacts(
     in_uri TEXT,
     in_uuid UUID DEFAULT NULL,
     in_icard TEXT DEFAULT NULL,
-    in_user INTEGER DEFAULT NULL
+    in_the_user TEXT DEFAULT NULL -- editing user (overridable in apps...)
 ) RETURNS INTEGER AS $$
 DECLARE
     contact_id INTEGER;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    the_user TEXT;
 BEGIN
     -- Try to find existing id and max version via UUID
     SELECT id, version, created
@@ -141,6 +163,12 @@ BEGIN
     WHERE uuid = in_uuid
     ORDER BY version DESC
     LIMIT 1;
+
+    IF in_the_user IS NULL THEN
+        the_user := SESSION_USER;
+    ELSE
+        the_user := in_the_user;
+    END IF;
 
     IF contact_id IS NULL THEN
         -- Create new anchor
@@ -173,7 +201,7 @@ BEGIN
     VALUES (
         contact_id, latest_version, in_uri, in_name, in_uuid,
         in_icard,
-        created_ts, NOW(), in_user
+        created_ts, NOW(), the_user
     );
 
     RETURN contact_id;
@@ -188,19 +216,26 @@ CREATE OR REPLACE FUNCTION perform_insert_users(
     in_idtoken TEXT DEFAULT NULL,
     in_idtokenhash TEXT DEFAULT NULL,
     in_idtokentype VARCHAR(16) DEFAULT NULL,
-    in_user INTEGER DEFAULT NULL
+    in_the_user TEXT DEFAULT NULL -- editing user (overridable in apps...)
 ) RETURNS INTEGER AS $$
 DECLARE
     user_id INTEGER;
     realperson_id INTEGER;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    the_user TEXT;
 BEGIN
     -- Try to link to an existing person first
     SELECT id INTO realperson_id
     FROM shadow_persons
     WHERE uri = in_uri -- URI is the same for user and person..
     LIMIT 1;
+
+    IF in_the_user IS NULL THEN
+        the_user := SESSION_USER;
+    ELSE
+        the_user := in_the_user;
+    END IF;
 
     -- Try to find existing id and max version via UUID
     SELECT id, version, created
@@ -243,7 +278,7 @@ BEGIN
         user_id, latest_version, in_name,
         in_email, in_passhash, in_idtoken, in_idtokenhash,
         in_idtokentype, realperson_id,
-        created_ts, NOW(), in_user
+        created_ts, NOW(), the_user
     );
 
     RETURN user_id;
@@ -260,19 +295,26 @@ CREATE OR REPLACE FUNCTION perform_insert_roles(
     in_cancreate BOOLEAN DEFAULT False,
     in_candelete BOOLEAN DEFAULT False,
     in_cangrant BOOLEAN DEFAULT False,
-    in_user INTEGER DEFAULT NULL
+    in_the_user TEXT DEFAULT NULL -- editing user (overridable in apps...)
 ) RETURNS INTEGER AS $$
 DECLARE
     role_id INTEGER;
     project_id INTEGER;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    the_user TEXT;
 BEGIN
     -- First verify the mandatory project affiliation
     SELECT id INTO project_id
     FROM shadow_projects
     WHERE uuid = in_project_uuid
     LIMIT 1;
+
+    IF in_the_user IS NULL THEN
+        the_user := SESSION_USER;
+    ELSE
+        the_user := in_the_user;
+    END IF;
 
     IF project_id IS NULL THEN
         RAISE EXCEPTION 'Project for role "%" not found, UUID: "%"',
@@ -319,7 +361,7 @@ BEGIN
         role_id, latest_version, in_name, in_uri,
         project_id, in_isowner,
         in_canread, in_canedit, in_cancreate, in_cangrant,
-        created_ts, NOW(), in_user
+        created_ts, NOW(), the_user
     );
 
     RETURN role_id;
@@ -341,12 +383,13 @@ CREATE OR REPLACE FUNCTION perform_insert_sourcetypes(
     in_unitencoding VARCHAR(16) DEFAULT NULL,
     in_tolerance INTEGER DEFAULT NULL,
     in_meta JSONB DEFAULT NULL,
-    in_user INTEGER DEFAULT NULL
+    in_the_user TEXT DEFAULT NULL -- editing user (overridable in apps...)
 ) RETURNS INTEGER AS $$
 DECLARE
     sourcetype_id INTEGER;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    the_user TEXT;
 BEGIN
     -- Try to find existing id and max version via UUID
     SELECT id, version, created
@@ -355,6 +398,12 @@ BEGIN
     WHERE uuid = in_uuid
     ORDER BY version DESC
     LIMIT 1;
+
+    IF in_the_user IS NULL THEN
+        the_user := SESSION_USER;
+    ELSE
+        the_user := in_the_user;
+    END IF;
 
     IF sourcetype_id IS NULL THEN
         -- Create new anchor
@@ -391,7 +440,7 @@ BEGIN
         in_class, in_devicetype, in_realmname, in_realmuuid,
         in_contentencoding, in_contenttype, in_contentrdfxtypes,
         in_unit, in_unitencoding, in_tolerance, in_meta,
-        created_ts, NOW(), in_user
+        created_ts, NOW(), the_user
     );
 
     RETURN sourcetype_id;
@@ -420,7 +469,7 @@ CREATE OR REPLACE FUNCTION perform_insert_sources(
     in_maintainer_uri TEXT DEFAULT NULL,
     in_softwareversion TEXT DEFAULT NULL,
     in_hardwareversion TEXT DEFAULT NULL,
-    in_user INTEGER DEFAULT NULL
+    in_the_user TEXT DEFAULT NULL -- editing user (overridable in apps...)
 ) RETURNS INTEGER AS $$
 DECLARE
     source_id INTEGER;
@@ -430,12 +479,19 @@ DECLARE
     maintainer_person_id INTEGER;
     latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    the_user TEXT;
 BEGIN
     -- First verify the mandatory project affiliation
     SELECT id INTO project_id
     FROM shadow_projects
     WHERE uuid = in_project_uuid
     LIMIT 1;
+
+    IF in_the_user IS NULL THEN
+        the_user := SESSION_USER;
+    ELSE
+        the_user := in_the_user;
+    END IF;
 
     IF project_id IS NULL THEN
         RAISE EXCEPTION 'Project for source "%" not found, UUID: "%"',
@@ -516,7 +572,8 @@ BEGIN
         projectid, parentid,
         alt, lat, lon, mapzoom, geohash,
         timezone, startdate, stopdate, samplerate,
-        meta, maintainerpersonid, softwareversion, hardwareversion,
+        meta, maintainerpersonid,
+        softwareversion, hardwareversion,
         created, lastmodifieddate, lastmodifieduser
     )
     VALUES (
@@ -525,8 +582,9 @@ BEGIN
         in_project_id, in_parentid,
         in_alt, in_lat, in_lon, in_mapzoom, in_geohash,
         in_timezone, in_startdate, in_stopdate, in_samplerate,
-        in_meta, in_maintainerpersonid, in_softwareversion, in_hardwareversion,
-        created_ts, NOW(), in_user
+        in_meta, in_maintainerpersonid,
+        in_softwareversion, in_hardwareversion,
+        created_ts, NOW(), the_user
     );
 
     RETURN source_id;
