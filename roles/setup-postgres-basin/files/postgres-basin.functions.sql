@@ -627,6 +627,69 @@ $$ LANGUAGE plpgsql;
 
 -- 4. now, let's call it from pg_cron..?
 
+-- Create functions to handle the LTREE path in shadow_sources
+CREATE OR REPLACE FUNCTION ltree_sanitize_label(in_name TEXT)
+RETURNS TEXT AS $$
+DECLARE
+    clean_name TEXT;
+BEGIN
+    -- Replace all illegal characters with _
+    clean_name := regexp_replace(in_name, '[^A-Za-z0-9_]', '_', 'g');
+
+    -- Ensure it doesn't start with a digit (prefix _ if so)
+    IF clean_name ~ '^[0-9]' THEN
+        clean_name := '_' || clean_name;
+    END IF;
+
+    -- Optional: lower-case it
+    clean_name := lower(clean_name);
+
+    RETURN clean_name;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE STRICT;
+
+-- used once to clean up..
+-- UPDATE shadow_sources
+-- SET path = (
+--     SELECT path || ltree_sanitize_label(my_table.name)
+--    FROM sources parent
+--    WHERE parent.id = sources.parentid
+-- )
+-- WHERE parentid IS NOT NULL;
+
+CREATE OR REPLACE FUNCTION update_ltree_path()
+RETURNS TRIGGER AS $$
+DECLARE
+    parent_path ltree;
+    self_label TEXT;
+BEGIN
+    -- Sanitize the current name
+    self_label := ltree_sanitize_label(NEW.name);
+
+    -- If no parent, this is a root node
+    IF NEW.parentid IS NULL THEN
+        NEW.path := self_label::ltree;
+
+    ELSE
+        -- Get parent's path
+        SELECT path INTO parent_path
+        FROM shadow_sources
+        WHERE id = NEW.parentid
+        ORDER BY version DESC
+        LIMIT 1;
+
+        IF parent_path IS NULL THEN
+            RAISE EXCEPTION
+                'Parent with id % has no path set yet.', NEW.parentid;
+        END IF;
+
+        -- Build full path
+        NEW.path := parent_path || self_label;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Create a function to manage partitions and subpartitions
 CREATE OR REPLACE FUNCTION manage_recordings_partitions()
