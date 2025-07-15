@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS shadow_persons (
     isnatural BOOLEAN DEFAULT True,
     created TIMESTAMPTZ DEFAULT NULL,
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
-    lastmodifieduser INTEGER DEFAULT NULL,
+    lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(uri, version)
 );
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS shadow_contacts (
     ownerid INTEGER DEFAULT NULL, -- .. other tables.
     created TIMESTAMPTZ NULL,
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
-    lastmodifieduser INTEGER DEFAULT NULL,
+    lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(name, ownertable, ownerid, version),
     UNIQUE(uri, version)
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS shadow_projects (
     meta JSONB DEFAULT NULL,
     created TIMESTAMPTZ DEFAULT NULL,
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
-    lastmodifieduser INTEGER DEFAULT NULL,
+    lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(uuid, version),
     UNIQUE(name, version),
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS shadow_users (
     realpersonid INTEGER REFERENCES persons(id),
     created TIMESTAMPTZ DEFAULT NULL,
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
-    lastmodifieduser INTEGER DEFAULT NULL,
+    lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(name, version),
     UNIQUE(uri, version)
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS shadow_roles (
     cangrant BOOLEAN DEFAULT False,
     created TIMESTAMPTZ DEFAULT NULL,
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
-    lastmodifieduser INTEGER DEFAULT NULL,
+    lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(name, version)
 );
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS shadow_sourcetypes (
     meta JSONB DEFAULT NULL,
     created TIMESTAMPTZ DEFAULT NULL,
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
-    lastmodifieduser INTEGER DEFAULT NULL,
+    lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(uuid, version),
     UNIQUE(name, version)
@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS shadow_sources (
     uri TEXT DEFAULT NULL, -- one source, many projects...?
     extid TEXT DEFAULT NULL, -- alternative for preexisting external reference if needed
     path LTREE NOT NULL, -- hierarchical info
-    name TEXT NOT NULL, -- short name, usually part of 'tree'..
+    name TEXT NOT NULL, -- short name, usually part of 'path'..
     context TEXT DEFAULT NULL, --
     sourcetypeid INTEGER REFERENCES sourcetypes(id) NOT NULL,
     projectid INTEGER REFERENCES projects(id) NOT NULL,
@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS shadow_sources (
     hardwareversion TEXT DEFAULT NULL,
     created TIMESTAMPTZ DEFAULT NULL,
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
-    lastmodifieduser INTEGER DEFAULT NULL,
+    lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(path, version),
     UNIQUE(uuid, version),
