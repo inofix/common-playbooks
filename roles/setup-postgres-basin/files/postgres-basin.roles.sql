@@ -81,7 +81,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON sources TO omni_admin;
 GRANT SELECT, INSERT, UPDATE, DELETE ON recordings TO main_admin;
 GRANT SELECT, INSERT, UPDATE, DELETE ON recordings TO omni_admin;
 --GRANT SELECT ON all_recordings_view TO omni_reader;
-GRANT SELECT ON all_recordings_view TO omni_consumer;
+--GRANT SELECT ON all_recordings_view TO omni_consumer;
 
 -- recorings staging permissions
 GRANT SELECT, INSERT, UPDATE, DELETE ON recordings_staging TO main_admin;
