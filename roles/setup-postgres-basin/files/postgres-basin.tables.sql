@@ -203,8 +203,7 @@ CREATE TABLE IF NOT EXISTS shadow_sourcetypes (
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
     lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
-    UNIQUE(uuid, version),
-    UNIQUE(name, version)
+    UNIQUE(uuid, version)
 );
 
 -- the data sources explaining all details of the recordings
@@ -247,9 +246,9 @@ CREATE TABLE IF NOT EXISTS shadow_sources (
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
     lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
-    UNIQUE(path, version),
     UNIQUE(uuid, version),
-    UNIQUE(name, version)
+    UNIQUE(projectid, path, version),
+    UNIQUE(projectid, name, version)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS shadow_sources_uri
