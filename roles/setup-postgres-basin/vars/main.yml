@@ -15,7 +15,11 @@ schema_files:
   triggers: "postgres-basin.triggers.sql"
   cron: "postgres-basin.cron.sql"
   version: "postgres-basin.version.sql"
+schema_files_auto_enable: "{{ app__postgresql__auto_schema_enabled | d(default_postgresql_auto_schema_enabled, True) }}"
 templates:
+  projects:
+    src: "postgres-basin.content.projects.sql.j2"
+    dest: "{{ schema_files_path }}/postgres-basin.content.projects.sql"
   pg_cron:
     src: "pg_cron.conf.j2"
     dest: "{{ app__postgresql__pg_cron__config | d(g_postgresql_config_path ~ default_postgresql_cron_config_basename, true) }}"
