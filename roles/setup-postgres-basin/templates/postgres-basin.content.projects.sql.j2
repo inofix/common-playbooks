@@ -1,0 +1,223 @@
+-- # insert table content project organization data
+
+{% for item in service_basin_projects %}
+
+DO $$
+DECLARE
+    project_uuid UUID;
+BEGIN
+    SELECT uuid INTO project_uuid FROM projects
+    WHERE
+{% if item.uuid is defined and item.uuid|length > 0 %}
+        uuid = $uuid${{ item.uuid }}$uuid$ OR
+{% endif %}
+{% if item.uri is defined and item.uri|length > 0 %}
+        uri = $uri${{ item.uri }}$uri$ OR
+{% endif %}
+        name = $name${{ item.name }}$name$
+    LIMIT 1;
+
+    IF project_uuid IS NULL THEN
+{% if item.uuid is defined and item.uuid|length > 0 %}
+        project_uuid := $uuid${{ item.uuid }}$uuid$;
+{% else %}
+        project_uuid := gen_random_uuid();
+{% endif %}
+        
+        PERFORM perform_insert_projects(
+            $name${{ item.name }}$name$,
+{% if item.uri is defined and item.uri|length > 0 %}
+            $uri${{ item.uri }}$uri$,
+{% else %}
+            NULL,
+{% endif %}
+            project_uuid
+        );
+    END IF;
+
+{% for st in item.sourcetypes %}
+
+    PERFORM perform_insert_sourcetypes(
+      $name${{ st.name }}$name$,
+{% if st.uuid is defined and st.uuid|length > 0 %}
+        $uuid${{ st.uuid }}$uuid$,
+{% else %}
+        gen_random_uuid(),
+{% endif %}
+{% if st.uri is defined and st.uri|length > 0 %}
+        $uri${{ st.uri }}$uri$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.class is defined and st.class|length > 0 %}
+        $class${{ st.class }}$class$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.devicetype is defined and st.devicetype|length > 0 %}
+        $dtype${{ st.devicetype }}$dtype$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.realmname is defined and st.realmname|length > 0 %}
+        $realm${{ st.realmname }}$realm$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.realmuuid is defined and st.realmuuid|length > 0 %}
+        $realm${{ st.realmuuid }}$realm$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.contentencoding is defined and st.contentencoding|length > 0 %}
+        $cont${{ st.contentencoding }}$cont$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.contenttype is defined and st.contenttype|length > 0 %}
+        $cont${{ st.contenttype }}$cont$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.contentrdfxtypes is defined and st.contentrdfxtyoes|length > 0 %}
+        $cont${{ st.contentrdfxtyoes }}$cont$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.unit is defined and st.unit|length > 0 %}
+        $unit${{ st.unit }}$unit$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.unitencoding is defined and st.unitencoding|length > 0 %}
+        $unit${{ st.unitencoding }}$unit$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.tolerance is defined and st.tolerance|length > 0 %}
+        $tol${{ st.tolerance }}$tol$,
+{% else %}
+        NULL,
+{% endif %}
+{% if st.meta is defined and st.meta|length > 0 %}
+        $meta${{ st.meta }}$meta$,
+{% else %}
+        NULL,
+{% endif %}
+        NULL
+    );
+{% endfor %}
+{% for s in item.sources %}
+
+    PERFORM perform_insert_sources(
+        $qq${{ s.name }}$qq$,
+{% if s.uuid is defined and s.uuid|length > 0 %}
+        $uuid${{ s.uuid }}$uuid$,
+{% else %}
+        gen_random_uuid(),
+{% endif %}
+{% if s.parentuuid is defined and s.parentuuid|length > 0 %}
+        $parent${{ s.parentuuid }}$parent$,
+{% else %}
+        NULL,
+{% endif %}
+        project_uuid,
+{% if s.typeuuid is defined and s.typeuuid|length > 0 %}
+        $tuuid${{ s.typeuuid }}$tuuid$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.uri is defined and s.uri|length > 0 %}
+        $uri${{ s.uri }}$uri$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.path is defined and s.path|length > 0 %}
+        $path${{ s.path }}$path$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.extid is defined and s.extid|length > 0 %}
+        $exitd${{ s.extid }}$extid$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.context is defined and s.context|length > 0 %}
+        $cont${{ s.context }}$cont$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.alt is defined and s.alt|length > 0 %}
+        $alt${{ s.alt }}$alt$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.lat is defined and s.lat|length > 0 %}
+        $lat${{ s.lat }}$lat$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.lon is defined and s.lon|length > 0 %}
+        $lon${{ s.lon }}$lon$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.mapzoom is defined and s.mapzoom|length > 0 %}
+        $map${{ s.mapzoom }}$map$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.geohash is defined and s.geohash|length > 0 %}
+        $geo${{ s.geohash }}$geo$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.timezone is defined and s.timezone|length > 0 %}
+        $time${{ s.timezone }}$time$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.startdate is defined and s.startdate|length > 0 %}
+        $start${{ s.startdate }}$start$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.stopdate is defined and s.stopdate|length > 0 %}
+        $stop${{ s.stopdate }}$stop$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.samplerate is defined and s.samplerate|length > 0 %}
+        $sample${{ s.samplerate }}$sample$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.meta is defined and s.meta|length > 0 %}
+        $meta${{ s.meta }}$meta$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.maintainer_uri is defined and s.maintainer_uri|length > 0 %}
+        $maint${{ s.maintainer_uri }}$maint$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.softwareversion is defined and s.softwareversion|length > 0 %}
+        $soft${{ s.softwareversion }}$soft$,
+{% else %}
+        NULL,
+{% endif %}
+{% if s.hardwareversion is defined and s.hardwareversion|length > 0 %}
+        $hard${{ s.hardwareversion }}$hard$,
+{% else %}
+        NULL,
+{% endif %}
+        NULL
+    );
+{% endfor %}
+END;
+$$ LANGUAGE plpgsql;
+
+{% endfor %}
+
+
