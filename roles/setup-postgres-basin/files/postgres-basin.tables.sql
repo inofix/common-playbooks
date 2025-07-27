@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS shadow_contacts (
     lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(name, ownertable, ownerid, version),
-    UNIQUE(uri, version)
+    UNIQUE(uri, ownertable, ownerid, version)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS shadow_contacts_uuid
@@ -92,7 +92,6 @@ CREATE TABLE IF NOT EXISTS shadow_projects (
     lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(uuid, version),
-    UNIQUE(name, version),
     UNIQUE(uri, version)
 );
 
@@ -130,7 +129,6 @@ CREATE TABLE IF NOT EXISTS shadow_users (
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
     lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
-    UNIQUE(name, version),
     UNIQUE(uri, version)
 );
 
@@ -247,8 +245,7 @@ CREATE TABLE IF NOT EXISTS shadow_sources (
     lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
     UNIQUE(uuid, version),
-    UNIQUE(projectid, path, version),
-    UNIQUE(projectid, name, version)
+    UNIQUE(projectid, path, version)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS shadow_sources_uri
