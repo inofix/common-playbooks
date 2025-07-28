@@ -190,6 +190,7 @@ CREATE TABLE IF NOT EXISTS shadow_sourcetypes (
     devicetype TEXT DEFAULT NULL, -- see above, e.g. RaspberryPi3
     realmname TEXT DEFAULT NULL, -- Lifebase service
     realmuuid UUID DEFAULT NULL, -- Lifebase service
+    projectid INTEGER REFERENCES projects(id) DEFAULT NULL,
     contentencoding VARCHAR(32) DEFAULT NULL,
     contenttype VARCHAR(32) DEFAULT NULL,
     contentrdfxtypes TEXT DEFAULT NULL,
@@ -201,7 +202,7 @@ CREATE TABLE IF NOT EXISTS shadow_sourcetypes (
     lastmodifieddate TIMESTAMPTZ DEFAULT NULL,
     lastmodifieduser TEXT DEFAULT NULL,
     PRIMARY KEY(id, version),
-    UNIQUE(uuid, version)
+    UNIQUE(uuid, projectid, version)
 );
 
 -- the data sources explaining all details of the recordings

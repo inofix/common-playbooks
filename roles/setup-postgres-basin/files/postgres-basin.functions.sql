@@ -376,6 +376,7 @@ CREATE OR REPLACE FUNCTION perform_insert_sourcetypes(
     in_devicetype TEXT DEFAULT NULL,
     in_realmname TEXT DEFAULT NULL,
     in_realmuuid UUID DEFAULT NULL,
+    in_project_uuid DEFAULT NULL,
     in_contentencoding VARCHAR(32) DEFAULT NULL,
     in_contenttype VARCHAR(32) DEFAULT NULL,
     in_contentrdfxtypes TEXT DEFAULT NULL,
@@ -387,15 +388,37 @@ CREATE OR REPLACE FUNCTION perform_insert_sourcetypes(
 ) RETURNS INTEGER AS $$
 DECLARE
     sourcetype_id INTEGER;
+    global_sourcetype_id INTEGER;
+    project_id INTEGER;
     latest_version INTEGER;
+    global_latest_version INTEGER;
     created_ts TIMESTAMPTZ;
+    global_created_ts TIMESTAMPTZ;
     the_user TEXT;
 BEGIN
-    -- Try to find existing id and max version via UUID
+    -- First handle the optional project (or global) scope
+    IF in_project_uuid IS NOT NULL THEN
+        SELECT id INTO project_id
+        FROM projects
+        WHERE uuid = in_project_uuid
+        LIMIT 1;
+
+        -- Try to find existing id and max version via UUID in local scope
+        SELECT id, version, created
+        INTO sourcetype_id, latest_version, created_ts
+        FROM shadow_sourcetypes
+        WHERE uuid = in_uuid AND projectid IS NOT DISTINCT FROM project_id
+        ORDER BY version DESC
+        LIMIT 1;
+    ELSE
+        project_id := NULL;
+    END IF;
+
+    -- Try to find existing id and max version via UUID in global scope
     SELECT id, version, created
-    INTO sourcetype_id, latest_version, created_ts
+    INTO global_sourcetype_id, global_latest_version, global_created_ts
     FROM shadow_sourcetypes
-    WHERE uuid = in_uuid
+    WHERE uuid = in_uuid AND projectid IS NULL
     ORDER BY version DESC
     LIMIT 1;
 
@@ -405,45 +428,93 @@ BEGIN
         the_user := in_the_user;
     END IF;
 
-    IF sourcetype_id IS NULL THEN
-        -- Create new anchor
+    IF global_sourcetype_id IS NULL THEN
+        IF project_id IS NOT NULL THEN
+            -- Create new local anchor
+            INSERT INTO sourcetypes(version, uri, name, uuid)
+            VALUES (0, in_uri, in_name, in_uuid)
+            RETURNING id INTO sourcetype_id;
+
+            latest_version := 0;
+            created_ts := NOW();
+        END IF;
+
+        -- Create new global anchor
         INSERT INTO sourcetypes(version, uri, name, uuid)
         VALUES (0, in_uri, in_name, in_uuid)
-        RETURNING id INTO sourcetype_id;
+        RETURNING id INTO global_sourcetype_id;
 
-        latest_version := 0;
-        created_ts := NOW();
+        global_latest_version := 0;
+        global_created_ts := NOW();
     ELSE
+        -- Update local anchor
+        IF project_id IS NOT NULL THEN
+            -- Prepare next version
+            latest_version := latest_version + 1;
+
+            -- Update pointer
+            UPDATE sourcetypes
+                SET
+                    version = latest_version,
+                    uri = in_uri,
+                    name = in_name,
+                    uuid = in_uuid
+            WHERE id = sourcetype_id;
+        END IF;
+
+        -- Udate global anchor
         -- Prepare next version
-        latest_version := latest_version + 1;
+        global_latest_version := global_latest_version + 1;
 
         -- Update pointer
         UPDATE sourcetypes
             SET
-                version = latest_version,
+                version = global_latest_version,
                 uri = in_uri,
                 name = in_name,
                 uuid = in_uuid
-        WHERE id = sourcetype_id;
+        WHERE id = global_sourcetype_id;
     END IF;
 
-    -- Insert new shadow row
+    IF project_id IS NOT NULL THEN
+        -- Insert new local shadow row
+        INSERT INTO shadow_sourcetypes (
+            id, version, uri, name, uuid,
+            class, devicetype, realmname, realmuuid, projectid,
+            contentencoding, contenttype, contentrdfxtypes,
+            unit, unitencoding, tolerance, meta,
+            created, lastmodifieddate, lastmodifieduser
+        )
+        VALUES (
+            sourcetype_id, latest_version, in_uri, in_name, in_uuid,
+            in_class, in_devicetype, in_realmname, in_realmuuid, project_id,
+            in_contentencoding, in_contenttype, in_contentrdfxtypes,
+            in_unit, in_unitencoding, in_tolerance, in_meta,
+            created_ts, NOW(), the_user
+        );
+    END IF;
+
+    -- Insert new global shadow row
     INSERT INTO shadow_sourcetypes (
         id, version, uri, name, uuid,
-        class, devicetype, realmname, realmuuid,
+        class, devicetype, realmname, realmuuid, projectid,
         contentencoding, contenttype, contentrdfxtypes,
         unit, unitencoding, tolerance, meta,
         created, lastmodifieddate, lastmodifieduser
     )
     VALUES (
-        sourcetype_id, latest_version, in_uri, in_name, in_uuid,
-        in_class, in_devicetype, in_realmname, in_realmuuid,
+        global_sourcetype_id, global_latest_version, in_uri, in_name, in_uuid,
+        in_class, in_devicetype, in_realmname, in_realmuuid, NULL,
         in_contentencoding, in_contenttype, in_contentrdfxtypes,
         in_unit, in_unitencoding, in_tolerance, in_meta,
-        created_ts, NOW(), the_user
+        global_created_ts, NOW(), the_user
     );
 
-    RETURN sourcetype_id;
+    IF project_id IS NOT NULL THEN
+        RETURN sourcetype_id;
+    ELSE
+        RETURN global_sourcetype_id;
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -730,7 +801,7 @@ $$ LANGUAGE plpgsql IMMUTABLE STRICT;
 CREATE OR REPLACE FUNCTION update_ltree_path()
 RETURNS TRIGGER AS $$
 DECLARE
-    parent_path ltree;
+    parent_path LTREE;
     self_label TEXT;
 BEGIN
     -- Sanitize the current name
@@ -765,11 +836,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION manage_recordings_partitions()
 RETURNS void AS $$
 DECLARE
-    current_year integer;
-    next_year integer;
-    project_id integer;
-    partition_name text;
-    subpartition_name text;
+    current_year INTEGER;
+    next_year INTEGER;
+    project_id INTEGER;
+    partition_name TEXT;
+    subpartition_name TEXT;
 BEGIN
     current_year := EXTRACT(YEAR FROM CURRENT_DATE);
     next_year := current_year + 1;
