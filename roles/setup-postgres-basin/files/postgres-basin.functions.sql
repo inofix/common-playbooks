@@ -46,7 +46,7 @@ BEGIN
         RETURNING id INTO project_id;
 
         latest_version := 0;
-        created_ts := NOW();
+        created_ts := CURRENT_TIMESTAMP;
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -68,7 +68,7 @@ BEGIN
     )
     VALUES (
         project_id, latest_version, in_uri, in_name, uuid_,
-        in_meta, created_ts, NOW(), the_user
+        in_meta, created_ts, CURRENT_TIMESTAMP, the_user
     );
 
     RETURN project_id;
@@ -112,7 +112,7 @@ BEGIN
         RETURNING id INTO person_id;
 
         latest_version := 0;
-        created_ts := NOW();
+        created_ts := CURRENT_TIMESTAMP;
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -136,7 +136,7 @@ BEGIN
     VALUES (
         person_id, latest_version, in_uri, in_name, in_uuid,
         in_extid, in_extidtype, in_isnatural,
-        created_ts, NOW(), the_user
+        created_ts, CURRENT_TIMESTAMP, the_user
     );
 
     RETURN person_id;
@@ -177,7 +177,7 @@ BEGIN
         RETURNING id INTO contact_id;
 
         latest_version := 0;
-        created_ts := NOW();
+        created_ts := CURRENT_TIMESTAMP;
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -201,7 +201,7 @@ BEGIN
     VALUES (
         contact_id, latest_version, in_uri, in_name, in_uuid,
         in_icard,
-        created_ts, NOW(), the_user
+        created_ts, CURRENT_TIMESTAMP, the_user
     );
 
     RETURN contact_id;
@@ -252,7 +252,7 @@ BEGIN
         RETURNING id INTO user_id;
 
         latest_version := 0;
-        created_ts := NOW();
+        created_ts := CURRENT_TIMESTAMP;
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -278,7 +278,7 @@ BEGIN
         user_id, latest_version, in_name,
         in_email, in_passhash, in_idtoken, in_idtokenhash,
         in_idtokentype, realperson_id,
-        created_ts, NOW(), the_user
+        created_ts, CURRENT_TIMESTAMP, the_user
     );
 
     RETURN user_id;
@@ -336,7 +336,7 @@ BEGIN
         RETURNING id INTO role_id;
 
         latest_version := 0;
-        created_ts := NOW();
+        created_ts := CURRENT_TIMESTAMP;
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -361,7 +361,7 @@ BEGIN
         role_id, latest_version, in_name, in_uri,
         project_id, in_isowner,
         in_canread, in_canedit, in_cancreate, in_cangrant,
-        created_ts, NOW(), the_user
+        created_ts, CURRENT_TIMESTAMP, the_user
     );
 
     RETURN role_id;
@@ -436,7 +436,7 @@ BEGIN
             RETURNING id INTO sourcetype_id;
 
             latest_version := 0;
-            created_ts := NOW();
+            created_ts := CURRENT_TIMESTAMP;
         END IF;
 
         -- Create new global anchor
@@ -445,7 +445,7 @@ BEGIN
         RETURNING id INTO global_sourcetype_id;
 
         global_latest_version := 0;
-        global_created_ts := NOW();
+        global_created_ts := CURRENT_TIMESTAMP;
     ELSE
         -- Update local anchor
         IF project_id IS NOT NULL THEN
@@ -490,7 +490,7 @@ BEGIN
             in_class, in_devicetype, in_realmname, in_realmuuid, project_id,
             in_contentencoding, in_contenttype, in_contentrdfxtypes,
             in_unit, in_unitencoding, in_tolerance, in_meta,
-            created_ts, NOW(), the_user
+            created_ts, CURRENT_TIMESTAMP, the_user
         );
     END IF;
 
@@ -507,7 +507,7 @@ BEGIN
         in_class, in_devicetype, in_realmname, in_realmuuid, NULL,
         in_contentencoding, in_contenttype, in_contentrdfxtypes,
         in_unit, in_unitencoding, in_tolerance, in_meta,
-        global_created_ts, NOW(), the_user
+        global_created_ts, CURRENT_TIMESTAMP, the_user
     );
 
     IF project_id IS NOT NULL THEN
@@ -633,7 +633,7 @@ BEGIN
         RETURNING id INTO source_id;
 
         latest_version := 0;
-        created_ts := NOW();
+        created_ts := CURRENT_TIMESTAMP;
     ELSE
         -- Prepare next version
         latest_version := latest_version + 1;
@@ -667,7 +667,7 @@ BEGIN
         in_timezone, in_startdate, in_stopdate, in_samplerate,
         in_meta, maintainer_person_id,
         in_softwareversion, in_hardwareversion,
-        created_ts, NOW(), the_user
+        created_ts, CURRENT_TIMESTAMP, the_user
     );
 
     RETURN source_id;
