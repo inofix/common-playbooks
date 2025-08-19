@@ -1,0 +1,381 @@
+---
+- name: "Make sure Easy-RSA has a home."
+  file:
+    path: '{{ easyrsa__path }}'
+    state: 'directory'
+    owner: '{{ easyrsa__user }}'
+    group: '{{ easyrsa__group }}'
+    mode: '0750'
+
+# Now, this is strange, Ansible-Magic seems to fail here if the last task's expectaion is not fullfilled. See next task...
+- name: "Test the above, as Ansible does not seem to force the state..."
+  stat:
+    path: '{{ easyrsa__path }}'
+  register: _pki_stat
+
+# See the last task: We still want to keep the test, who knows what will come after v1.7.1.
+# Further down we will use the inmodule creates test, but here we need more control.
+- name: "Fail on unexpected file entry."
+  fail:
+    msg: "Can not continue as {{ easyrsa__path }} is not a directory: {{ _pki_stat.stat }}"
+  when: _pki_stat.stat.exists and not _pki_stat.stat.isdir
+
+- name: "Test for pre-existing RootCA home folders."
+  stat:
+    path: '{{ easyrsa__path }}/{{ _ca.name }}'
+  register: _ca_root_home_stat
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+  loop: '{{ easyrsa__root_ca }}'
+
+- name: "Debug those CA folders."
+  debug:
+    msg: "Does that folder exist? {{ item.stat }}"
+  loop: '{{ _ca_root_home_stat.results }}'
+
+# See the last task: We still want to keep the test, who knows what will come after v1.7.1.
+# Further down we will use the inmodule creates test, but here we need more control.
+- name: "Fail on unexpected file entries."
+  fail:
+    msg: "Can not continue as {{ item.stat.path }} is not a directory"
+  when: item.stat.exists and not item.stat.isdir
+  loop: '{{ _ca_root_home_stat.results }}'
+
+- name: "Make sure each RootCA has a home too."
+  file:
+    path: "{{ item.invocation.module_args.path }}"
+    state: 'directory'
+    owner: '{{ easyrsa__user }}'
+    group: '{{ easyrsa__group }}'
+    mode: '0750'
+  when: not item.stat.exists
+  loop: '{{ _ca_root_home_stat.results }}'
+
+- name: "Allow world readable temp files as this play should be run on a low risk environment and we are not storing critical info here."
+  set_fact:
+    ansible_shell_allow_world_readable_temp: true
+
+- name: "Prepare the directory for every CA."
+  become_user: '{{ easyrsa__user }}'
+  command: "make-cadir {{ _ca_dir }}"
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
+  args:
+    creates: "{{ _ca_dir }}"
+  loop: '{{ easyrsa__all_ca }}'
+
+- name: "Initialize PKI for Root CA"
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa init-pki"
+  args:
+    chdir: "{{ _ca_dir }}"
+    creates: "{{ _ca_dir }}/pki"
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
+  loop: '{{ easyrsa__all_ca }}'
+
+- name: "Move the vars file to the PKI folder."
+  become_user: '{{ easyrsa__user }}'
+  command: "mv {{ _ca_dir }}/vars {{ _ca_dir }}/pki/"
+  args:
+    removes: "{{ _ca_dir }}/vars"
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
+  loop: '{{ easyrsa__all_ca }}'
+
+- name: "Add the necessary variables for the new CAs"
+  become_user: '{{ easyrsa__user }}'
+  blockinfile:
+    marker: '# {mark} ANSIBLE MANAGED BLOCK (changes here might go lost):'
+    backup: false
+    path: '{{ _ca_dir  }}/pki/vars'
+    block: |
+      set_var EASYRSA_ALGO "{{ _ca.vars.algo | d('rsa', true) }}"
+      set_var EASYRSA_KEY_SIZE "{{ _ca.vars.key_size | d('2048', true) }}"
+      set_var EASYRSA_DIGEST "{{ _ca.vars.digest | d('sha256', true) }}"
+      set_var EASYRSA_REQ_COUNTRY "{{ _ca.vars.req_country }}"
+      set_var EASYRSA_REQ_PROVINCE "{{ _ca.vars.req_province }}"
+      set_var EASYRSA_REQ_CITY "{{ _ca.vars.req_city }}"
+      set_var EASYRSA_REQ_ORG "{{ _ca.vars.req_org }}"
+      set_var EASYRSA_REQ_EMAIL "{{ _ca.vars.req_email }}"
+      set_var EASYRSA_REQ_OU "{{ _ca.vars.req_ou }}"
+      set_var EASYRSA_REQ_CN "{{ _ca.cn }}"
+      set_var EASYRSA_CA_EXPIRE "{{ _ca.vars.ca_expire }}"
+      set_var EASYRSA_CERT_EXPIRE "{{ _ca.vars.cert_expire }}"
+      set_var EASYRSA_CRL_DAYS "{{ _ca.vars.crl_days }}"
+      set_var EASYRSA_BATCH "true"
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
+  loop: '{{ easyrsa__all_ca }}'
+
+#TODO we later want to add the password from the vault here,
+# maybe encrypting the file only after having it generated
+# (in the meantime run the vault seperately...)
+- name: "Build Root CA (nopass at this stage)"
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa build-ca nopass"
+  args:
+    chdir: "{{ _ca_dir }}"
+    creates: "{{ _ca_dir }}/pki/ca.crt"
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.name }}/{{ _ca.name }}"
+  loop: '{{ easyrsa__root_ca }}'
+
+- name: "Build Intermediate CAs."
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa build-ca subca nopass"
+  args:
+    chdir: "{{ _ca_dir }}"
+    creates: '{{ _ca_dir }}/pki/reqs/ca.req'
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
+  loop: '{{ easyrsa__inter_ca }}'
+
+- name: "Link the intermediate CA request to its parent signing CA."
+  become_user: '{{ easyrsa__user }}'
+  command: "ln -sf ../../../{{ _ca.name }}/pki/reqs/ca.req pki/reqs/{{ _ca.name }}.req"
+  args:
+    chdir: "{{ _ca_dir }}"
+    creates: '{{ _ca_dir }}/pki/reqs/{{ _ca.name }}.req'
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
+  loop: '{{ easyrsa__inter_ca }}'
+
+- name: "Sign the intermediate CAs."
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa sign-req ca {{ _ca.name }}"
+  args:
+    chdir: "{{ _ca_dir }}"
+    creates: '{{ _ca_dir }}/pki/issued/{{ _ca.name }}.crt'
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
+  loop: '{{ easyrsa__inter_ca }}'
+
+- name: "Copy back the signed certificate to the SubCA."
+  copy:
+    force: true
+    remote_src: true
+    src: "{{ _ca_parent_dir }}/pki/issued/{{ _ca.name }}.crt"
+    dest: "{{ _ca_dir }}/pki/ca.crt"
+    owner: '{{ easyrsa__user }}'
+    group: '{{ easyrsa__group }}'
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
+    _ca_parent_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
+  loop: '{{ easyrsa__inter_ca }}'
+
+##TODO
+# As we created the SubCA's easyrsa__inter_ca with deep-first, we can now concat the files in reverse
+#    - name: "Concatenate the CA chain in every SubCA."
+#      become_user: '{{ easyrsa__user }}'
+#      copy:
+#        force: true
+#        content: |
+#          {% for _ in range(easyrsa__max_ca_depth) %}
+#          {% if _ca.parent_name %}
+#          {{ lookup('file', _e_dir + _ca.name + '/ca.crt' ) }}
+#          {{ 
+#          {% else %}
+#          {% break %}
+#          {% endif %}
+#          {% endfor %}
+#        dest: "{{ _ca_dir }}/pki/ca_chain.crt"
+#      vars:
+#        _ca: "{{ easyrsa__ca.available[item.item] }}"
+#        _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
+#        _e_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/"
+##        _ca_parent_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
+#        _ca_parent_file: "{{ _ca_dir }}/pki/ca.crt ]"
+#      loop: '{{ _ca_inter_stat.results | reverse }}'
+
+- name: 'Build the Diffie-Hellman key, e.g. for OpenVPN connection restriction'
+  become_user: '{{ easyrsa__user }}'
+  command: './easyrsa gen-dh'
+  args:
+    chdir: "{{ _ca_dir }}"
+    creates: "{{ _ca_dir }}/pki/dh.pem"
+  vars:
+    _dh: "{{ easyrsa__dh.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _dh.ca.root_name }}/{{ _dh.ca.name }}"
+  loop: '{{ easyrsa__dh.enable }}'
+
+- name: "Look out for existing certificate requests"
+  become_user: '{{ easyrsa__user }}'
+  stat:
+    path: '{{ _ca_dir }}//pki/reqs/{{ _cert.name }}.req'
+  register: _request_list
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ easyrsa__certificate.enable }}'
+
+- name: "Look out for existing certificates"
+  become_user: '{{ easyrsa__user }}'
+  stat:
+    path: '{{ _ca_dir }}//pki/issued/{{ _cert.name }}.crt'
+  register: _certs_list
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ easyrsa__certificate.enable }}'
+
+- name: "Revoke a certificate on request"
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa revoke {{ _cert.name }}"
+  args:
+    chdir: "{{ _ca_dir }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and (
+      item.item in easyrsa__certificate.revoke_only | d([], true) or
+      item.item in easyrsa__certificate.revoke_resign | d([], true)
+    )
+
+- name: "Generate server/client certificate requests"
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa --req-cn={{ _cert.name }} gen-req {{ _cert.name }} nopass"
+  args:
+    chdir: "{{ _ca_dir }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _request_list.results }}'
+  when: >
+    not item.stat.exists or (
+      item.item in easyrsa__certificate.force_renew | d([], true) or
+      item.item in easyrsa__certificate.revoke_resign | d([], true)
+    )
+
+- name: "Sign certificate with it's intermediate CA"
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa sign-req {{ _cert.type }} {{ _cert.name }}"
+  args:
+    chdir: "{{ _ca_dir }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    not item.stat.exists or (
+      item.item in easyrsa__certificate.force_renew | d([], true) or
+      item.item in easyrsa__certificate.revoke_resign | d([], true)
+    )
+
+- name: "Look out for existing certificates - again"
+  become_user: '{{ easyrsa__user }}'
+  stat:
+    path: '{{ _ca_dir }}//pki/issued/{{ _cert.name }}.crt'
+  register: _certs_list
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ easyrsa__certificate.enable }}'
+
+- name: "Generate CRL (Certificate Revocation List)"
+  become_user: '{{ easyrsa__user }}'
+  command: "./easyrsa gen-crl"
+  args:
+    chdir: "{{ _ca_dir }}"
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
+  loop: "{{ easyrsa__all_ca }}"
+
+- name: "Create scripts that can later be used to (re-)create certificates, e.g. by cron."
+  become_user: '{{ easyrsa__user }}'
+  template:
+    src: "renew-cert.sh.j2"
+    dest: "{{ _ca_dir }}/create_cert.{{ _cert.ca.name }}.renew-cert.sh"
+    mode: 0755
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _cert_deploy: "{{ _cert.deploy_option.easyrsa.method.ssh }}"
+    _cert_restart_command: "{{ _cert.deploy_option.easyrsa.restart_command }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'deploy_option' in _cert and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'ssh' in _cert.deploy_option.easyrsa.method and
+    'restart_command' in _cert.deploy_option
+
+- name: "Deploy the roots' CAs via Maestro/Ansible"
+  fetch:
+    src: "{{ _ca_dir }}/pki/ca.crt"
+    dest: "{{ workdir }}"
+  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.ca is defined"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.root_name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
+- name: "Deploy the certificates' CAs via Maestro/Ansible"
+  fetch:
+    src: "{{ _ca_dir }}/pki/ca.crt"
+    dest: "{{ workdir }}"
+  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.ca is defined"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
+- name: "Deploy the certificates' private keys via Maestro/Ansible"
+  fetch:
+    src: "{{ _ca_dir }}/pki/private/{{ _cert.name }}.key"
+    dest: "{{ workdir }}"
+  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.key is defined"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
+- name: "Deploy the certificates via Maestro/Ansible"
+  fetch:
+    src: "{{ _ca_dir }}/pki/issued/{{ _cert.name }}.crt"
+    dest: "{{ workdir }}"
+  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.cert is defined"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
+- name: "Deploy the CRL via Maestro/Ansible"
+  fetch:
+    src: "{{ _ca_dir }}/pki/crl.pem"
+    dest: "{{ workdir }}"
+  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.crl is defined"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: "{{ easyrsa__certificate.enable }}"
+
+#- name: "Display generated certificates"
+#  debug:
+#    msg:
+#      - "Root CA: {{ easyrsa_path }}/pki/ca.crt"
+#      - "Intermediate CAs:
+#      {% for %}
+#        - {{ easyrsa_path }}/intermediate-ca/pki/ca.crt"
+#          {% for %}
+#      - "Client Certificate: {{ easyrsa_path }}/pki/issued/{{ client_name }}.crt"
+#      - "Client Key: {{ easyrsa_path }}/pki/private/{{ client_name }}.key"
+#      - "CRL: {{ easyrsa_path }}/pki/crl.pem"
+

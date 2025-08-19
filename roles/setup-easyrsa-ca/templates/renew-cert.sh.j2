@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#TODO  - actually do something here ..
+
+CERT_CAFILE="{{ _cert_deploy.src_file.ca }}"
+CERT_KEYFILE="{{ _cert_deploy.src_file.key }}"
+CERT_CERTFILE="{{ _cert_deploy.src_file.cert }}"
+CERT_CHAINFILE="{{ _cert_deploy.src_file.chain }}"
+CERT_FULLCHAINFILE="{{ _cert_deploy.src_file.fullchain }}"
+CERT_FULLKEYFILE="{{ _cert_deploy.src_file.fullkey }}"
+
+DEPLOY_SSH_USER="{{ _cert_deploy.target_user }}"
+DEPLOY_SSH_SERVER="{{ _cert_deploy.target_host }}"
+
+DEPLOY_SSH_CAFILE="{{ _cert_deploy.dest_file.ca }}"
+DEPLOY_SSH_KEYFILE="{{ _cert_deploy.dest_file.key }}"
+DEPLOY_SSH_CERTFILE="{{ _cert_deploy.dest_file.cert }}"
+DEPLOY_SSH_CHAIN="{{ _cert_deploy.dest_file.chain }}"
+DEPLOY_SSH_FULLCHAIN="{{ _cert_deploy.dest_file.fullchain }}"
+DEPLOY_SSH_REMOTE_CMD="{{ _cert_restart_command }}" #TODO add counter, then restart
