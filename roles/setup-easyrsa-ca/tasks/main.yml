@@ -330,6 +330,17 @@
   loop: '{{ _certs_list.results }}'
   when: item.stat.exists
 
+- name: "Deploy the certificates' Chain CAs via Maestro/Ansible"
+  fetch:
+    src: "{{ _ca_dir }}/pki/ca_chain.crt"
+    dest: "{{ workdir }}"
+  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.ca is defined"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
 - name: "Deploy the certificates' private keys via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/private/{{ _cert.name }}.key"
