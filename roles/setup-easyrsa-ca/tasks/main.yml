@@ -173,29 +173,24 @@
     _ca_parent_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
   loop: '{{ easyrsa__inter_ca }}'
 
-##TODO
 # As we created the SubCA's easyrsa__inter_ca with deep-first, we can now concat the files in reverse
-#    - name: "Concatenate the CA chain in every SubCA."
-#      become_user: '{{ easyrsa__user }}'
-#      copy:
-#        force: true
-#        content: |
-#          {% for _ in range(easyrsa__max_ca_depth) %}
-#          {% if _ca.parent_name %}
-#          {{ lookup('file', _e_dir + _ca.name + '/ca.crt' ) }}
-#          {{ 
-#          {% else %}
-#          {% break %}
-#          {% endif %}
-#          {% endfor %}
-#        dest: "{{ _ca_dir }}/pki/ca_chain.crt"
-#      vars:
-#        _ca: "{{ easyrsa__ca.available[item.item] }}"
-#        _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
-#        _e_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/"
-##        _ca_parent_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
-#        _ca_parent_file: "{{ _ca_dir }}/pki/ca.crt ]"
-#      loop: '{{ _ca_inter_stat.results | reverse }}'
+- name: "Concatenate the CA chain in every SubCA."
+  become_user: '{{ easyrsa__user }}'
+  copy:
+    force: true
+    remote_src: true
+    content: |
+      {{ lookup('file', "{{ _ca_cert }}" ) }}
+      {% if _ca.parent_name != _ca.root_name %}
+      {{ lookup('file', "{{ _ca_parent_chain }}" ) }}
+      {% endif %}
+    dest: "{{ _ca_dir }}/pki/ca_chain.crt"
+  vars:
+    _ca: "{{ easyrsa__ca.available[item] }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
+    _ca_cert: "{{ _ca_dir }}/pki/ca.crt"
+    _ca_parent_chain: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}/pki/ca_chain.crt"
+  loop: '{{ easyrsa__inter_ca }}'
 
 - name: 'Build the Diffie-Hellman key, e.g. for OpenVPN connection restriction'
   become_user: '{{ easyrsa__user }}'
