@@ -33,4 +33,5 @@
     # Let's select all intermediate CA's by looping through all enabled CA's and selecting the CA based on their distance to the RootCA.
     easyrsa__inter_ca_on: "{% set r = [] %}{% for i in range(1, easyrsa__max_ca_depth) %}{% set k = i | string %}{% for item in easyrsa__ca.enable %}{% if k in item %}{% set _ = r.append(item[k]) %}{% endif %}{% endfor %}{% endfor %}{{ r | unique }}"
     easyrsa__all_ca_on: "{{ easyrsa__root_ca_on + easyrsa__inter_ca_on }}"
+    easyrsa__all_certs: "{{ easyrsa__ca.available | combine(easyrsa__dh.available) | combine(easyrsa__certificate.available) }}"
 

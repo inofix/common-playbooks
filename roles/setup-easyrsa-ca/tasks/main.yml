@@ -1,4 +1,12 @@
 ---
+- name: "Check whether the cert list is written for EasyRSA."
+  fail:
+    msg: "All certs in the list must be of app type 'easy-rsa'"
+  loop: "{{ easyrsa__all_certs | dict2items }}"
+  when: >
+    'app' not in item.value or
+    item.value.app != 'easy-rsa'
+
 - name: "Make sure Easy-RSA has a home."
   file:
     path: '{{ easyrsa__path }}'
