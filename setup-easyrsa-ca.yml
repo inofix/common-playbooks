@@ -29,9 +29,8 @@
     easyrsa__dh: "{{ app__easyrsa__dh }}"
     easyrsa__ca: "{{ app__easyrsa__ca }}"
 
-    easyrsa__root_ca: "{{ easyrsa__ca.enable | map(attribute='root') | unique }}"
+    easyrsa__root_ca_on: "{{ easyrsa__ca.enable | map(attribute='root') | unique }}"
     # Let's select all intermediate CA's by looping through all enabled CA's and selecting the CA based on their distance to the RootCA.
-    easyrsa__inter_ca: "{% set r = [] %}{% for i in range(1, easyrsa__max_ca_depth) %}{% set k = i | string %}{% for item in easyrsa__ca.enable %}{% if k in item %}{% set _ = r.append(item[k]) %}{% endif %}{% endfor %}{% endfor %}{{ r | unique }}"
-    easyrsa__all_ca: "{{ easyrsa__root_ca + easyrsa__inter_ca }}"
-
+    easyrsa__inter_ca_on: "{% set r = [] %}{% for i in range(1, easyrsa__max_ca_depth) %}{% set k = i | string %}{% for item in easyrsa__ca.enable %}{% if k in item %}{% set _ = r.append(item[k]) %}{% endif %}{% endfor %}{% endfor %}{{ r | unique }}"
+    easyrsa__all_ca_on: "{{ easyrsa__root_ca_on + easyrsa__inter_ca_on }}"
 

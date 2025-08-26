@@ -26,7 +26,7 @@
   register: _ca_root_home_stat
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
-  loop: '{{ easyrsa__root_ca }}'
+  loop: '{{ easyrsa__root_ca_on }}'
 
 - name: "Debug those CA folders."
   debug:
@@ -63,7 +63,7 @@
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
   args:
     creates: "{{ _ca_dir }}"
-  loop: '{{ easyrsa__all_ca }}'
+  loop: '{{ easyrsa__all_ca_on }}'
 
 - name: "Initialize PKI for Root CA"
   become_user: '{{ easyrsa__user }}'
@@ -74,7 +74,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
-  loop: '{{ easyrsa__all_ca }}'
+  loop: '{{ easyrsa__all_ca_on }}'
 
 - name: "Move the vars file to the PKI folder."
   become_user: '{{ easyrsa__user }}'
@@ -84,7 +84,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
-  loop: '{{ easyrsa__all_ca }}'
+  loop: '{{ easyrsa__all_ca_on }}'
 
 - name: "Add the necessary variables for the new CAs"
   become_user: '{{ easyrsa__user }}'
@@ -110,7 +110,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name | d(_ca.name, true) }}/{{ _ca.name }}"
-  loop: '{{ easyrsa__all_ca }}'
+  loop: '{{ easyrsa__all_ca_on }}'
 
 #TODO we later want to add the password from the vault here,
 # maybe encrypting the file only after having it generated
@@ -124,7 +124,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.name }}/{{ _ca.name }}"
-  loop: '{{ easyrsa__root_ca }}'
+  loop: '{{ easyrsa__root_ca_on }}'
 
 - name: "Build Intermediate CAs."
   become_user: '{{ easyrsa__user }}'
@@ -135,7 +135,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
-  loop: '{{ easyrsa__inter_ca }}'
+  loop: '{{ easyrsa__inter_ca_on }}'
 
 - name: "Link the intermediate CA request to its parent signing CA."
   become_user: '{{ easyrsa__user }}'
@@ -146,7 +146,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
-  loop: '{{ easyrsa__inter_ca }}'
+  loop: '{{ easyrsa__inter_ca_on }}'
 
 - name: "Sign the intermediate CAs."
   become_user: '{{ easyrsa__user }}'
@@ -157,7 +157,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
-  loop: '{{ easyrsa__inter_ca }}'
+  loop: '{{ easyrsa__inter_ca_on }}'
 
 - name: "Copy back the signed certificate to the SubCA."
   copy:
@@ -171,9 +171,9 @@
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
     _ca_parent_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
-  loop: '{{ easyrsa__inter_ca }}'
+  loop: '{{ easyrsa__inter_ca_on }}'
 
-# As we created the SubCA's easyrsa__inter_ca with deep-first, we can now concat the files in reverse
+# As we created the SubCA's easyrsa__inter_ca_on with deep-first, we can now concat the files in reverse
 - name: "Concatenate the CA chain in every SubCA."
   become_user: '{{ easyrsa__user }}'
   copy:
@@ -190,7 +190,7 @@
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
     _ca_cert: "{{ _ca_dir }}/pki/ca.crt"
     _ca_parent_chain: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}/pki/ca_chain.crt"
-  loop: '{{ easyrsa__inter_ca }}'
+  loop: '{{ easyrsa__inter_ca_on }}'
 
 - name: 'Build the Diffie-Hellman key, e.g. for OpenVPN connection restriction'
   become_user: '{{ easyrsa__user }}'
@@ -286,7 +286,7 @@
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
-  loop: "{{ easyrsa__all_ca }}"
+  loop: "{{ easyrsa__all_ca_on }}"
 
 - name: "Create scripts that can later be used to (re-)create certificates, e.g. by cron."
   become_user: '{{ easyrsa__user }}'
@@ -296,16 +296,20 @@
     mode: 0755
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
-    _cert_deploy: "{{ _cert.deploy_option.easyrsa.method.ssh }}"
+    _cert_deploy: "{{ _cert.deploy_option.easyrsa }}"
     _cert_restart_command: "{{ _cert.deploy_option.easyrsa.restart_command }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+    _cert_key_file: "{{ _ca_dir }}/pki/private/{{ _cert.name }}.key"
+    _cert_file: "{{ _ca_dir }}/pki/issued/{{ _cert.name }}.crt"
+    _cert_ca_file: "{{ _ca_dir }}/pki/ca.crt"
+    _cert_chain_file: "{{ _ca_dir }}/pki/ca_chain.crt"
   loop: '{{ _certs_list.results }}'
   when: >
     item.stat.exists and
-    'deploy_option' in _cert and
     'easyrsa' in _cert.deploy_option and
     'method' in _cert.deploy_option.easyrsa and
     'ssh' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.ssh and
     'restart_command' in _cert.deploy_option
 
 - name: "Deploy the roots' CAs via Maestro/Ansible"
