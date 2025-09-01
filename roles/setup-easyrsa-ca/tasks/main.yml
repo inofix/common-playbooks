@@ -306,6 +306,7 @@
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
     _cert_deploy: "{{ _cert.deploy_option.easyrsa }}"
     _cert_restart_command: "{{ _cert.deploy_option.easyrsa.restart_command }}"
+    _root_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.root.name }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
     _cert_key_file: "{{ _ca_dir }}/pki/private/{{ _cert.name }}.key"
     _cert_file: "{{ _ca_dir }}/pki/issued/{{ _cert.name }}.crt"
@@ -320,70 +321,456 @@
     _cert.deploy_option.easyrsa.method.ssh and
     'restart_command' in _cert.deploy_option
 
-- name: "Deploy the roots' CAs via Maestro/Ansible"
+- name: "Fetch the roots' CAs via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/ca.crt"
     dest: "{{ workdir }}"
-  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.ca is defined"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.root_name }}"
   loop: '{{ _certs_list.results }}'
-  when: item.stat.exists
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'root_ca' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.root_ca is defined
 
-- name: "Deploy the certificates' CAs via Maestro/Ansible"
+- name: "Fetch the certificates' CAs via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/ca.crt"
     dest: "{{ workdir }}"
-  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.ca is defined"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
   loop: '{{ _certs_list.results }}'
-  when: item.stat.exists
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'ca' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.ca is defined
 
-- name: "Deploy the certificates' Chain CAs via Maestro/Ansible"
+- name: "Fetch the certificates' Chain CAs via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/ca_chain.crt"
     dest: "{{ workdir }}"
-  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.ca is defined"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
   loop: '{{ _certs_list.results }}'
-  when: item.stat.exists
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'chain' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.chain is defined
 
-- name: "Deploy the certificates' private keys via Maestro/Ansible"
+- name: "Fetch the certificates' private keys via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/private/{{ _cert.name }}.key"
     dest: "{{ workdir }}"
-  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.key is defined"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
   loop: '{{ _certs_list.results }}'
-  when: item.stat.exists
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'key' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.key is defined
 
-- name: "Deploy the certificates via Maestro/Ansible"
+- name: "Fetch the certificates via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/issued/{{ _cert.name }}.crt"
     dest: "{{ workdir }}"
-  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.cert is defined"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
   loop: '{{ _certs_list.results }}'
-  when: item.stat.exists
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'cert' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.cert is defined
 
-- name: "Deploy the CRL via Maestro/Ansible"
+- name: "Fetch the CRL via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/crl.pem"
     dest: "{{ workdir }}"
-  when: "_cert.deploy_option.easyrsa is defined and _cert.deploy_option.easyrsa.method.maestro.src_file.crl is defined"
   vars:
     _cert: "{{ easyrsa__certificate.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
   loop: "{{ easyrsa__certificate.enable }}"
+  when: >
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'crl' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.crl is defined
+
+- name: "Prepare the deploy of the CA - create the parent dir"
+  delegate_to: localhost
+  file:
+    path: "{{ workdir }}/{{ _target | dirname }}"
+    mode: "0750"
+    state: "directory"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.ca }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'ca' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.ca
+
+- name: "Prepare the deploy of the CA - copy the file"
+  become: false
+  delegate_to: localhost
+  copy:
+    src: "{{ workdir }}/{{ ansible_fqdn }}/{{ _ca_dir }}/pki/ca.crt"
+    dest: "{{ workdir }}/{{ _target }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.ca }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'ca' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.ca
+
+- name: "Prepare the deploy of the CRL - create the parent dir"
+  become: false
+  delegate_to: localhost
+  file:
+    path: "{{ workdir }}/{{ _target | dirname }}"
+    mode: "0750"
+    state: "directory"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.crl }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'crl' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.crl
+
+- name: "Prepare the deploy of the CRL - copy the file"
+  become: false
+  delegate_to: localhost
+  copy:
+    src: "{{ workdir }}/{{ ansible_fqdn }}/{{ _ca_dir }}/pki/crl.pem"
+    dest: "{{ workdir }}/{{ _target }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.crl }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'crl' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.crl
+
+- name: "Read contents of the server certificate key"
+  become: false
+  delegate_to: localhost
+  slurp:
+    src: "{{ workdir }}/{{ ansible_fqdn }}/{{ _ca_dir }}/{{ _path }}"
+  register: _cert_key_content
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _path: "/pki/private/{{ _cert.name }}.key"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
+- name: "Read contents of the server certificate"
+  delegate_to: localhost
+  slurp:
+    src: "{{ workdir }}/{{ ansible_fqdn }}/{{ _ca_dir }}/{{ _path }}"
+  register: _cert_content
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _path: "pki/issued/{{ _cert.name }}.crt"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
+- name: "Read contents of the server CA chain"
+  become: false
+  delegate_to: localhost
+  slurp:
+    src: "{{ workdir }}/{{ ansible_fqdn }}/{{ _ca_dir }}/{{ _path }}"
+  register: _chain_content
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _path: "pki/ca_chain.crt"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: item.stat.exists
+
+- name: "Prepare the deploy of the key - create the parent dir"
+  become: false
+  delegate_to: localhost
+  file:
+    path: "{{ workdir }}/{{ _target | dirname }}"
+    mode: "0750"
+    state: "directory"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.key }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'key' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.key
+
+- name: "Prepare the deploy of the key - copy the file"
+  become: false
+  delegate_to: localhost
+  copy:
+    content: "{{ _cert_key_content }}"
+    dest: "{{ workdir }}/{{ _target }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.key }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'key' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.key
+
+- name: "Prepare the deploy of the cert - create the parent dir"
+  become: false
+  delegate_to: localhost
+  file:
+    path: "{{ workdir }}/{{ _target | dirname }}"
+    mode: "0750"
+    state: "directory"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.cert }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'cert' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.cert
+
+- name: "Prepare the deploy of the cert - copy the file"
+  become: false
+  delegate_to: localhost
+  copy:
+    content: "{{ _cert_content }}"
+    dest: "{{ workdir }}/{{ _target }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.cert }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'cert' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.cert
+
+- name: "Prepare the deploy of the CA chain - create the parent dir"
+  become: false
+  delegate_to: localhost
+  file:
+    path: "{{ workdir }}/{{ _target | dirname }}"
+    mode: "0750"
+    state: "directory"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.chain }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'chain' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.chain
+
+- name: "Prepare the deploy of the CA chain - copy the file"
+  become: false
+  delegate_to: localhost
+  copy:
+    content: "{{ _chain_content }}"
+    dest: "{{ workdir }}/{{ _target }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.chain }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'chain' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.chain
+
+- name: "Prepare the deploy of the full chain - create the parent dir"
+  become: false
+  delegate_to: localhost
+  file:
+    path: "{{ workdir }}/{{ _target | dirname }}"
+    mode: "0750"
+    state: "directory"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.fullchain }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'fullchain' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.fullchain
+
+- name: "Prepare the deploy of the full chain - copy the file"
+  become: false
+  delegate_to: localhost
+  copy:
+    content: >
+      {{ _cert_content }}
+      {{ _chain_content }}
+    dest: "{{ workdir }}/{{ _target }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.fullchain }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'fullchain' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.fullchain
+
+- name: "Prepare the deploy of the full chain with key - create the parent dir"
+  become: false
+  delegate_to: localhost
+  file:
+    path: "{{ workdir }}/{{ _target | dirname }}"
+    mode: "0750"
+    state: "directory"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.fullkey }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'fullkey' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.fullkey
+
+- name: "Prepare the deploy of the full chain with key - copy the file"
+  become: false
+  delegate_to: localhost
+  copy:
+    content: >
+      {{ _cert_content }}
+      {{ _chain_content }}
+      {{ _cert_key_content }}
+    dest: "{{ workdir }}/{{ _target }}"
+  vars:
+    _cert: "{{ easyrsa__certificate.available[item.item] }}"
+    _target: "{{ _cert.deploy_option.easyrsa.target_host }}/{{ _cert.deploy_option.easyrsa.dest_file.fullkey }}"
+    _ca_dir: "{{ easyrsa__path }}/{{ _cert.ca.root_name }}/{{ _cert.ca.name }}"
+  loop: '{{ _certs_list.results }}'
+  when: >
+    item.stat.exists and
+    'easyrsa' in _cert.deploy_option and
+    'method' in _cert.deploy_option.easyrsa and
+    'maestro' in _cert.deploy_option.easyrsa.method and
+    _cert.deploy_option.easyrsa.method.maestro and
+    'dest_file' in _cert.deploy_option.easyrsa and
+    'fullkey' in _cert.deploy_option.easyrsa.dest_file and
+    _cert.deploy_option.easyrsa.dest_file.fullkey
+
 
 #- name: "Display generated certificates"
 #  debug:
