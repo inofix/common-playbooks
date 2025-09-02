@@ -1,11 +1,16 @@
 ---
+- name: "Combine and deduplicate the enabled certificates for the check below"
+  set_fact:
+    _enabled_certs: "{{ (( easyrsa__ca.enable | map('dict2items') | flatten | map(attribute='value') ) + easyrsa__dh.enable + easyrsa__certificate.enable ) | unique }}"
+    _available_certs: "{{ easyrsa__ca.available | combine(easyrsa__dh.available) | combine(easyrsa__certificate.available) | dict2items }}"
+
 - name: "Check whether the cert list is written for EasyRSA."
   fail:
     msg: "All certs in the list must be of app type 'easy-rsa'"
-  loop: "{{ easyrsa__all_certs | dict2items }}"
+  loop: "{{ _available_certs }}"
   when: >
-    'app' not in item.value or
-    item.value.app != 'easy-rsa'
+    item.key in _enabled_certs and
+    ( 'app' not in item.value or item.value.app != 'easy-rsa' )
 
 - name: "Make sure Easy-RSA has a home."
   file:
