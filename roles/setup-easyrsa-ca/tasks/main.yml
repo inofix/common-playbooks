@@ -435,6 +435,7 @@
 
 - name: "Prepare the deploy of the CA - create the parent dir"
   delegate_to: localhost
+  become: false
   file:
     path: "{{ workdir }}/{{ _target | dirname }}"
     mode: "0750"
