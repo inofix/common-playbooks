@@ -583,7 +583,10 @@
   become: false
   delegate_to: localhost
   copy:
-    content: "{{ _cert_key_content }}"
+    content: >-
+      {{ ( _cert_key_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
     dest: "{{ workdir }}/{{ _target }}"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
@@ -626,7 +629,11 @@
   become: false
   delegate_to: localhost
   copy:
-    content: "{{ _cert_content }}"
+    content: >-
+      {{ ( _cert_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
+    dest: "{{ workdir }}/{{ _target }}"
     dest: "{{ workdir }}/{{ _target }}"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
@@ -669,7 +676,10 @@
   become: false
   delegate_to: localhost
   copy:
-    content: "{{ _chain_content }}"
+    content: >-
+      {{ ( _chain_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
     dest: "{{ workdir }}/{{ _target }}"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
@@ -713,8 +723,12 @@
   delegate_to: localhost
   copy:
     content: >
-      {{ _cert_content }}
-      {{ _chain_content }}
+      {{ ( _cert_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
+      {{ ( _chain_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
     dest: "{{ workdir }}/{{ _target }}"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
@@ -758,9 +772,15 @@
   delegate_to: localhost
   copy:
     content: >
-      {{ _cert_content }}
-      {{ _chain_content }}
-      {{ _cert_key_content }}
+      {{ ( _cert_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
+      {{ ( _chain_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
+      {{ ( _cert_key_content.results
+        | selectattr('item.item', 'equalto', item.item)
+        | list )[0].content | b64decode }}
     dest: "{{ workdir }}/{{ _target }}"
   vars:
     _cert: "{{ easyrsa__certificate.available[item.item] }}"
