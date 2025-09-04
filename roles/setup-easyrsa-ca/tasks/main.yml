@@ -186,24 +186,42 @@
     _ca_parent_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}"
   loop: '{{ easyrsa__inter_ca_on }}'
 
-# As we created the SubCA's easyrsa__inter_ca_on with deep-first, we can now concat the files in reverse
-- name: "Concatenate the CA chain in every SubCA."
+# As we created the SubCA's easyrsa__inter_ca_on with deep-first, we can now just concat the files
+- name: "Concatenate the CA chain in every SubCA (remote script)"
   become_user: '{{ easyrsa__user }}'
-  copy:
-    force: true
-    remote_src: true
-    content: |
-      {{ lookup('file', "{{ _ca_cert }}" ) }}
-      {% if _ca.parent_name != _ca.root_name %}
-      {{ lookup('file', "{{ _ca_parent_chain }}" ) }}
-      {% endif %}
-    dest: "{{ _ca_dir }}/pki/ca_chain.crt"
+  shell: |
+    set -euo pipefail
+    if [[ -f "${_CA_CERT}" ]] ; then
+        cat "${_CA_CERT}" > "${_CA_CHAIN}"
+    else
+        echo "Cert file not found: ${_CA_CERT}" >&2
+        exit 1
+    fi
+    if [[ "${_CA_ROOT}" != "${_CA_PARENT}" ]] ; then
+        if [[ ! -f "${_CA_PARENT_CHAIN}" ]] ; then
+            echo "Parent chain file not found: ${_CA_PARENT_CHAIN}" >&2
+            exit 2
+        fi
+        echo "" >> "${_CA_CHAIN}"
+        cat "${_CA_PARENT_CHAIN}" >> "${_CA_CHAIN}"
+    fi
+    exit 0
+  args:
+    executable: /bin/bash
+  environment:
+    _CA_ROOT: "{{ _ca.root_name }}"
+    _CA_PARENT: "{{ _ca.parent_name }}"
+    _CA_DIR: "{{ _ca_dir }}"
+    _CA_CERT: "{{ _ca_cert }}"
+    _CA_PARENT_CHAIN: "{{ _ca_parent_chain }}"
+    _CA_CHAIN: "{{ _ca_chain }}"
   vars:
     _ca: "{{ easyrsa__ca.available[item] }}"
     _ca_dir: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.name }}"
     _ca_cert: "{{ _ca_dir }}/pki/ca.crt"
     _ca_parent_chain: "{{ easyrsa__path }}/{{ _ca.root_name }}/{{ _ca.parent_name }}/pki/ca_chain.crt"
-  loop: '{{ easyrsa__inter_ca_on }}'
+    _ca_chain: "{{ _ca_dir }}/pki/ca_chain.crt"
+  loop: "{{ easyrsa__inter_ca_on }}"
 
 - name: 'Build the Diffie-Hellman key, e.g. for OpenVPN connection restriction'
   become_user: '{{ easyrsa__user }}'
@@ -416,6 +434,7 @@
     'cert' in _cert.deploy_option.easyrsa.dest_file and
     _cert.deploy_option.easyrsa.dest_file.cert is defined
 
+# (Reading certain contents again - these are separate tasks...)
 - name: "Fetch the CRL via Maestro/Ansible"
   fetch:
     src: "{{ _ca_dir }}/pki/crl.pem"
