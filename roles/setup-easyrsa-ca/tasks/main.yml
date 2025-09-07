@@ -552,6 +552,7 @@
   when: item.stat.exists
 
 - name: "Read contents of the server certificate"
+  become: false
   delegate_to: localhost
   slurp:
     src: "{{ workdir }}/{{ ansible_fqdn }}/{{ _ca_dir }}/{{ _path }}"
