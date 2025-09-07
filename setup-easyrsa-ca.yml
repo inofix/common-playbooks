@@ -1,0 +1,36 @@
+---
+#*  This is not production ready yet..
+# TODO work over this one..
+
+# TODO move vars to defaults / vars
+
+- name: "Set up PKI and generate CA and all certificates"
+  hosts: app.easyrsa, &service.certificate
+    #  gather_facts: false
+  become: yes
+  roles:
+  - inofix.yapkg
+  - setup-easyrsa-ca
+  vars:
+    yapkg__task_group_name: 'easyrsa'
+    yapkg__names: '{{ os__pkg_name.easyrsa[os__distro][os__codename] | d([ "easy-rsa" ]) }}'
+
+    easyrsa__user: '{{ app__easyrsa__user }}'
+    easyrsa__group: '{{ app__easyrsa__group }}'
+
+    #TODO this is not fully working yet with deep intermediate hierarchy as the cert chain is not yet created..
+    easyrsa__max_ca_depth: 2 # Used to control the for loop (simulated while)
+
+    easyrsa__path: "{{ app__easyrsa__path | d('/etc/easyrsa/') }}"
+    easyrsa__ca_command: "{{ app__easyrsa__ca_command | d('/usr/bin/make-cadir') }}"
+    easyrsa__command: "{{ app__easyrsa__command | d('./easyrsa') }}"
+
+    easyrsa__certificate: "{{ app__easyrsa__certificate }}"
+    easyrsa__dh: "{{ app__easyrsa__dh }}"
+    easyrsa__ca: "{{ app__easyrsa__ca }}"
+
+    easyrsa__root_ca_on: "{{ easyrsa__ca.enable | map(attribute='root') | unique }}"
+    # Let's select all intermediate CA's by looping through all enabled CA's and selecting the CA based on their distance to the RootCA.
+    easyrsa__inter_ca_on: "{% set r = [] %}{% for i in range(1, easyrsa__max_ca_depth) %}{% set k = i | string %}{% for item in easyrsa__ca.enable %}{% if k in item %}{% set _ = r.append(item[k]) %}{% endif %}{% endfor %}{% endfor %}{{ r | unique }}"
+    easyrsa__all_ca_on: "{{ easyrsa__root_ca_on + easyrsa__inter_ca_on }}"
+

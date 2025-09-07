@@ -8,28 +8,45 @@
 -- for the supplier we do not want too much overhead, the main_admin
 -- should be as low tech as possible, IMO.
 
--- admin role with local super powers
-CREATE ROLE main_admin;
-
--- omni project - roles with access to all projects
--- projects admin role with lots of privledges
-CREATE ROLE omni_admin;
--- role to read most information
---CREATE ROLE omni_reader;
--- role to also add information
---CREATE ROLE omni_creator;
--- role to edit existing information
---CREATE ROLE omni_editor;
--- role to only add recordings to the staging area
-CREATE ROLE omni_supplier;
--- role to read by views
-CREATE ROLE omni_consumer;
+-- idempotent version..
+DO $$
+BEGIN
+    -- admin role with local super powers
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'main_admin') THEN
+        CREATE ROLE main_admin;
+    END IF;
+    -- omni project - roles with access to all projects
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'main_admin') THEN
+        -- projects admin role with lots of privledges
+        CREATE ROLE omni_admin;
+    END IF;
+--    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'main_admin') THEN
+        -- role to read most information
+        --CREATE ROLE omni_reader;
+--    END IF;
+--    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'main_admin') THEN
+        -- role to also add information
+--        CREATE ROLE omni_creator;
+--    END IF;
+--    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'main_admin') THEN
+        -- role to edit existing information
+--        CREATE ROLE omni_editor;
+--    END IF;
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'main_admin') THEN
+        -- role to only add recordings to the staging area
+        CREATE ROLE omni_supplier;
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'main_admin') THEN
+        -- role to read by views
+        CREATE ROLE omni_consumer;
+    END IF;
+END$$;
 
 -- revoke permissions
 REVOKE ALL ON SCHEMA public FROM
---    omni_reader,
---    omni_creator,
---    omni_editor,
+    omni_reader,
+    omni_creator,
+    omni_editor,
     omni_supplier,
     omni_consumer;
 
@@ -81,7 +98,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON sources TO omni_admin;
 GRANT SELECT, INSERT, UPDATE, DELETE ON recordings TO main_admin;
 GRANT SELECT, INSERT, UPDATE, DELETE ON recordings TO omni_admin;
 --GRANT SELECT ON all_recordings_view TO omni_reader;
-GRANT SELECT ON all_recordings_view TO omni_consumer;
+--GRANT SELECT ON all_recordings_view TO omni_consumer;
 
 -- recorings staging permissions
 GRANT SELECT, INSERT, UPDATE, DELETE ON recordings_staging TO main_admin;

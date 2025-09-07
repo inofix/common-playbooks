@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#TODO  - actually do something here ..
+
+CERT_CAFILE="{{ _cert_ca_file }}"
+CERT_CHAINFILE="{{ _cert_chain_file }}"
+CERT_KEYFILE="{{ _cert_key_file }}"
+CERT_CERTFILE="{{ _cert_file }}"
+
+DEPLOY_SSH_USER="{{ _cert_deploy.target_user }}"
+DEPLOY_SSH_SERVER="{{ _cert_deploy.target_host }}"
+
+DEPLOY_SSH_REMOTE_CMD="{{ _cert_restart_command }}" #TODO add counter, then restart
+
+{% if _cert_deploy.dest_file.ca is defined %}
+DEPLOY_SSH_CAFILE="{{ _cert_deploy.dest_file.ca }}"
+{% endif %}
+{% if _cert_deploy.dest_file.chain is defined %}
+DEPLOY_SSH_CHAIN="{{ _cert_deploy.dest_file.chain }}"
+{% endif %}
+{% if _cert_deploy.dest_file.key is defined %}
+DEPLOY_SSH_KEYFILE="{{ _cert_deploy.dest_file.key }}"
+{% endif %}
+{% if _cert_deploy.dest_file.cert is defined %}
+DEPLOY_SSH_CERTFILE="{{ _cert_deploy.dest_file.cert }}"
+{% endif %}
+{% if _cert_deploy.dest_file.fullchain is defined %}
+DEPLOY_SSH_FULLCHAIN="{{ _cert_deploy.dest_file.fullchain }}"
+{% endif %}
+{% if _cert_deploy.dest_file.fullkey is defined %}
+DEPLOY_SSH_FULLKEYCHAIN="{{ _cert_deploy.dest_file.fullkey }}"
+{% endif %}
+

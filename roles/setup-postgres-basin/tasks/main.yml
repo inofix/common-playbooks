@@ -22,6 +22,14 @@
     mode: "0640"
   loop: "{{ schema_files.values() | list }}"
 
+- name: "Add the projects with their content"
+  ansible.builtin.template:
+    src: '{{ templates.projects.src }}'
+    dest: '{{ templates.projects.dest }}'
+    mode: "0640"
+    owner: '{{ postgresql_user }}'
+    group: '{{ postgresql_group }}'
+
 - name: "Create app database"
   community.postgresql.postgresql_db:
     state: present
@@ -46,9 +54,11 @@
   ansible.builtin.template:
     src: '{{ templates.pg_cron.src }}'
     dest: '{{ templates.pg_cron.dest }}'
-    mode: "0750"
+    mode: "0640"
     owner: '{{ postgresql_user }}'
     group: '{{ postgresql_group }}'
+  when:
+    * 'app.postgresql.pg_cron' in group_names
 
 - name: "Restart PostgreSQL"
   ansible.builtin.command: >
@@ -59,48 +69,73 @@
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.extensions }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'extensions') | map(attribute='enabled') | first | d(false)
 
 - name: "Create the roles and privledges"
   ansible.builtin.command: >
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.roles }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'roles') | map(attribute='enabled') | first | d(false)
 
 - name: "Create the tables"
   ansible.builtin.command: >
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.tables }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'tables') | map(attribute='enabled') | first | d(false)
 
 - name: "Create the views"
   ansible.builtin.command: >
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.views }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'views') | map(attribute='enabled') | first | d(false)
 
 - name: "Create the functionss"
   ansible.builtin.command: >
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.functions }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'functions') | map(attribute='enabled') | first | d(false)
 
 - name: "Create the triggers"
   ansible.builtin.command: >
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.triggers }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'triggers') | map(attribute='enabled') | first | d(false)
+
+- name: "Insert the content: projects, sourcetypes, sources"
+  ansible.builtin.command: >
+    psql -d {{ db_name }} -f '{{ templates.projects.dest }}'
+  become: yes
+  become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'content') | map(attribute='enabled') | first | d(false)
 
 - name: "Create the cron jobs"
   ansible.builtin.command: >
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.cron }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when:
+    * 'app.postgresql.pg_cron' in group_names
+    * schema_files_auto_enable | selectattr('name', 'equalto', 'cron') | map(attribute='enabled') | first | d(false)
 
 - name: "Insert the version info"
   ansible.builtin.command: >
     psql -d {{ db_name }} -f {{ schema_files_path ~ "/" ~ schema_files.version }}
   become: yes
   become_user: "{{ postgresql_user }}"
+  when: >
+    schema_files_auto_enable | selectattr('name', 'equalto', 'version') | map(attribute='enabled') | first | d(false)
 
 - name: "Get the password from file if possible"
   register: accountsfile
@@ -121,7 +156,7 @@
   become: yes
   become_user: "{{ postgresql_user }}"
 
-- name: "Ensure user is a member of the omni_admin group"
+- name: "Ensure user is a member of its respective group"
   community.postgresql.postgresql_membership:
     login_db: postgres
     group: "{{ item.group }}"
